@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Inscription Livreur - SEND2.0 Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --success-solid: #43e97b;
+            --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --warning-solid: #fa709a;
+            --danger: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            --danger-solid: #ff6b6b;
+            --info: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            --info-solid: #74b9ff;
+            
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            --glass: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 6px 20px rgba(0, 0, 0, 0.2);
+            
+            --radius: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --radius-full: 9999px;
+            
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 14px;
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary);
+            min-height: 100vh;
+            padding: 8px;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* SYSTÈME MASCOTTE OPTIMISÉ MOBILE */
+        .send-container {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            z-index: 2000;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .send-mascot {
+            width: 60px;
+            height: 80px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            pointer-events: all;
+            transform-origin: center;
+        }
+
+        .send-mascot:hover {
+            transform: scale(1.05);
+        }
+
+        .send-mascot.bouncing {
+            animation: sendBounce 0.6s ease-in-out;
+        }
+
+        .send-mascot.excited {
+            animation: sendExcited 1s ease-in-out infinite;
+        }
+
+        .send-mascot.celebrating {
+            animation: sendCelebrate 2s ease-in-out;
+        }
+
+        @keyframes sendBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes sendExcited {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(2deg); }
+            75% { transform: scale(1.05) rotate(-2deg); }
+        }
+
+        @keyframes sendCelebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.15) rotate(8deg); }
+            50% { transform: scale(1.1) rotate(-8deg); }
+            75% { transform: scale(1.15) rotate(4deg); }
+        }
+
+        .send-body {
+            width: 50px;
+            height: 60px;
+            background: var(--primary-solid);
+            border-radius: 25px 25px 15px 15px;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            animation: sendFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes sendFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .send-face {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+        }
+
+        .send-eyes {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .send-eye {
+            width: 8px;
+            height: 8px;
+            background: var(--gray-800);
+            border-radius: 50%;
+            animation: sendBlink 4s infinite;
+        }
+
+        @keyframes sendBlink {
+            0%, 94% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        .send-mouth {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            border: 1px solid var(--gray-700);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .send-delivery-helmet {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 18px;
+            background: #4facfe;
+            border-radius: 50% 50% 0 0;
+            border: 1px solid var(--gray-300);
+        }
+
+        .send-name-badge {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4facfe;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* DIALOGUE OPTIMISÉ MOBILE */
+        .send-dialogue {
+            position: fixed;
+            bottom: 110px;
+            right: 16px;
+            left: 16px;
+            max-width: 280px;
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 2001;
+        }
+
+        .send-dialogue.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .send-dialogue.delivery {
+            border-color: #4facfe;
+        }
+
+        .send-dialogue-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--primary-solid);
+            font-size: 0.9rem;
+        }
+
+        .send-dialogue-content {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--gray-700);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .send-dialogue-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .send-dialogue-btn {
+            padding: 8px 12px;
+            background: var(--primary-solid);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 36px;
+            touch-action: manipulation;
+        }
+
+        .send-dialogue-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-dialogue-btn.secondary {
+            background: var(--gray-400);
+        }
+
+        .send-dialogue-btn.accent {
+            background: #4facfe;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .step-tabs {
+            display: flex;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .step-tab {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.75rem;
+            min-height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            touch-action: manipulation;
+        }
+
+        .step-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .step-tab:not(.active):hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .step-tab i {
+            font-size: 1rem;
+        }
+
+        .step-content {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            display: none;
+            margin-bottom: 100px;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .step-header h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .step-header p {
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger-solid);
+            font-weight: 800;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1rem;
+            z-index: 2;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 12px 14px 40px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            color: var(--gray-900);
+            background: var(--white);
+            transition: var(--transition);
+            outline: none;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+            min-height: 48px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            padding-top: 14px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px 16px;
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            background: var(--gray-50);
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            min-height: 100px;
+            touch-action: manipulation;
+        }
+
+        .file-upload-label:hover, .file-upload-label:active {
+            border-color: var(--primary-solid);
+            background: rgba(102, 126, 234, 0.05);
+            color: var(--primary-solid);
+        }
+
+        .file-upload-label i {
+            font-size: 1.5rem;
+        }
+
+        .signature-container {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            margin: 12px 0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .signature-header {
+            background: var(--gray-50);
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .signature-header h4 {
+            color: var(--gray-700);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .signature-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 36px;
+            touch-action: manipulation;
+        }
+
+        .signature-btn:hover, .signature-btn:active {
+            background: var(--gray-100);
+            border-color: var(--primary-solid);
+            color: var(--primary-solid);
+        }
+
+        .signature-canvas {
+            width: 100%;
+            height: 120px;
+            cursor: crosshair;
+            background: var(--white);
+            display: block;
+            touch-action: none;
+        }
+
+        .signature-info {
+            padding: 12px;
+            background: var(--gray-50);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            text-align: center;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            min-height: 48px;
+            white-space: nowrap;
+            box-shadow: var(--shadow);
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.15), rgba(9, 132, 227, 0.15));
+            color: var(--info-solid);
+            border-left: 3px solid var(--info-solid);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(67, 233, 123, 0.15), rgba(56, 249, 215, 0.15));
+            color: var(--success-solid);
+            border-left: 3px solid var(--success-solid);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.15), rgba(254, 225, 64, 0.15));
+            color: var(--warning-solid);
+            border-left: 3px solid var(--warning-solid);
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-solid);
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .phone-input .form-input {
+            padding-left: 85px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--glass-border);
+            margin: 16px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-solid);
+            border-radius: var(--radius-full);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            border: 1px solid var(--glass-border);
+            z-index: 10000;
+            transform: translateY(-100%);
+            transition: var(--transition);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            border-left: 3px solid var(--success-solid);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--danger-solid);
+        }
+
+        .toast.warning {
+            border-left: 3px solid var(--warning-solid);
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .toast-icon.success { background: var(--success-solid); }
+        .toast-icon.error { background: var(--danger-solid); }
+        .toast-icon.warning { background: var(--warning-solid); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        /* Section headers for mobile */
+        .section-header {
+            margin: 20px 0 16px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(116, 185, 255, 0.1));
+            border-radius: var(--radius-lg);
+            border-left: 3px solid var(--primary-solid);
+        }
+
+        .section-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary-solid);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Preview images */
+        .preview-container {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* Celebration particles */
+        .celebration-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-solid);
+            border-radius: 50%;
+            animation: particleFall 3s linear infinite;
+        }
+
+        @keyframes particleFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-10px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+            
+            .step-tab {
+                font-size: 0.7rem;
+                padding: 10px 6px;
+            }
+            
+            .step-content {
+                padding: 12px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .send-dialogue {
+                right: 12px;
+                left: 12px;
+                bottom: 100px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            html {
+                font-size: 12px;
+            }
+            
+            .container {
+                padding: 0 4px;
+            }
+            
+            .step-content {
+                padding: 10px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .form-input.error {
+            border-color: var(--danger-solid) !important;
+            background-color: rgba(255, 107, 107, 0.05) !important;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<!-- Menu Hamburger -->
+<div class="menu-btn" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND Logo" class="menu-logo">
+        <span class="menu-title">SEND 2.0</span>
+        <i class="fas fa-times menu-close" id="menuClose"></i>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item"><a href="index.html" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="menu-item"><a href="client.html" class="menu-link"><i class="fas fa-shopping-bag"></i> Recevoir</a></li>
+        <li class="menu-item"><a href="expediteur.html" class="menu-link"><i class="fas fa-paper-plane"></i> Expédier</a></li>
+        <li class="menu-item"><a href="suivi.html" class="menu-link"><i class="fas fa-search-location"></i> Suivi de colis</a></li>
+        <li class="menu-item"><a href="inscription_restau.html" class="menu-link"><i class="fas fa-utensils"></i> Partenariat Restaurant</a></li>
+        <li class="menu-item"><a href="services.html" class="menu-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li class="menu-item"><a href="inscription.html" class="menu-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+        <li class="menu-item"><a href="Connection.html" class="menu-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+        <li class="menu-item"><a href="assistance.html" class="menu-link"><i class="fas fa-headset"></i> Assistance</a></li>
+    </ul>
+
+    <div class="menu-footer">
+        SEND 2.0 &copy; 2025<br>
+        Tous droits réservés
+    </div>
+</div>
+
+<style>
+    /* ====== Menu Hamburger ====== */
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background:#ee5a24;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1rem;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-drawer.active {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.menu-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #0066FF;
+}
+
+.menu-close {
+    margin-left: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #1f2937;
+    background: none;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-close:hover {
+    transform: rotate(90deg);
+}
+
+.menu-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    z-index: -1;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.menu-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu-link:hover::before {
+    width: 100%;
+}
+
+.menu-link i {
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2);
+}
+
+.menu-link.active {
+    color: white;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: center;
+}
+</style>
+
+
+<script>
+    // ====== Gestion du Menu Hamburger ======
+const menuBtn = document.getElementById('menuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuDrawer = document.getElementById('menuDrawer');
+const menuClose = document.getElementById('menuClose');
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+    menuOverlay.classList.add('active');
+    menuDrawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+    menuOverlay.classList.remove('active');
+    menuDrawer.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Événements
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Mettre en surbrillance l'élément du menu actif
+document.querySelectorAll('.menu-link').forEach(link => {
+    if(link.href === window.location.href) {
+        link.classList.add('active');
+    }
+});
+</script>
+
+
+
+
+    <!-- SYSTÈME MASCOTTE SEND POUR LIVREURS -->
+    <div class="send-container" id="sendContainer">
+        <div class="send-mascot" id="sendMascot">
+            <div class="send-delivery-helmet"></div>
+            <div class="send-body">
+                <div class="send-face">
+                    <div class="send-eyes">
+                        <div class="send-eye"></div>
+                        <div class="send-eye"></div>
+                    </div>
+                    <div class="send-mouth"></div>
+                </div>
+            </div>
+            <div class="send-name-badge">Send</div>
+        </div>
+
+        <div class="send-dialogue delivery" id="sendDialogue">
+            <div class="send-dialogue-header">
+                <i class="fas fa-motorcycle"></i>
+                Send
+            </div>
+            <div class="send-dialogue-content" id="sendDialogueContent">
+                Salut futur livreur ! 🏍️ Je vais t'accompagner pour ton inscription ! Prêt à rejoindre l'équipe SEND2.0 ?
+            </div>
+            <div class="send-dialogue-actions" id="sendDialogueActions">
+                <button class="send-dialogue-btn accent" onclick="startDeliveryGuide()">
+                    C'est parti !
+                </button>
+                <button class="send-dialogue-btn secondary" onclick="hideSendDialogue()">
+                    Plus tard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div style="font-weight: 600; color: var(--gray-800);">Traitement en cours...</div>
+            <div style="font-size: 0.9rem; color: var(--gray-600); margin-top: 8px;" id="loadingMessage">Veuillez patienter</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Celebration Particles -->
+    <div id="celebrationParticles" class="celebration-particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <h1 class="title">Devenir Livreur</h1>
+            <p class="subtitle">Rejoignez l'équipe SEND2.0 Pro</p>
+        </div>
+
+        <!-- Step Tabs -->
+        <div class="step-tabs">
+            <div class="step-tab active" data-step="demande">
+                <i class="fas fa-file-alt"></i>
+                <div>Demande</div>
+            </div>
+            <div class="step-tab" data-step="finalisation">
+                <i class="fas fa-key"></i>
+                <div>Code</div>
+            </div>
+            <div class="step-tab" data-step="inscription">
+                <i class="fas fa-user-check"></i>
+                <div>Compte</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Demande de Recrutement -->
+        <div class="step-content active" id="step-demande">
+            <div class="step-header">
+                <h2>
+                    <i class="fas fa-file-alt"></i>
+                    Demande de Recrutement
+                </h2>
+                <p>Remplissez vos informations pour rejoindre notre équipe</p>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Information :</strong><br>
+                    Après validation, vous recevrez un code d'autorisation par WhatsApp ou SMS pour finaliser votre inscription.
+                </div>
+            </div>
+
+            <form id="demandeForm">
+                <!-- Informations personnelles -->
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-user"></i>
+                        Informations Personnelles
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="nom">Nom de famille</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-input" id="nom" required placeholder="Votre nom">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="prenom">Prénom</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-input" id="prenom" required placeholder="Votre prénom">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="whatsapp">Numéro WhatsApp</label>
+                    <div class="input-wrapper phone-input">
+                        <i class="fas fa-phone input-icon"></i>
+                        <span class="phone-prefix">+226</span>
+                        <input type="tel" class="form-input" id="whatsapp" required placeholder="XX XX XX XX">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="telephone">Téléphone secondaire</label>
+                    <div class="input-wrapper phone-input">
+                        <i class="fas fa-phone input-icon"></i>
+                        <span class="phone-prefix">+226</span>
+                        <input type="tel" class="form-input" id="telephone" placeholder="XX XX XX XX">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="quartier">Quartier de résidence</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" class="form-input" id="quartier" required placeholder="Ex: Patte d'Oie, Koulouba...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="dateNaissance">Date de naissance</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input type="date" class="form-input" id="dateNaissance">
+                    </div>
+                </div>
+
+                <!-- Informations véhicule -->
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-motorcycle"></i>
+                        Informations Véhicule
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="vehicule">Type de véhicule</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-motorcycle input-icon"></i>
+                        <select class="form-select" id="vehicule" required>
+                            <option value="">-- Choisir le type --</option>
+                            <option value="Moto">Moto</option>
+                            <option value="Vélo">Vélo</option>
+                            <option value="Voiture">Voiture</option>
+                            <option value="Scooter">Scooter</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="immatriculation">Numéro d'immatriculation</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" class="form-input" id="immatriculation" required placeholder="Ex: AB-123-CD">
+                    </div>
+                </div>
+
+                <!-- Contact d'urgence -->
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-phone-alt"></i>
+                        Contact d'Urgence
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="contactUrgenceNom">Personne à prévenir</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-friends input-icon"></i>
+                        <input type="text" class="form-input" id="contactUrgenceNom" placeholder="Nom de la personne">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="contactUrgenceTel">Numéro de cette personne</label>
+                    <div class="input-wrapper phone-input">
+                        <i class="fas fa-phone input-icon"></i>
+                        <span class="phone-prefix">+226</span>
+                        <input type="tel" class="form-input" id="contactUrgenceTel" placeholder="XX XX XX XX">
+                    </div>
+                </div>
+
+                <!-- Expérience -->
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-briefcase"></i>
+                        Expérience
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="experience">Expérience en livraison</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-briefcase input-icon"></i>
+                        <select class="form-select" id="experience">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Aucune">Aucune expérience</option>
+                            <option value="Moins de 1 an">Moins de 1 an</option>
+                            <option value="1-2 ans">1 à 2 ans</option>
+                            <option value="2-5 ans">2 à 5 ans</option>
+                            <option value="Plus de 5 ans">Plus de 5 ans</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-id-card"></i>
+                        Documents Obligatoires
+                    </h3>
+                </div>
+
+<div class="file-upload">
+    <input type="file" id="photoIdentite" accept="image/*" capture="user">
+    <label for="photoIdentite" class="file-upload-label">
+        <i class="fas fa-camera"></i>
+        <div>
+            <div style="font-weight: 700;">Photo d'identité</div>
+            <div style="font-size: 0.8rem; opacity: 0.8;">Visage visible (max 5MB)</div>
+        </div>
+    </label>
+    <!-- Après le champ de téléchargement photoIdentite -->
+<div class="preview-container" id="previewPhotoIdentite" style="display: none;">
+    <img id="photoIdentitePreview">
+</div>
+
+</div>
+
+<div class="form-group">
+    <label class="form-label required">Carte Grise ou Permis</label>
+    <div class="file-upload">
+        <input type="file" id="documentVehicule" accept="image/*,.pdf" capture="environment">
+        <label for="documentVehicule" class="file-upload-label">
+            <i class="fas fa-file-image"></i>
+            <div>
+                <div style="font-weight: 700;">Document véhicule</div>
+                <div style="font-size: 0.8rem; opacity: 0.8;">Photo ou scan lisible (max 5MB)</div>
+            </div>
+        </label>
+    </div>
+    <div class="preview-container" id="previewDocumentVehicule" style="display: none;">
+        <img id="documentVehiculePreview">
+    </div>
+</div>
+
+
+                <!-- Signature -->
+                <div class="form-group">
+                    <label class="form-label required">Signature Électronique</label>
+                    <div class="signature-container">
+                        <div class="signature-header">
+                            <h4>Signez ci-dessous</h4>
+                            <button type="button" class="signature-btn" onclick="clearSignature()">
+                                <i class="fas fa-eraser"></i> Effacer
+                            </button>
+                        </div>
+                        <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                        <div class="signature-info">
+                            <i class="fas fa-info-circle"></i>
+                            Signature obligatoire pour confirmer votre demande
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer ma Demande
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 2: Code -->
+        <div class="step-content" id="step-finalisation">
+            <div class="step-header">
+                <h2>
+                    <i class="fas fa-key"></i>
+                    Code d'Autorisation
+                </h2>
+                <p>Entrez le code reçu pour valider votre demande</p>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Code en attente</strong><br>
+                    Délai : 15 minutes à 24h<br>
+                    Surveillez vos messages WhatsApp/SMS<br>
+                    Le code commence par <strong>"LIV"</strong>
+                </div>
+            </div>
+
+            <form id="finalisationForm">
+                <div class="form-group">
+                    <label class="form-label required" for="codeAutorisation">Code d'autorisation</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-key input-icon"></i>
+                        <input type="text" class="form-input" id="codeAutorisation" required placeholder="LIV1234" style="text-transform: uppercase;">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i>
+                        Valider le Code
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: Compte -->
+        <div class="step-content" id="step-inscription">
+            <div class="step-header">
+                <h2>
+                    <i class="fas fa-user-check"></i>
+                    Créer votre Compte
+                </h2>
+                <p>Finalisez votre inscription</p>
+            </div>
+
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Demande approuvée !</strong><br>
+                    Créez maintenant votre compte de connexion
+                </div>
+            </div>
+
+            <form id="inscriptionForm">
+                <div class="form-group">
+                    <label class="form-label required" for="username">Nom d'utilisateur</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-input" id="username" required placeholder="Nom d'utilisateur">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email (optionnel)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-input" id="email" placeholder="votre@email.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" for="password">Mot de passe</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" id="password" required placeholder="Mot de passe sécurisé">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="confirmPassword">Confirmer le mot de passe</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" id="confirmPassword" required placeholder="Confirmer">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i>
+                        Créer mon Compte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // CLASSE MASCOTTE OPTIMISÉE MOBILE
+        class MotoSendMascot {
+            constructor() {
+                this.currentEmotion = 'neutral';
+                this.currentSection = 'general';
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.showWelcomeMessage();
+                this.startIdleAnimations();
+            }
+
+            setupEventListeners() {
+                document.getElementById('sendMascot').addEventListener('click', () => this.handleSendClick());
+            }
+
+            startIdleAnimations() {
+                setInterval(() => {
+                    if (this.currentEmotion === 'neutral') {
+                        this.performIdleAction();
+                    }
+                }, 10000);
+            }
+
+            performIdleAction() {
+                const mascot = document.getElementById('sendMascot');
+                mascot.classList.add('bouncing');
+                setTimeout(() => {
+                    mascot.classList.remove('bouncing');
+                }, 600);
+            }
+
+            setEmotion(emotion) {
+                const mascot = document.getElementById('sendMascot');
+                mascot.className = `send-mascot ${emotion}`;
+                this.currentEmotion = emotion;
+                
+                setTimeout(() => {
+                    if (this.currentEmotion === emotion) {
+                        mascot.className = 'send-mascot';
+                        this.currentEmotion = 'neutral';
+                    }
+                }, 3000);
+            }
+
+            showMessage(message, options = {}) {
+                const content = document.getElementById('sendDialogueContent');
+                const actions = document.getElementById('sendDialogueActions');
+                const dialogue = document.getElementById('sendDialogue');
+                
+                content.textContent = message;
+
+                if (options.actions) {
+                    actions.innerHTML = '';
+                    options.actions.forEach(action => {
+                        const button = document.createElement('button');
+                        button.className = `send-dialogue-btn ${action.secondary ? 'secondary' : action.accent ? 'accent' : ''}`;
+                        button.innerHTML = action.text;
+                        button.onclick = () => this.handleAction(action.action, action.data);
+                        actions.appendChild(button);
+                    });
+                } else {
+                    actions.innerHTML = '';
+                }
+
+                dialogue.classList.add('visible');
+
+                if (options.autoHide !== false) {
+                    setTimeout(() => {
+                        dialogue.classList.remove('visible');
+                    }, options.duration || 6000);
+                }
+            }
+
+            handleAction(action, data) {
+                switch(action) {
+                    case 'startGuide':
+                        this.startDeliveryGuide();
+                        break;
+                    case 'hideDialogue':
+                        this.hideDialogue();
+                        break;
+                    case 'focusField':
+                        const field = document.getElementById(data);
+                        if (field) {
+                            field.focus();
+                            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        break;
+                }
+            }
+
+            startDeliveryGuide() {
+                this.hideDialogue();
+                this.setEmotion('excited');
+                
+                setTimeout(() => {
+                    this.showMessage('Parfait ! Commençons par tes informations personnelles !', {
+                        actions: [
+                            { text: 'Commencer', action: 'focusField', data: 'nom', accent: true }
+                        ]
+                    });
+                }, 1000);
+            }
+
+            showWelcomeMessage() {
+                setTimeout(() => {
+                    this.showMessage('Salut futur livreur ! 🏍️ Je vais t\'accompagner pour ton inscription ! Prêt à rejoindre l\'équipe SEND2.0 ?', {
+                        actions: [
+                            { text: 'C\'est parti !', action: 'startGuide', accent: true }
+                        ]
+                    });
+                }, 2000);
+            }
+
+            onFormSubmit() {
+                this.showMessage('J\'envoie ta demande ! Tu recevras une réponse rapidement !', { duration: 4000 });
+            }
+
+            onCodeValidated() {
+                this.setEmotion('celebrating');
+                this.showMessage('Code valide ! Tu peux créer ton compte maintenant !', { duration: 4000 });
+            }
+
+            celebrate() {
+                this.setEmotion('celebrating');
+                this.createCelebrationParticles();
+                
+                this.showMessage('FÉLICITATIONS ! Tu es maintenant livreur SEND2.0 ! 🎉', { 
+                    duration: 8000
+                });
+            }
+
+            createCelebrationParticles() {
+                const container = document.getElementById('celebrationParticles');
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.background = ['#667eea', '#43e97b', '#4facfe', '#ff6b6b'][Math.floor(Math.random() * 4)];
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 3000);
+                }
+            }
+
+            hideDialogue() {
+                document.getElementById('sendDialogue').classList.remove('visible');
+            }
+
+            handleSendClick() {
+                const dialogue = document.getElementById('sendDialogue');
+                if (dialogue.classList.contains('visible')) {
+                    this.hideDialogue();
+                } else {
+                    this.showMessage('Besoin d\'aide ? Je peux te guider !', {
+                        actions: [
+                            { text: 'Aide', action: 'startGuide', accent: true }
+                        ]
+                    });
+                }
+            }
+        }
+
+        class InscriptionLivreurManager {
+            constructor() {
+                this.currentStep = 'demande';
+                this.API_URL = 'https://send20.netlify.app/.netlify/functions/Authentification';
+                this.signatureCanvas = null;
+                this.signatureCtx = null;
+                this.isSignatureDrawing = false;
+                this.hasSignature = false;
+                this.validatedCode = null;
+                this.mascot = null;
+                this.init();
+            }
+
+            init() {
+                this.mascot = new MotoSendMascot();
+                window.motoSend = this.mascot;
+                
+                this.setupEventListeners();
+                this.setupPhoneFormatting();
+                this.setupFilePreviews();
+                this.setupSignatureCanvas();
+            }
+            
+            setupEventListeners() {
+                document.querySelectorAll('.step-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const step = tab.dataset.step;
+                        if (this.canAccessStep(step)) {
+                            this.switchStep(step);
+                        }
+                    });
+                });
+
+                document.getElementById('demandeForm').addEventListener('submit', this.handleDemandeSubmit.bind(this));
+                document.getElementById('finalisationForm').addEventListener('submit', this.handleFinalisationSubmit.bind(this));
+                document.getElementById('inscriptionForm').addEventListener('submit', this.handleInscriptionSubmit.bind(this));
+            }
+
+            canAccessStep(step) {
+                if (step === 'demande') return true;
+                if (step === 'finalisation') return true;
+                if (step === 'inscription') return this.validatedCode !== null;
+                return false;
+            }
+
+            setupPhoneFormatting() {
+                const phoneInputs = document.querySelectorAll('#whatsapp, #telephone, #contactUrgenceTel');
+                phoneInputs.forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        let value = e.target.value.replace(/\D/g, '');
+                        
+                        if (value.length > 8) {
+                            value = value.substring(0, 8);
+                        }
+                        
+                        if (value.length >= 2) {
+                            value = value.replace(/(\d{2})(\d{2})?(\d{2})?(\d{2})?/, (match, p1, p2, p3, p4) => {
+                                let formatted = p1;
+                                if (p2) formatted += ' ' + p2;
+                                if (p3) formatted += ' ' + p3;
+                                if (p4) formatted += ' ' + p4;
+                                return formatted;
+                            });
+                        }
+                        
+                        e.target.value = value;
+                    });
+                });
+            }
+
+setupFilePreviews() {
+    document.getElementById('photoIdentite').addEventListener('change', (e) => {
+        this.handleImageUpload(e, 'photoIdentitePreview', 'previewPhotoIdentite', 500);
+    });
+
+    document.getElementById('documentVehicule').addEventListener('change', (e) => {
+        this.handleDocumentUpload(e, 'documentVehiculePreview', 'previewDocumentVehicule', 500);
+    });
+}
+
+
+setupSignatureCanvas() {
+                this.signatureCanvas = document.getElementById('signatureCanvas');
+                this.signatureCtx = this.signatureCanvas.getContext('2d');
+                
+                const rect = this.signatureCanvas.getBoundingClientRect();
+                this.signatureCanvas.width = rect.width * 2;
+                this.signatureCanvas.height = rect.height * 2;
+                this.signatureCtx.scale(2, 2);
+                
+                this.signatureCtx.strokeStyle = '#1e293b';
+                this.signatureCtx.lineWidth = 2;
+                this.signatureCtx.lineCap = 'round';
+                this.signatureCtx.lineJoin = 'round';
+
+                this.signatureCanvas.addEventListener('mousedown', this.startDrawing.bind(this));
+                this.signatureCanvas.addEventListener('mousemove', this.draw.bind(this));
+                this.signatureCanvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.signatureCanvas.addEventListener('mouseleave', this.stopDrawing.bind(this));
+
+                this.signatureCanvas.addEventListener('touchstart', this.handleTouch.bind(this));
+                this.signatureCanvas.addEventListener('touchmove', this.handleTouch.bind(this));
+                this.signatureCanvas.addEventListener('touchend', this.stopDrawing.bind(this));
+            }
+
+            startDrawing(e) {
+                this.isSignatureDrawing = true;
+                const pos = this.getEventPosition(e);
+                this.signatureCtx.beginPath();
+                this.signatureCtx.moveTo(pos.x, pos.y);
+            }
+
+            draw(e) {
+                if (!this.isSignatureDrawing) return;
+                
+                const pos = this.getEventPosition(e);
+                this.signatureCtx.lineTo(pos.x, pos.y);
+                this.signatureCtx.stroke();
+                this.hasSignature = true;
+            }
+
+            stopDrawing() {
+                if (this.isSignatureDrawing) {
+                    this.isSignatureDrawing = false;
+                    this.signatureCtx.beginPath();
+                }
+            }
+
+            handleTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                this.signatureCanvas.dispatchEvent(mouseEvent);
+            }
+
+            getEventPosition(e) {
+                const rect = this.signatureCanvas.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            clearSignature() {
+                this.signatureCtx.clearRect(0, 0, this.signatureCanvas.width, this.signatureCanvas.height);
+                this.hasSignature = false;
+            }
+
+            getSignatureData() {
+                if (!this.hasSignature) return null;
+                return this.signatureCanvas.toDataURL('image/png');
+            }
+
+
+
+// Modifiez la méthode handleImageUpload comme ceci :
+async handleImageUpload(event, previewId, containerId) {
+    const file = event.target.files[0];
+    
+    if (!file) return;
+
+    // Vérification du type de fichier
+    if (!file.type.match('image.*')) {
+        this.showToast('Format invalide', 'error', 'Seules les images sont acceptées');
+        event.target.value = '';
+        return;
+    }
+
+    // Vérification de la taille (6MB max)
+    if (file.size > 6000 * 1024) {
+        this.showToast('Fichier trop volumineux', 'error', 'Taille max: 6MB');
+        event.target.value = '';
+        return;
+    }
+
+    this.showLoading('Compression de l\'image...');
+
+    try {
+        // Compression de l'image
+        const compressedImage = await this.compressImage(file, {
+            quality: 0.7,
+            maxWidth: 800,
+            maxHeight: 800
+        });
+
+        // Création d'un aperçu
+        const previewUrl = URL.createObjectURL(compressedImage);
+        document.getElementById(previewId).src = previewUrl;
+        document.getElementById(containerId).style.display = 'block';
+
+        // Stockage du fichier compressé pour envoi ultérieur
+        this.photoIdentiteCompressed = compressedImage; // <-- Cette ligne est cruciale
+
+        // Conversion en base64
+        const base64String = await this.fileToBase64(compressedImage);
+        
+        // Stockage pour envoi ultérieur
+        this[event.target.id + 'Base64'] = base64String;
+        
+        this.hideLoading();
+        
+    } catch (error) {
+        console.error('Erreur de traitement:', error);
+        this.hideLoading();
+        this.showToast('Erreur', 'error', 'Impossible de traiter l\'image');
+        event.target.value = '';
+    }
+}
+
+
+fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Et modifiez la méthode compressImage :
+compressImage(file, options = {}) {
+    const { quality = 0.7, maxWidth = 800, maxHeight = 800 } = options;
+    
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const img = new Image();
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Calcul des nouvelles dimensions
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Dessiner l'image redimensionnée
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convertir en blob avec qualité réduite
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        reject(new Error('Canvas toBlob failed'));
+                        return;
+                    }
+                    resolve(blob);
+                }, 'image/jpeg', quality);
+            };
+            
+            img.onerror = function() {
+                reject(new Error('Image loading error'));
+            };
+            
+            img.src = event.target.result;
+        };
+        
+        reader.onerror = function() {
+            reject(new Error('File reading error'));
+        };
+        
+        reader.readAsDataURL(file);
+    });
+}
+
+
+
+
+
+
+async handleDocumentUpload(event, previewId, containerId, maxSizeKB) {
+    const file = event.target.files[0];
+    
+    if (!file) return;
+
+    // Vérifier la taille (5MB max)
+    if (file.size > 5000 * 1024) {
+        this.showToast('Fichier trop volumineux', 'error', 'Taille max: 5MB');
+        event.target.value = '';
+        return;
+    }
+
+    this.showLoading('Traitement du document...');
+
+    try {
+        // Si c'est un PDF, on le garde tel quel (mais limité à 5MB)
+        if (file.type === 'application/pdf') {
+            this[event.target.id + 'Compressed'] = file;
+            document.getElementById(containerId).style.display = 'none'; // Pas de prévisualisation pour PDF
+            this.hideLoading();
+            return;
+        }
+
+        // Pour les images, on compresse
+        const compressedImage = await this.compressDocumentImage(file, 500); // Cible 500KB
+        const previewUrl = URL.createObjectURL(compressedImage);
+        
+        document.getElementById(previewId).src = previewUrl;
+        document.getElementById(containerId).style.display = 'block';
+        
+        this[event.target.id + 'Compressed'] = compressedImage;
+        this.hideLoading();
+    } catch (error) {
+        this.hideLoading();
+        this.showToast('Erreur', 'error', 'Impossible de traiter le document');
+    }
+}
+
+// Méthode de compression spécifique pour les documents
+async compressDocumentImage(file, targetSizeKB) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Dimensions maximales plus grandes pour les documents
+                const MAX_WIDTH = 1600;
+                const MAX_HEIGHT = 1600;
+                let width = img.width;
+                let height = img.height;
+                
+                // Redimensionnement proportionnel
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compression plus légère pour les documents (meilleure lisibilité)
+                let quality = 0.85;
+                let attempts = 0;
+                const maxAttempts = 8;
+                
+                const checkSize = () => {
+                    attempts++;
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                    const sizeKB = (compressedDataUrl.length * 0.75) / 1024;
+                    
+                    if (sizeKB > targetSizeKB && quality > 0.3 && attempts < maxAttempts) {
+                        quality -= 0.1;
+                        checkSize();
+                    } else {
+                        const binaryString = atob(compressedDataUrl.split(',')[1]);
+                        const bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        resolve(new Blob([bytes], { type: 'image/jpeg' }));
+                    }
+                };
+                
+                checkSize();
+            };
+            
+            img.onerror = () => reject(new Error('Erreur de chargement de l\'image'));
+        };
+        
+        reader.onerror = () => reject(new Error('Erreur de lecture du fichier'));
+    });
+}
+
+
+
+
+
+
+            switchStep(step) {
+                document.querySelectorAll('.step-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-step="${step}"]`).classList.add('active');
+
+                document.querySelectorAll('.step-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`step-${step}`).classList.add('active');
+
+                this.currentStep = step;
+            }
+
+            async handleDemandeSubmit(e) {
+                e.preventDefault();
+                
+                if (!this.validateDemandeForm()) {
+                    return;
+                }
+
+                this.showLoading('Envoi de votre demande...');
+                this.mascot.onFormSubmit();
+
+                try {
+                    const formData = await this.collectDemandeData();
+                    const response = await this.submitDemande(formData);
+
+                    this.hideLoading();
+
+                    if (response.success) {
+                        this.showToast('Succès', 'success', 'Demande envoyée!');
+                        document.getElementById('demandeForm').reset();
+                        this.clearSignature();
+                        setTimeout(() => this.switchStep('finalisation'), 2000);
+                    } else {
+                        this.showToast('Erreur', 'error', response.message || 'Erreur serveur');
+                    }
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Connexion échouée');
+                }
+            }
+
+            validateDemandeForm() {
+                const required = ['nom', 'prenom', 'whatsapp', 'quartier', 'vehicule', 'immatriculation'];
+                let isValid = true;
+
+                required.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        this.highlightError(field);
+                        isValid = false;
+                    } else {
+                        this.clearError(field);
+                    }
+                });
+
+                if (!this.photoIdentiteCompressed) {
+                    this.showToast('Photo manquante', 'error', 'Photo d\'identité obligatoire');
+                    isValid = false;
+                }
+
+                if (!this.documentVehiculeCompressed) {
+                    this.showToast('Document manquant', 'error', 'Document véhicule obligatoire');
+                    isValid = false;
+                }
+
+                if (!this.hasSignature) {
+                    this.showToast('Signature manquante', 'error', 'Signature obligatoire');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+async collectDemandeData() {
+    const photoIdentiteFile = this.photoIdentiteCompressed;
+    const documentVehiculeFile = this.documentVehiculeCompressed;
+    const signatureData = this.getSignatureData();
+
+    // Conversion des fichiers en base64 avec métadonnées (version optimisée)
+    const [photoData, documentData] = await Promise.all([
+        this.convertToBase64WithMeta(photoIdentiteFile),
+        this.convertToBase64WithMeta(documentVehiculeFile)
+    ]);
+
+    // Structure inchangée comme demandé
+    const data = {
+        action: 'demandeRecrutement',
+        type: 'livreur',
+
+        // Champs personnels (à la racine) - EXACTEMENT comme dans votre demande
+        nom: document.getElementById('nom').value.trim(),
+        prenom: document.getElementById('prenom').value.trim(),
+        whatsapp: '+226' + document.getElementById('whatsapp').value.replace(/\s/g, ''),
+        telephone: document.getElementById('telephone').value 
+                   ? '+226' + document.getElementById('telephone').value.replace(/\s/g, '') 
+                   : '',
+        quartier: document.getElementById('quartier').value.trim(),
+        dateNaissance: document.getElementById('dateNaissance').value || null,
+
+        // Infos véhicule
+        vehicule: document.getElementById('vehicule').value,
+        immatriculation: document.getElementById('immatriculation').value.trim(),
+        experience: document.getElementById('experience').value || '',
+
+        // Contact d'urgence
+        contactUrgence: {
+            nom: document.getElementById('contactUrgenceNom').value.trim() || '',
+            telephone: document.getElementById('contactUrgenceTel').value 
+                       ? '+226' + document.getElementById('contactUrgenceTel').value.replace(/\s/g, '') 
+                       : ''
+        },
+
+        // Partie documents améliorée mais compatible
+        documents: {
+            photoIdentite: photoData,
+            documentVehicule: documentData
+        },
+
+        // Signature avec métadonnées
+        signature: signatureData ? {
+            data: signatureData.split(',')[1],
+            type: 'image/png',
+            size: Math.floor((signatureData.length * 3) / 4),
+            name: `signature_${Date.now()}.png`
+        } : null
+    };
+
+    // Nettoyage des champs null/undefined
+    this.removeEmptyFields(data);
+
+    console.log('✅ Données prêtes pour envoi:', data);
+    return data;
+}
+
+// Méthodes utilitaires (nouvelles)
+async convertToBase64WithMeta(file) {
+    if (!file) return null;
+    
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+            data: reader.result.split(',')[1],
+            type: file.type || this.guessMimeType(file),
+            size: file.size,
+            name: this.generateFileName(file),
+            lastModified: file.lastModified
+        });
+        reader.readAsDataURL(file);
+    });
+}
+
+guessMimeType(file) {
+    if (file.name.endsWith('.pdf')) return 'application/pdf';
+    return 'image/jpeg'; // Valeur par défaut
+}
+
+generateFileName(file) {
+    const prefix = file.type?.startsWith('image/') ? 'photo' : 'doc';
+    const ext = file.name.split('.').pop() || (file.type === 'application/pdf' ? 'pdf' : 'jpg');
+    return `${prefix}_${Date.now()}.${ext}`;
+}
+
+removeEmptyFields(obj) {
+    Object.keys(obj).forEach(key => {
+        if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
+            delete obj[key];
+        }
+        if (typeof obj[key] === 'object') {
+            this.removeEmptyFields(obj[key]);
+        }
+    });
+}
+
+
+
+
+
+// Helper pour générer des noms de fichiers cohérents
+generateFileName(file) {
+    const prefix = file.type === 'application/pdf' ? 'document' : 'photo';
+    const extension = file.type.split('/').pop() || 'jpg';
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return `${prefix}_${timestamp}.${extension}`;
+}
+
+            async submitDemande(data) {
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                return await response.json();
+            }
+
+            async handleFinalisationSubmit(e) {
+                e.preventDefault();
+                
+                const code = document.getElementById('codeAutorisation').value.trim();
+                
+                if (!code) {
+                    this.showToast('Code requis', 'warning', 'Entrez votre code');
+                    return;
+                }
+
+                this.showLoading('Vérification...');
+
+                try {
+                    const response = await fetch(this.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'verifyCode',
+                            code: code,
+                            type: 'livreur'
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    if (result.success) {
+                        this.validatedCode = code;
+                        this.showToast('Code valide !', 'success', 'Vous pouvez créer votre compte');
+                        this.mascot.onCodeValidated();
+                        setTimeout(() => {
+                            this.switchStep('inscription');
+                        }, 2000);
+                    } else {
+                        this.showToast('Code invalide', 'error', 'Code non reconnu');
+                    }
+
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Impossible de vérifier');
+                }
+            }
+
+            async handleInscriptionSubmit(e) {
+                e.preventDefault();
+
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!username || username.length < 3) {
+                    this.showToast('Nom invalide', 'error', 'Au moins 3 caractères');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showToast('Erreur', 'error', 'Mots de passe différents');
+                    return;
+                }
+
+                if (password.length < 8) {
+                    this.showToast('Mot de passe faible', 'warning', 'Au moins 8 caractères');
+                    return;
+                }
+
+                this.showLoading('Création du compte...');
+
+                try {
+                    const payload = {
+                        action: 'finalizeInscription',
+                        code: this.validatedCode,
+                        username: username,
+                        email: email,
+                        password: password,
+                        type: 'livreur'
+                    };
+
+                    const response = await fetch(this.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    if (result.success) {
+                        this.showToast('Inscription réussie !', 'success', 'Redirection...');
+                        this.mascot.celebrate();
+                        
+                        setTimeout(() => {
+                            window.location.href = 'Connection.html';
+                        }, 3000);
+                    } else {
+                        this.showToast('Erreur', 'error', result.message || 'Création échouée');
+                    }
+
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Impossible de créer le compte');
+                }
+            }
+
+            highlightError(field) {
+                field.classList.add('error');
+                setTimeout(() => field.classList.remove('error'), 3000);
+            }
+
+            clearError(field) {
+                field.classList.remove('error');
+            }
+
+            showLoading(message = 'Chargement...') {
+                document.getElementById('loadingMessage').textContent = message;
+                document.getElementById('loadingOverlay').classList.add('show');
+            }
+
+            hideLoading() {
+                document.getElementById('loadingOverlay').classList.remove('show');
+            }
+
+            showToast(title, type, message) {
+                const existingToast = document.querySelector('.toast');
+                if (existingToast) {
+                    existingToast.remove();
+                }
+
+                const iconMap = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    warning: 'fa-exclamation-triangle',
+                    info: 'fa-info-circle'
+                };
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div class="toast-icon ${type}">
+                        <i class="fas ${iconMap[type]}"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                `;
+
+                document.getElementById('toastContainer').appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }, 4000);
+            }
+        }
+
+        // Global functions
+        function clearSignature() {
+            if (window.inscriptionManager) {
+                window.inscriptionManager.clearSignature();
+            }
+        }
+
+        function startDeliveryGuide() {
+            if (window.motoSend) {
+                window.motoSend.startDeliveryGuide();
+            }
+        }
+
+        function hideSendDialogue() {
+            if (window.motoSend) {
+                window.motoSend.hideDialogue();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.inscriptionManager = new InscriptionLivreurManager();
+        });
+    </script>
+</body>
+</html>

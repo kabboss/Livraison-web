@@ -1,0 +1,4783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SEND2.0 Services - Livraison Nouvelle Génération</title>
+    <meta name="description" content="Services de livraison premium SEND2.0 - Nourriture, Pharmacie, Courses à domicile au Burkina Faso">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.cinetpay.com/seamless/main.js" type="text/javascript"></script>
+
+<style>
+    :root {
+        --primary: #667eea;
+        --primary-dark: #4c63d2;
+        --secondary: #10B981;
+        --accent: #F59E0B;
+        --danger: #EF4444;
+        --success: #22C55E;
+        --warning: #F59E0B;
+        --white: #FFFFFF;
+        --gray-50: #F8FAFC;
+        --gray-100: #F1F5F9;
+        --gray-200: #E2E8F0;
+        --gray-300: #CBD5E1;
+        --gray-400: #94A3B8;
+        --gray-500: #64748B;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1E293B;
+        --gray-900: #0F172A;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --send-primary: #667eea;
+        --send-secondary: #10B981;
+        --send-accent: #F59E0B;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        min-height: 100vh;
+        color: var(--gray-800);
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* SYSTÈME MASCOTTE SEND */
+    .send-container {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2000;
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        pointer-events: none;
+    }
+
+    .send-container.moving {
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .send-mascot {
+        width: 100px;
+        height: 120px;
+        position: relative;
+        cursor: pointer;
+        transition: var(--transition);
+        pointer-events: all;
+        transform-origin: center;
+    }
+
+    .send-mascot:hover {
+        transform: scale(1.05);
+    }
+
+    .send-mascot.bouncing {
+        animation: sendBounce 0.6s ease-in-out;
+    }
+
+    .send-mascot.excited {
+        animation: sendExcited 1s ease-in-out infinite;
+    }
+
+    .send-mascot.guiding {
+        animation: sendGuide 2s ease-in-out infinite;
+    }
+
+    .send-mascot.celebrating {
+        animation: sendCelebrate 2s ease-in-out;
+    }
+
+    .send-mascot.searching {
+        animation: sendSearching 1.5s ease-in-out infinite;
+    }
+
+    @keyframes sendBounce {
+        0%, 100% { transform: scale(1); }
+        25% { transform: scale(1.1) rotate(-3deg); }
+        50% { transform: scale(1.08) rotate(3deg); }
+        75% { transform: scale(1.12) rotate(-1deg); }
+    }
+
+    @keyframes sendExcited {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.08) rotate(2deg); }
+        75% { transform: scale(1.08) rotate(-2deg); }
+    }
+
+    @keyframes sendGuide {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes sendCelebrate {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.2) rotate(8deg); }
+        50% { transform: scale(1.15) rotate(-8deg); }
+        75% { transform: scale(1.2) rotate(4deg); }
+    }
+
+    @keyframes sendSearching {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.1) rotate(3deg) translateX(-2px); }
+        50% { transform: scale(1.05) rotate(0deg) translateX(0px); }
+        75% { transform: scale(1.1) rotate(-3deg) translateX(2px); }
+    }
+
+    .send-body {
+        width: 80px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--send-primary) 0%, var(--primary-dark) 100%);
+        border-radius: 50px 50px 25px 25px;
+        position: relative;
+        box-shadow: var(--shadow-xl);
+        animation: sendFloat 4s ease-in-out infinite;
+        overflow: hidden;
+        top: 135px;
+        left: 9px;
+    }
+
+    @keyframes sendFloat {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        25% { transform: translateY(-5px) rotate(1deg); }
+        50% { transform: translateY(-10px) rotate(0deg); }
+        75% { transform: translateY(-5px) rotate(-1deg); }
+    }
+
+    .send-body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+        background-size: 200% 200%;
+        animation: sendBodyShimmer 6s linear infinite;
+    }
+
+    @keyframes sendBodyShimmer {
+        0% { background-position: -200% -200%; }
+        100% { background-position: 200% 200%; }
+    }
+
+    .send-face {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 30px;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .send-eyes {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+    }
+
+    .send-eye {
+        width: 12px;
+        height: 12px;
+        background: var(--gray-800);
+        border-radius: 50%;
+        position: relative;
+        animation: sendBlink 4s infinite;
+        transition: var(--transition);
+    }
+
+    .send-mascot.scanning .send-eye {
+        animation: sendScan 2s linear infinite;
+    }
+
+    .send-mascot.focusing .send-eye {
+        animation: sendFocus 1.5s ease-in-out infinite;
+    }
+
+    .send-mascot.thinking .send-eye {
+        animation: sendThink 2s ease-in-out infinite;
+    }
+
+    @keyframes sendBlink {
+        0%, 94% { transform: scaleY(1); }
+        95% { transform: scaleY(0.1); }
+        97% { transform: scaleY(0.1); }
+        100% { transform: scaleY(1); }
+    }
+
+    @keyframes sendScan {
+        0%, 100% { transform: translateX(0) scaleY(1); }
+        25% { transform: translateX(-3px) scaleY(1.3); }
+        75% { transform: translateX(3px) scaleY(1.3); }
+    }
+
+    @keyframes sendFocus {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.4); }
+    }
+
+    @keyframes sendThink {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.2) rotate(5deg); }
+    }
+
+    .send-eye::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 4px;
+        height: 4px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .send-mouth {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 8px;
+        border: 2px solid var(--gray-700);
+        border-top: none;
+        border-radius: 0 0 16px 16px;
+        transition: var(--transition);
+    }
+
+    .send-mascot.talking .send-mouth {
+        animation: sendTalk 0.3s ease-in-out infinite alternate;
+    }
+
+    .send-mascot.happy .send-mouth {
+        border-radius: 16px 16px 0 0;
+        border-bottom: none;
+        border-top: 2px solid var(--gray-700);
+    }
+
+    .send-mascot.worried .send-mouth {
+        width: 10px;
+        height: 6px;
+        border-radius: 6px 6px 0 0;
+        border-bottom: none;
+        border-top: 2px solid var(--gray-700);
+        transform: translateX(-50%) rotate(180deg);
+    }
+
+    @keyframes sendTalk {
+        0% { transform: translateX(-50%) scaleY(0.6); }
+        100% { transform: translateX(-50%) scaleY(1.3); }
+    }
+
+    .send-arms {
+        position: absolute;
+        top: 30px;
+        left: -10px;
+        right: -10px;
+    }
+
+    .send-arm {
+        position: absolute;
+        width: 18px;
+        height: 40px;
+        background: var(--send-primary);
+        border-radius: 10px;
+        animation: sendArmWave 3s ease-in-out infinite;
+    }
+
+    .send-arm.left {
+        left: 0;
+        transform-origin: top center;
+    }
+
+    .send-arm.right {
+        right: 0;
+        transform-origin: top center;
+        animation-delay: 1.5s;
+    }
+
+    .send-mascot.directing .send-arm {
+        animation: sendDirect 2s ease-in-out infinite;
+    }
+
+    .send-mascot.welcoming .send-arm {
+        animation: sendWelcome 2s ease-in-out infinite;
+    }
+
+    @keyframes sendArmWave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(15deg); }
+        75% { transform: rotate(-15deg); }
+    }
+
+    @keyframes sendDirect {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(45deg); }
+    }
+
+    @keyframes sendWelcome {
+        0%, 100% { transform: rotate(10deg); }
+        50% { transform: rotate(40deg); }
+    }
+
+    .send-antenna {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 3px;
+        height: 20px;
+        background: var(--send-accent);
+        border-radius: 2px;
+    }
+
+    .send-antenna::after {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background: var(--send-accent);
+        border-radius: 50%;
+        animation: sendAntennaGlow 2s ease-in-out infinite alternate;
+    }
+
+    .send-mascot.processing .send-antenna::after {
+        animation: sendProcessing 1s linear infinite;
+    }
+
+    .send-mascot.alert .send-antenna::after {
+        animation: sendAlert 0.5s ease-in-out infinite;
+    }
+
+    @keyframes sendAntennaGlow {
+        0% { box-shadow: 0 0 8px var(--send-accent); }
+        100% { box-shadow: 0 0 20px var(--send-accent), 0 0 30px rgba(245, 158, 11, 0.6); }
+    }
+
+    @keyframes sendProcessing {
+        0% { 
+            box-shadow: 0 0 12px var(--primary); 
+            background: var(--primary);
+        }
+        33% { 
+            box-shadow: 0 0 15px var(--secondary); 
+            background: var(--secondary);
+        }
+        66% { 
+            box-shadow: 0 0 12px var(--send-accent); 
+            background: var(--send-accent);
+        }
+        100% { 
+            box-shadow: 0 0 12px var(--primary); 
+            background: var(--primary);
+        }
+    }
+
+    @keyframes sendAlert {
+        0%, 100% { 
+            box-shadow: 0 0 10px var(--warning); 
+            transform: translateX(-50%) scale(1);
+        }
+        50% { 
+            box-shadow: 0 0 25px var(--warning), 0 0 35px rgba(245, 158, 11, 0.8); 
+            transform: translateX(-50%) scale(1.3);
+        }
+    }
+
+    .send-name-badge {
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--send-accent);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: bold;
+        box-shadow: var(--shadow);
+        animation: sendBadgePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes sendBadgePulse {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.05); }
+    }
+
+    /* SYSTÈME DIALOGUE SEND */
+    .send-dialogue {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 16px 20px;
+        min-width: 240px;
+        max-width: 280px;
+        box-shadow: var(--shadow-xl);
+        border: 2px solid rgba(102, 126, 234, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.8);
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1001;
+    }
+
+    .send-dialogue.visible {
+        opacity: 1;
+        pointer-events: all;
+        transform: scale(1);
+    }
+
+    .send-dialogue.urgent {
+        border-color: var(--warning);
+        animation: sendUrgentDialogue 2s ease-in-out infinite;
+    }
+
+    .send-dialogue.tip {
+        border-color: var(--secondary);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 0.98) 100%);
+    }
+
+    @keyframes sendUrgentDialogue {
+        0%, 100% { box-shadow: var(--shadow-xl); }
+        50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.5); }
+    }
+
+    .send-dialogue.position-right {
+        right: 110px;
+        top: 50%;
+        transform-origin: left center;
+    }
+
+    .send-dialogue.position-right.visible {
+        transform: translateY(-50%) scale(1);
+    }
+
+    .send-dialogue.position-left {
+        left: 110px;
+        top: 50%;
+        transform-origin: right center;
+    }
+
+    .send-dialogue.position-left.visible {
+        transform: translateY(-50%) scale(1);
+    }
+
+    .send-dialogue.position-top {
+        top: -15px;
+        right: 110px;
+        transform-origin: left bottom;
+    }
+
+    .send-dialogue.position-bottom {
+        bottom: -15px;
+        right: 110px;
+        transform-origin: left top;
+    }
+
+    .send-dialogue::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 2px solid rgba(102, 126, 234, 0.25);
+        transform: rotate(45deg);
+        backdrop-filter: blur(20px);
+    }
+
+    .send-dialogue.position-right::after {
+        right: -10px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        border-left: none;
+        border-top: none;
+    }
+
+    .send-dialogue.position-left::after {
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .send-dialogue.position-top::after {
+        right: 30px;
+        bottom: -10px;
+        border-top: none;
+        border-left: none;
+    }
+
+    .send-dialogue.position-bottom::after {
+        right: 30px;
+        top: -10px;
+        border-bottom: none;
+        border-right: none;
+    }
+
+    .send-dialogue-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 0.9rem;
+    }
+
+    .send-dialogue-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        font-size: 0.75rem;
+        color: var(--success);
+    }
+
+    .send-status-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: sendStatusPulse 2s infinite;
+    }
+
+    @keyframes sendStatusPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.9); }
+    }
+
+    .send-dialogue-content {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--gray-700);
+        margin-bottom: 12px;
+        font-weight: 500;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .send-dialogue-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .send-dialogue-btn {
+        padding: 6px 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .send-dialogue-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .send-dialogue-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+    }
+
+    .send-dialogue-btn:hover::before {
+        left: 100%;
+    }
+
+    .send-dialogue-btn.secondary {
+        background: var(--gray-400);
+    }
+
+    .send-dialogue-btn.success {
+        background: var(--success);
+    }
+
+    .send-dialogue-btn.warning {
+        background: var(--warning);
+    }
+
+    .send-dialogue-btn.danger {
+        background: var(--danger);
+    }
+
+    /* CONTAINER PRINCIPAL */
+    .container {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* HEADER */
+    .header {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        padding: 30px 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-xl);
+        animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .header h1 {
+        color: white;
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+    }
+
+    .header p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* CARTE DE SERVICE */
+    .service-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: slideUp 0.6s ease-out;
+        animation-fill-mode: both;
+        position: relative;
+        transition: var(--transition);
+    }
+
+    .service-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* GÉOLOCALISATION */
+    .geo-section {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .geo-status {
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border-left: 4px solid var(--primary);
+        transition: var(--transition);
+    }
+
+    .geo-status:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: translateX(4px);
+    }
+
+    .geo-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: var(--transition);
+    }
+
+    .geo-icon.waiting { background: var(--warning); }
+    .geo-icon.searching { 
+        background: var(--primary); 
+        animation: spin 2s linear infinite;
+    }
+    .geo-icon.found { background: var(--success); }
+    .geo-icon.error { background: var(--danger); }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .geo-text {
+        flex: 1;
+        text-align: left;
+    }
+
+    .geo-text h3 {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--gray-800);
+        font-size: 1rem;
+    }
+
+    .geo-text p {
+        color: var(--gray-600);
+        font-size: 0.85rem;
+    }
+
+    .accuracy-display {
+        text-align: right;
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    /* BOUTONS */
+    .btn {
+        width: 100%;
+        padding: 14px 18px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 50px;
+        font-family: inherit;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn:hover:not(:disabled)::before {
+        left: 100%;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn.success {
+        background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+    }
+
+    .btn.secondary {
+        background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-500) 100%);
+    }
+
+    .btn.accent {
+        background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+    }
+
+    /* BADGE MAINTENANCE */
+    .maintenance-badge {
+        position: absolute;
+        top: -3px;
+        right: -1px;
+        background: var(--warning);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-weight: bold;
+        box-shadow: var(--shadow);
+        animation: maintenancePulse 2s infinite;
+    }
+
+    @keyframes maintenancePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* SERVICES SECTION */
+    .services-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .service-item {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-xl);
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .service-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .service-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .service-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        transition: var(--transition);
+    }
+
+    .service-item:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .service-info h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 6px;
+    }
+
+    .service-badge {
+        background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .service-content {
+        display: none;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gray-200);
+        animation: fadeInUp 0.5s ease both;
+    }
+
+    .service-content.active {
+        display: block;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORMULAIRES */
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--gray-700);
+        font-size: 0.9rem;
+    }
+
+    .form-input, .form-textarea, .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius);
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: var(--transition);
+        background: var(--white);
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* PANIER */
+    .cart-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        padding: 16px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: var(--shadow-xl);
+        z-index: 100;
+        width: calc(100% - 40px);
+        max-width: 440px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(100%);
+        transition: var(--transition);
+    }
+
+    .cart-container.visible {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .cart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .cart-title {
+        font-weight: 700;
+        color: var(--gray-800);
+        font-size: 1.1rem;
+    }
+
+    .cart-count {
+        background: var(--primary);
+        color: white;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .cart-items {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item-image {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius);
+        object-fit: cover;
+        background: var(--gray-100);
+    }
+
+    .cart-item-info {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+
+    .cart-item-price {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .cart-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cart-control-btn {
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 50%;
+        background: var(--gray-200);
+        color: var(--gray-700);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-control-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .cart-quantity {
+        font-weight: 600;
+        color: var(--gray-800);
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .cart-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 2px solid var(--gray-200);
+        margin-bottom: 12px;
+    }
+
+    .cart-total-label {
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+
+    .cart-total-amount {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1.2rem;
+    }
+
+    .cart-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .cart-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.9rem;
+    }
+
+    .cart-btn.primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .cart-btn.secondary {
+        background: var(--gray-200);
+        color: var(--gray-700);
+    }
+
+    .cart-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* RESTAURANTS */
+    .restaurants-grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+    }
+
+    .restaurant-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .restaurant-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .restaurant-image {
+        width: 50px;
+        height: 50px;
+        border-radius: var(--radius);
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--gray-100);
+    }
+
+    .restaurant-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .restaurant-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .restaurant-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--gray-600);
+        margin-bottom: 4px;
+    }
+
+    .restaurant-distance {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .restaurant-address {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* FILTRES */
+    .filters-section {
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .filters-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .distance-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        background: var(--gray-200);
+        border-radius: 3px;
+        outline: none;
+    }
+
+    .distance-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+    }
+
+    .distance-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: var(--shadow);
+    }
+
+    .distance-display {
+        font-size: 0.8rem;
+        color: var(--primary);
+        font-weight: 600;
+        text-align: center;
+        margin-top: 4px;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: var(--gray-200);
+        border: none;
+        color: var(--gray-700);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* MENU ITEMS */
+    .menu-grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+    }
+
+    .menu-item {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .menu-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .menu-item-header {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .menu-item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius);
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--gray-100);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .menu-item-image:hover {
+        transform: scale(1.05);
+    }
+
+    .menu-item-info {
+        flex: 1;
+    }
+
+    .menu-item-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 4px;
+        font-size: 1rem;
+    }
+
+    .menu-item-description {
+        color: var(--gray-600);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .menu-item-price {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .menu-item-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .quantity-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quantity-btn:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow);
+    }
+
+    .quantity-btn:disabled {
+        background: var(--gray-300);
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .quantity-display {
+        font-weight: 600;
+        color: var(--gray-800);
+        min-width: 24px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .add-to-cart-btn {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        padding: 8px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.9rem;
+    }
+
+    .add-to-cart-btn:hover {
+        background: #16a34a;
+        transform: translateY(-1px);
+    }
+
+    /* MODALS */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+    }
+
+    .modal.visible {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .modal-content {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        padding: 24px;
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+        transform: scale(0.9);
+        transition: var(--transition);
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+    }
+
+    .modal.visible .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 22px;
+        right: 146px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color:red;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .modal-close:hover {
+        background: var(--gray-100);
+    }
+
+    .modal-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: var(--radius);
+        margin-bottom: 16px;
+    }
+
+    .modal-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--gray-800);
+    }
+
+    .modal-description {
+        color: var(--gray-600);
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+
+    .modal-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 20px;
+    }
+
+    /* LOADING */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 16px;
+    }
+
+    .loading-text {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* NOTIFICATIONS */
+    .notification-system {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 3000;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 320px;
+        width: 100%;
+    }
+
+    .notification {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        box-shadow: var(--shadow-xl);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: var(--transition);
+        border-left: 4px solid var(--primary);
+    }
+
+    .notification.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .notification.success {
+        border-left-color: var(--success);
+    }
+
+    .notification.error {
+        border-left-color: var(--danger);
+    }
+
+    .notification.warning {
+        border-left-color: var(--warning);
+    }
+
+    .notification-icon {
+        font-size: 1.2rem;
+        margin-top: 2px;
+    }
+
+    .notification.success .notification-icon {
+        color: var(--success);
+    }
+
+    .notification.error .notification-icon {
+        color: var(--danger);
+    }
+
+    .notification.warning .notification-icon {
+        color: var(--warning);
+    }
+
+    .notification-content h4 {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--gray-800);
+        font-size: 0.9rem;
+    }
+
+    .notification-content p {
+        color: var(--gray-600);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    /* PAYMENT METHOD BUTTONS */
+    .payment-btn {
+        opacity: 0.7;
+        transform: scale(0.98);
+        position: relative;
+    }
+
+    .payment-btn.selected {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    /* SEARCH RESULTS */
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        border: 2px solid var(--gray-200);
+        margin-top: 2px;
+    }
+
+    .search-result-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--gray-200);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .search-result-item:hover {
+        background: var(--gray-50);
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .search-result-image {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius);
+        object-fit: cover;
+        background: var(--gray-100);
+        flex-shrink: 0;
+    }
+
+    .search-result-info {
+        flex: 1;
+    }
+
+    .search-result-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+
+    .search-result-restaurant {
+        color: var(--gray-500);
+        font-size: 0.8rem;
+    }
+
+    .search-result-price {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* ANIMATIONS SUPPLÉMENTAIRES */
+    .celebration-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    .particle {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        animation: particleFall 3s linear infinite;
+    }
+
+    @keyframes particleFall {
+        0% {
+            opacity: 1;
+            transform: translateY(-10px) rotate(0deg);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(100vh) rotate(360deg);
+        }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* RESPONSIVE AMÉLIORÉ */
+    @media (max-width: 480px) {
+        .container {
+            padding: 16px;
+        }
+        
+        .send-container {
+            right: 16px;
+            top: 20px;
+            transform: none !important;
+            bottom: auto;
+        }
+        
+        .send-container.cart-open {
+            top: 20px;
+            right: 16px;
+            bottom: auto;
+            transform: none;
+        }
+        
+.send-dialogue {
+    position: absolute;
+    max-width: 280px;
+    z-index: 999;
+    top: 0;
+    transform: translateY(60px); /* 💡 décale vers le bas */
+}
+        
+        .send-dialogue.position-right {
+            right: 100px;
+            top: 190px;
+            transform-origin: left top;
+            max-width: calc(100vw - 130px);
+        }
+        
+        .send-dialogue.position-right::after {
+            right: -10px;
+            top: 15px;
+            bottom: auto;
+        }
+        
+        .service-card {
+            padding: 20px;
+        }
+        
+        .service-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .service-icon {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .cart-container {
+            bottom: 16px;
+            width: calc(100% - 32px);
+        }
+
+        .notification-system {
+            right: 16px;
+            left: 16px;
+            max-width: none;
+        }
+
+        .filters-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Positionnement spécial pour les services */
+    .send-container.service-food {
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .send-container.service-shopping,
+    .send-container.service-pharmacy {
+        right: 20px;
+        top: 30%;
+        transform: translateY(-30%);
+    }
+
+    @media (max-width: 480px) {
+        .send-container.service-food,
+        .send-container.service-shopping,
+        .send-container.service-pharmacy {
+            right: 16px;
+            top: 20px;
+            transform: none;
+        }
+    }
+
+
+
+    .call-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+.call-button:hover {
+    background-color: var(--primary-dark);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+</head>
+<body>
+
+
+
+
+
+<!-- Menu Hamburger -->
+<div class="menu-btn" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND Logo" class="menu-logo">
+        <span class="menu-title">SEND 2.0</span>
+        <i class="fas fa-times menu-close" id="menuClose"></i>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item"><a href="index.html" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="menu-item"><a href="client.html" class="menu-link"><i class="fas fa-shopping-bag"></i> Recevoir</a></li>
+        <li class="menu-item"><a href="expediteur.html" class="menu-link"><i class="fas fa-paper-plane"></i> Expédier</a></li>
+        <li class="menu-item"><a href="suivi.html" class="menu-link"><i class="fas fa-search-location"></i> Suivi de colis</a></li>
+        <li class="menu-item"><a href="inscription_restau.html" class="menu-link"><i class="fas fa-utensils"></i> Partenariat Restaurant</a></li>
+        <li class="menu-item"><a href="services.html" class="menu-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li class="menu-item"><a href="inscription.html" class="menu-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+        <li class="menu-item"><a href="Connection.html" class="menu-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+        <li class="menu-item"><a href="assistance.html" class="menu-link"><i class="fas fa-headset"></i> Assistance</a></li>
+    </ul>
+
+    <div class="menu-footer">
+        SEND 2.0 &copy; 2025<br>
+        Tous droits réservés
+    </div>
+</div>
+
+<style>
+    /* ====== Menu Hamburger ====== */
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background:#F59E0B;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1rem;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-drawer.active {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.menu-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #0066FF;
+}
+
+.menu-close {
+    margin-left: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #1f2937;
+    background: none;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-close:hover {
+    transform: rotate(90deg);
+}
+
+.menu-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    z-index: -1;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.menu-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu-link:hover::before {
+    width: 100%;
+}
+
+.menu-link i {
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2);
+}
+
+.menu-link.active {
+    color: white;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+
+
+
+/* Nouvelle position pour le menu ouvert */
+.send-container.menu-open {
+    right: auto;
+    left: 20px;
+    transform: translateY(-50%);
+}
+
+/* Pour mobile */
+@media (max-width: 480px) {
+    .send-container.menu-open {
+        left: 16px;
+    }
+}
+
+
+
+</style>
+
+
+<script>
+    // ====== Gestion du Menu Hamburger ======
+const menuBtn = document.getElementById('menuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuDrawer = document.getElementById('menuDrawer');
+const menuClose = document.getElementById('menuClose');
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+    menuOverlay.classList.add('active');
+    menuDrawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Déplacer la mascotte à gauche
+    const sendContainer = document.getElementById('sendContainer');
+    sendContainer.classList.add('menu-open');
+    appState.sendMascot.setEmotion('happy');
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+    menuOverlay.classList.remove('active');
+    menuDrawer.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Remettre la mascotte à droite
+    const sendContainer = document.getElementById('sendContainer');
+    sendContainer.classList.remove('menu-open');
+}
+
+
+// Événements
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Mettre en surbrillance l'élément du menu actif
+document.querySelectorAll('.menu-link').forEach(link => {
+    if(link.href === window.location.href) {
+        link.classList.add('active');
+    }
+});
+</script>
+
+
+
+    <!-- SYSTÈME MASCOTTE SEND -->
+    <div class="send-container" id="sendContainer">
+        <div class="send-mascot" id="sendMascot">
+            <div class="send-body">
+                <div class="send-face">
+                    <div class="send-eyes">
+                        <div class="send-eye"></div>
+                        <div class="send-eye"></div>
+                    </div>
+                    <div class="send-mouth"></div>
+                </div>
+                <div class="send-arms">
+                    <div class="send-arm left"></div>
+                    <div class="send-arm right"></div>
+                </div>
+                <div class="send-antenna"></div>
+            </div>
+            <div class="send-name-badge">Send</div>
+        </div>
+
+        <div class="send-dialogue position-right" id="sendDialogue">
+
+            <div class="send-dialogue-content" id="sendDialogueContent">
+                Salut ! 👋 Moi c'est Send ! Je vais vous guider pour utiliser tous nos services ! Prêt pour une expérience exceptionnelle ?
+            </div>
+            <div class="send-dialogue-actions" id="sendDialogueActions">
+                <button class="send-dialogue-btn" onclick="startSendTour()">
+                    <i class="fas fa-rocket"></i> Commencer !
+                </button>
+                <button class="send-dialogue-btn secondary" onclick="hideSendDialogue()">
+                    Plus tard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>SEND2.0 Services</h1>
+            <p>Livraison nouvelle génération avec Send</p>
+        </header>
+
+        <!-- Géolocalisation -->
+        <section class="service-card geo-section" id="geoSection">
+            <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--gray-800); margin-bottom: 16px; text-align: center;">
+                <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 8px;"></i>
+                Géolocalisation GPS
+            </h2>
+            <p style="color: var(--gray-600); text-align: center; margin-bottom: 20px;">
+                Send a besoin de votre position pour calculer les frais de livraison optimaux
+            </p>
+
+            <div class="geo-status">
+                <div id="geoStatusIcon" class="geo-icon waiting">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <div class="geo-text">
+                    <h3 id="geoStatusTitle">GPS en attente</h3>
+                    <p id="geoStatusDesc">Appuyez pour que Send active la géolocalisation</p>
+                </div>
+                <div class="accuracy-display">
+                    <span id="accuracyText">--</span>
+                </div>
+            </div>
+
+            <button id="getLocationBtn" class="btn">
+                <i class="fas fa-location-arrow"></i>
+                Activer la Géolocalisation Send
+            </button>
+        </section>
+
+        <!-- Services -->
+        <section class="services-grid" id="servicesSection" style="opacity: 0.3; pointer-events: none; transition: all 0.5s ease;">
+            <!-- Service Restauration -->
+            <div class="service-item" data-service="food" id="foodService">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="service-info">
+                        <h3>Restauration</h3>
+                        <div class="service-badge">Commandez vos plats favoris</div>
+                    </div>
+                </div>
+                
+                <div id="foodServiceContent" class="service-content">
+                    <div class="form-group">
+                        <label class="form-label">Rechercher un plat ou restaurant</label>
+                        <div style="display: flex; gap: 8px; position: relative;">
+                            <input type="text" id="platSearch" class="form-input" placeholder="Tapez le nom d'un plat..." style="flex: 1;">
+                            <button id="searchBtn" class="btn secondary" style="width: auto; padding: 12px 16px;">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <div id="searchResults" class="search-results" style="display: none;"></div>
+                        </div>
+
+<div id="loadingSpinner" style="display: none; position: absolute; right: 50px; top: 50%; transform: translateY(-50%);">
+    <i class="fas fa-spinner fa-spin" style="font-size: 20px; color: #555;"></i>
+</div>
+
+
+
+                    </div>
+                    <button id="showRestaurantsBtn" class="btn">
+                        <i class="fas fa-store"></i> Voir tous les restaurants
+                    </button>
+                </div>
+            </div>
+
+            <!-- Service Courses -->
+            <div class="service-item" data-service="shopping" id="shoppingService">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <div class="service-info">
+                        <h3>Courses</h3>
+                        <div class="service-badge">Supérette & Marché</div>
+                    </div>
+                </div>
+
+                <div id="shoppingServiceContent" class="service-content">
+                    <div style="background: var(--gray-50); padding: 16px; border-radius: var(--radius); margin-bottom: 20px; border-left: 4px solid var(--accent);">
+                        <p style="color: var(--accent); font-weight: 600; margin: 0;">
+                            <i class="fas fa-truck"></i> Frais de livraison : <strong>1000 FCFA</strong>
+                        </p>
+                    </div>
+
+                    <form id="shoppingForm">
+                        <div class="form-group">
+                            <label class="form-label">Vos articles :</label>
+                            <div id="shoppingItemsContainer">
+                                <div class="shopping-item" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                    <input type="text" class="form-input item-name" placeholder="Article" style="flex: 2;" required>
+                                    <input type="number" class="form-input item-quantity" min="1" value="1" style="width: 80px;" required>
+                                    <input type="text" class="form-input item-notes" placeholder="Notes" style="flex: 1;">
+                                    <button type="button" class="btn secondary btn-remove" style="width: auto; padding: 12px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="addShoppingItemBtn" class="btn secondary" style="margin-bottom: 16px;">
+                                <i class="fas fa-plus"></i> Ajouter un article
+                            </button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="budgetMin" class="form-label">Budget min</label>
+                                <input type="number" id="budgetMin" class="form-input" min="0" step="500" placeholder="Optionnel">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="budgetMax" class="form-label">Budget max</label>
+                                <input type="number" id="budgetMax" class="form-input" min="0" step="500" placeholder="Optionnel">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shoppingPhone" class="form-label">Votre téléphone *</label>
+                            <input type="tel" id="shoppingPhone" class="form-input" pattern="[0-9]{8}" placeholder="70000000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="specialInstructions" class="form-label">Instructions spéciales</label>
+                            <textarea id="specialInstructions" class="form-textarea" placeholder="Préférences, substitutions..."></textarea>
+                        </div>
+
+                        <div class="form-group" id="shoppingPaymentContainer">
+                            <label class="form-label">Méthode de paiement *</label>
+                            <div style="display: flex; gap: 12px;">
+                                <button type="button" class="btn secondary payment-btn" data-payment="online" style="flex: 1; position: relative;">
+                                    <i class="fas fa-credit-card"></i> Payer maintenant
+                                    <span class="maintenance-badge">En Maintenance</span>
+                                </button>
+                                <button type="button" class="btn payment-btn" data-payment="on_delivery" style="flex: 1;">
+                                    <i class="fas fa-truck"></i> Payer à la livraison
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn success">
+                            <i class="fas fa-paper-plane"></i> Envoyer ma commande
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Service Pharmacie -->
+            <div class="service-item" data-service="pharmacy" id="pharmacyService">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="service-info">
+                        <h3>Pharmacie</h3>
+                        <div class="service-badge">Médicaments à domicile</div>
+                    </div>
+                </div>
+
+                <div id="pharmacyServiceContent" class="service-content">
+                    <div style="background: var(--gray-50); padding: 16px; border-radius: var(--radius); margin-bottom: 20px; border-left: 4px solid var(--primary);">
+                        <p style="color: var(--primary); margin: 0; font-size: 0.9rem; line-height: 1.4;">
+                            <i class="fas fa-info-circle"></i> <strong>Livraison : 1000 FCFA</strong><br>
+                            📸 Joindre une ordonnance pour plus de précision<br>
+                            Le livreur vous contactera pour confirmer la disponibilité
+                        </p>
+                    </div>
+
+                    <form id="pharmacyForm">
+                        <div class="form-group">
+                            <label class="form-label">Médicaments :</label>
+                            <div id="medicamentItemsContainer">
+                                <div class="medicament-item" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                    <input type="text" class="form-input med-name" placeholder="Médicament" style="flex: 2;" required>
+                                    <input type="number" class="form-input med-quantity" value="1" min="1" style="width: 80px;" required>
+                                    <input type="text" class="form-input med-notes" placeholder="Instructions" style="flex: 1;">
+                                    <button type="button" class="btn secondary btn-remove" style="width: auto; padding: 12px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="addMedicamentBtn" class="btn secondary" style="margin-bottom: 16px;">
+                                <i class="fas fa-plus"></i> Ajouter un médicament
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ordonnancePhoto" class="form-label">Photo ordonnance (facultatif)</label>
+                            <input type="file" id="ordonnancePhoto" class="form-input" accept="image/*">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pharmacyPhone" class="form-label">Votre téléphone *</label>
+                            <input type="tel" id="pharmacyPhone" class="form-input" pattern="[0-9]{8}" placeholder="70000000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pharmacyNotes" class="form-label">Notes supplémentaires</label>
+                            <textarea id="pharmacyNotes" class="form-textarea" placeholder="Allergies, urgence, etc."></textarea>
+                        </div>
+
+                        <div class="form-group" id="pharmacyPaymentContainer">
+                            <label class="form-label">Méthode de paiement *</label>
+                            <div style="display: flex; gap: 12px;">
+                                <button type="button" class="btn secondary payment-btn" data-payment="online" style="flex: 1; position: relative;">
+                                    <i class="fas fa-credit-card"></i> Payer maintenant
+                                    <span class="maintenance-badge">Maintenance</span>
+                                </button>
+                                <button type="button" class="btn payment-btn" data-payment="on_delivery" style="flex: 1;">
+                                    <i class="fas fa-truck"></i> Payer à la livraison
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn success">
+                            <i class="fas fa-paper-plane"></i> Commander
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Panier -->
+    <div class="cart-container" id="cartContainer">
+        <div class="cart-header">
+            <div class="cart-title">
+                <i class="fas fa-shopping-cart"></i> Mon Panier
+            </div>
+            <div class="cart-count" id="cartCount">0</div>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-total">
+            <span class="cart-total-label">Total (+ livraison):</span>
+            <span class="cart-total-amount" id="cartTotal">0 FCFA</span>
+        </div>
+        <div class="cart-actions">
+            <button class="cart-btn secondary" id="clearCartBtn">
+                <i class="fas fa-trash"></i> Vider
+            </button>
+            <button class="cart-btn primary" id="checkoutBtn">
+                <i class="fas fa-credit-card"></i> Commander
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Restaurants -->
+    <div class="modal" id="restaurantsModal">
+        <div class="modal-content" style="max-width: 480px; max-height: 90vh;">
+            <button class="modal-close" id="closeRestaurantsModal">&times;</button>
+            <h2 style="margin-bottom: 20px; color: var(--gray-800);">Restaurants disponibles</h2>
+            
+            <!-- Section Filtres -->
+            <div class="filters-section">
+                <div style="margin-bottom: 16px;">
+                    <input type="text" id="restaurantSearch" class="form-input" placeholder="Rechercher un restaurant..." style="margin-bottom: 12px;">
+                </div>
+                
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Type de cuisine</label>
+                        <select id="cuisineFilter" class="form-select">
+                            <option value="">Tous types</option>
+                            <option value="Africaine">Cuisine Africaine</option>
+                            <option value="Burkinabè">Cuisine Burkinabè</option>
+                            <option value="Ivoirienne">Cuisine Ivoirienne</option>
+                            <option value="Italienne">Cuisine Italienne</option>
+                            <option value="Chinoise">Cuisine Chinoise</option>
+                            <option value="Libanaise">Cuisine Libanaise</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Grillades">Grillades</option>
+                            <option value="Végétarienne">Végétarienne</option>
+                            <option value="Mixte">Cuisine Mixte</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Distance maximale</label>
+                        <input type="range" id="distanceFilter" class="distance-slider" min="1" max="20" value="5" step="1">
+                        <div class="distance-display" id="distanceDisplay">≤ 5 km</div>
+                    </div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-sort="distance">Plus proches</button>
+                    <button class="filter-btn" data-sort="name">Alphabétique</button>
+                    <button class="filter-btn" data-sort="cuisine">Par cuisine</button>
+                </div>
+            </div>
+            
+            <div class="restaurants-grid" id="restaurantsGrid"></div>
+        </div>
+    </div>
+
+<!-- Modal Menu -->
+<div class="modal" id="menuModal">
+    <div class="modal-content" style="max-width: 480px; max-height: 90vh;">
+        <button class="modal-close" id="closeMenuModal">Fermer</button>
+        <h3 id="modalRestaurantName" style="margin-bottom: 20px; color: var(--gray-800);"></h3>
+        <div id="menuItemsContainer" class="menu-grid"></div>
+    </div>
+</div>
+
+
+    <!-- Modal Image -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" id="closeImageModal">&times;</button>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <h3 id="modalImageTitle" class="modal-title"></h3>
+            <p id="modalImageDescription" class="modal-description"></p>
+            <div id="modalImagePrice" class="modal-price"></div>
+        </div>
+    </div>
+
+    <!-- Modal Commande -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" id="closeOrderModal">&times;</button>
+            <h3 style="margin-bottom: 20px; color: var(--gray-800);">Finaliser la commande</h3>
+            
+            <form id="orderForm">
+                <div class="form-group">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" id="clientName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Téléphone *</label>
+                    <input type="tel" id="clientPhone" class="form-input" pattern="[0-9]{8}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Adresse de livraison *</label>
+                    <textarea id="deliveryAddress" class="form-textarea" required placeholder="Adresse complète avec points de repère"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Instructions spéciales</label>
+                    <textarea id="orderNotes" class="form-textarea" placeholder="Instructions pour le livreur..."></textarea>
+                </div>
+
+                <div class="form-group" id="orderPaymentContainer">
+                    <label class="form-label">Méthode de paiement *</label>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" class="btn secondary payment-btn" data-payment="online" style="flex: 1; position: relative;">
+                            <i class="fas fa-credit-card"></i> Payer maintenant
+                            <span class="maintenance-badge">Maintenance</span>
+                        </button>
+                        <button type="button" class="btn payment-btn" data-payment="on_delivery" style="flex: 1;">
+                            <i class="fas fa-truck"></i> Payer à la livraison
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: var(--gray-50); padding: 16px; border-radius: var(--radius); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Sous-total:</span>
+                        <span id="orderSubtotal">0 FCFA</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Livraison:</span>
+                        <span id="orderDeliveryFee">700 FCFA</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 8px; border-top: 1px solid var(--gray-300);">
+                        <span>Total:</span>
+                        <span id="orderFinalTotal">700 FCFA</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn success">
+                    <i class="fas fa-check"></i> Confirmer la commande
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Chargement...</div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification-system" id="notificationSystem"></div>
+
+    <!-- Celebration Particles -->
+    <div id="celebrationParticles" class="celebration-particles"></div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            location: {
+                requiredAccuracy: 50,
+                timeout: 30000,
+                maximumAge: 60000,
+                enableHighAccuracy: true
+            },
+            apiEndpoints: {
+                restaurants: 'https://send20.netlify.app/.netlify/functions/get-restaurants',
+                createOrder: 'https://send20.netlify.app/.netlify/functions/create-order',
+                shopping: 'https://send20.netlify.app/.netlify/functions/create-shopping-order',
+                pharmacy: 'https://send20.netlify.app/.netlify/functions/create-pharmacy-order'
+            },
+            deliveryFee: {
+                base: 700,
+                perKmExtra: 100
+            },
+            cinetpay: {
+                apikey: '463682317687456a8df3143.47147531',
+                site_id: '105901861',
+                notify_url: 'https://send20.netlify.app/notifications',
+                mode: 'PRODUCTION'
+            }
+        };
+
+        // État global
+        const appState = {
+            location: null,
+            selectedPaymentMethod: null,
+            cart: [],
+            currentRestaurant: null,
+            isSubmitting: false,
+            sendMascot: null,
+            currentServiceContext: null,
+            restaurants: [],
+            filteredRestaurants: [],
+            currentFilters: {
+                search: '',
+                cuisine: '',
+                distance: 5,
+                sort: 'distance'
+            },
+            uniqueIdCounter: 0,
+            allMenuItems: []
+        };
+
+        // Animation de recherche améliorée
+        function animateMascotOnSearch() {
+            const mascot = document.getElementById('sendMascot');
+            const container = document.getElementById('sendContainer');
+            
+            mascot.classList.add('searching', 'excited');
+            container.classList.add('service-food');
+            
+            setTimeout(() => {
+                mascot.classList.remove('searching', 'excited');
+            }, 2500);
+        }
+
+        function performSearch(query) {
+            animateMascotOnSearch();
+            
+            if (!appState.allMenuItems.length) {
+                loadAllMenuItems().then(() => {
+                    showSearchResults(query);
+                });
+            } else {
+                showSearchResults(query);
+            }
+        }
+
+        // CLASSE SEND MASCOTTE AMÉLIORÉE
+        class SendMascot {
+            constructor() {
+                this.currentEmotion = 'neutral';
+                this.currentPosition = 'default';
+                this.isMoving = false;
+                this.isDragging = false;
+                this.dragOffset = { x: 0, y: 0 };
+                this.contextMemory = new Map();
+                this.interactionCount = 0;
+                this.currentService = null;
+                this.tourStep = 0;
+                this.livenessTimer = null;
+                this.init();
+
+            }
+
+init() {
+    this.setupEventListeners();
+    this.showWelcomeMessage();
+    this.startIdleAnimations();
+    this.startLivenessSystem();
+    this.enableManualDragging(); // ← ajoute cette ligne à la fin
+}
+
+            setupEventListeners() {
+                document.getElementById('sendMascot').addEventListener('click', () => this.handleSendClick());
+            }
+
+
+
+    enableManualDragging() {
+    const mascot = document.getElementById('sendMascot');
+    const container = document.getElementById('sendContainer');
+
+    let startX, startY;
+
+    mascot.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        this.isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = container.getBoundingClientRect();
+        this.dragOffset.x = startX - rect.left;
+        this.dragOffset.y = startY - rect.top;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (this.isDragging) {
+            const x = e.clientX - this.dragOffset.x;
+            const y = e.clientY - this.dragOffset.y;
+            this.manualMoveTo(x, y);
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        this.isDragging = false;
+    });
+
+    mascot.addEventListener('touchstart', (e) => {
+        this.isDragging = true;
+        const touch = e.touches[0];
+        const rect = container.getBoundingClientRect();
+        this.dragOffset.x = touch.clientX - rect.left;
+        this.dragOffset.y = touch.clientY - rect.top;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (this.isDragging) {
+            const touch = e.touches[0];
+            const x = touch.clientX - this.dragOffset.x;
+            const y = touch.clientY - this.dragOffset.y;
+            this.manualMoveTo(x, y);
+        }
+    });
+
+    document.addEventListener('touchend', () => {
+        this.isDragging = false;
+    });
+}
+
+
+
+manualMoveTo(x, y) {
+    const container = document.getElementById('sendContainer');
+    this.isMoving = true;
+
+    container.style.transition = 'none';
+    container.style.left = `${x}px`;
+    container.style.top = `${y}px`;
+    container.style.right = 'auto';
+    container.style.transform = 'none';
+
+    this.currentPosition = 'custom';
+    this.isMoving = false;
+}
+
+
+            startIdleAnimations() {
+                setInterval(() => {
+                    if (this.currentEmotion === 'neutral' && !this.isMoving) {
+                        this.performIdleAction();
+                    }
+                }, 8000);
+            }
+
+            startLivenessSystem() {
+                setInterval(() => {
+                    this.checkContextAndReact();
+                }, 15000);
+
+                setInterval(() => {
+                    if (Math.random() < 0.3 && this.currentEmotion === 'neutral') {
+                        this.performLivelyAction();
+                    }
+                }, 10000);
+            }
+
+            checkContextAndReact() {
+                const activeService = document.querySelector('.service-content.active');
+                const cartCount = appState.cart.length;
+                
+                if (cartCount > 0 && Math.random() < 0.4) {
+                    this.showContextualEncouragement();
+                } else if (activeService && Math.random() < 0.3) {
+                    this.showServiceTip();
+                } else if (Math.random() < 0.2) {
+                    this.showRandomTip();
+                }
+            }
+
+            performLivelyAction() {
+                const actions = ['scanning', 'thinking', 'guiding', 'excited'];
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                
+                const mascot = document.getElementById('sendMascot');
+                mascot.classList.add(action);
+                
+                setTimeout(() => {
+                    mascot.classList.remove(action);
+                }, 2000);
+            }
+
+            performIdleAction() {
+                const actions = ['scanning', 'thinking', 'guiding'];
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                
+                const mascot = document.getElementById('sendMascot');
+                mascot.classList.add(action);
+                setTimeout(() => {
+                    mascot.classList.remove(action);
+                }, 2000);
+            }
+
+            showContextualEncouragement() {
+                const messages = [
+                    `🛒 Votre panier contient ${appState.cart.length} article(s) ! N'hésitez pas à finaliser votre commande !`,
+                    '🍽️ Mmm, vos choix ont l\'air délicieux ! Prêt à commander ?',
+                    '✨ Excellent sélection ! Un clic et c\'est parti pour la livraison !',
+                    '🚀 Votre commande est presque prête ! Voulez-vous passer à la caisse ?'
+                ];
+                
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                this.showMessage(message, { 
+                    duration: 5000,
+                    actions: [
+                        { text: '✅ Commander', action: 'checkout', primary: true }
+                    ]
+                });
+            }
+
+            showServiceTip() {
+                const activeService = document.querySelector('.service-content.active').id;
+                const tips = {
+                    foodServiceContent: [
+                        '🔍 Astuce : Utilisez la recherche pour trouver rapidement vos plats favoris !',
+                        '📱 Conseil : Explorez différents restaurants pour découvrir de nouveaux goûts !',
+                        '⭐ Info : Les restaurants les plus proches sont en haut de la liste !'
+                    ],
+                    shoppingServiceContent: [
+                        '📝 Conseil : Plus vous êtes précis dans vos descriptions, mieux c\'est !',
+                        '💰 Astuce : Indiquez votre budget pour un service personnalisé !',
+                        '🛒 Info : Vous pouvez ajouter autant d\'articles que nécessaire !'
+                    ],
+                    pharmacyServiceContent: [
+                        '💊 Important : Utilisez les noms exacts des médicaments !',
+                        '📸 Conseil : Une photo d\'ordonnance aide énormément !',
+                        '🚨 Info : Mentionnez toute urgence dans les notes !'
+                    ]
+                };
+
+                const serviceTips = tips[activeService];
+                if (serviceTips) {
+                    const tip = serviceTips[Math.floor(Math.random() * serviceTips.length)];
+                    this.showMessage(tip, { duration: 4000, tip: true });
+                }
+            }
+
+            showRandomTip() {
+                const tips = [
+                    '🌟 Saviez-vous ? Send2.0 livre dans toute la ville avec des tarifs optimaux !',
+                    '⚡ Astuce : Activez votre géolocalisation pour des frais de livraison précis !',
+                    '🎯 Info : Send calcule automatiquement le chemin le plus rapide !',
+                    '📞 Service : Nos livreurs vous contactent toujours avant la livraison !',
+                    '🔒 Sécurité : Tous vos paiements sont sécurisés avec CinetPay !',
+                    '🚀 Rapidité : Livraison moyenne en moins de 45 minutes !'
+                ];
+
+                const tip = tips[Math.floor(Math.random() * tips.length)];
+                this.showMessage(tip, { duration: 6000, tip: true });
+            }
+
+// Fonction moveTo optimisée pour Android
+async moveTo(position, element = null, speed = 'normal') {
+    if (this.isMoving) return;
+
+    this.isMoving = true;
+    const container = document.getElementById('sendContainer');
+    const mascot = document.getElementById('sendMascot');
+
+    container.classList.add('moving');
+    mascot.classList.add('bouncing');
+
+    let targetX, targetY, targetPosition = position;
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const isMobile = window.innerWidth <= 480;
+
+    // Interdire centre et centre-gauche
+    const forbiddenPositions = ['center', 'center-left'];
+    if (forbiddenPositions.includes(position)) {
+        position = 'middle-right';
+        targetPosition = 'middle-right';
+    }
+
+if (element) {
+    const rect = element.getBoundingClientRect();
+
+    if (isMobile) {
+        targetX = viewport.width - 110;
+        targetY = 20;
+        targetPosition = 'mobile-top-right';
+    } else {
+        targetX = viewport.width - 120;
+
+        // Évite que le haut dépasse si rect.top < 100
+        targetY = Math.max(80, rect.top);  
+        targetPosition = 'desktop-right';
+    }
+
+    } else {
+        const positions = {
+            'top-right': { x: viewport.width - 110, y: 80 },
+            'middle-right': { x: viewport.width - 110, y: viewport.height / 2 - 60 },
+            'bottom-right': { x: viewport.width - 110, y: viewport.height - 180 },
+            'top-right': { x: viewport.width - 110, y: Math.max(40, viewport.height * 0.05) },
+        };
+
+        const pos = positions[position] || positions['middle-right'];
+        targetX = pos.x;
+        targetY = pos.y;
+    }
+
+    const duration = speed === 'fast' ? 600 : speed === 'slow' ? 1200 : 800;
+
+    container.style.transition = `all ${duration}ms cubic-bezier(0.68, -0.55, 0.265, 1.55)`;
+    container.style.left = `${targetX}px`;
+    container.style.top = `${targetY}px`;
+    container.style.right = 'auto';
+    container.style.transform = 'none';
+
+    this.updateDialoguePosition(targetPosition);
+
+    await new Promise(resolve => setTimeout(resolve, duration));
+
+    mascot.classList.remove('bouncing');
+    this.currentPosition = targetPosition;
+    this.isMoving = false;
+}
+
+updateDialoguePosition(position) {
+    const dialogue = document.getElementById('sendDialogue');
+    dialogue.className = 'send-dialogue';
+
+    // Position dynamique basée sur la fenêtre
+    const top = dialogue.getBoundingClientRect().top;
+    if (top < 0) {
+        dialogue.style.marginTop = `${Math.abs(top) + 10}px`;
+    }
+
+    if (['top-right', 'middle-right', 'bottom-right', 'mobile-top-right', 'desktop-right'].includes(position)) {
+        dialogue.classList.add('position-right');
+    } else {
+        dialogue.classList.add('position-left');
+    }
+}
+
+
+
+
+            setEmotion(emotion) {
+                const mascot = document.getElementById('sendMascot');
+                mascot.className = `send-mascot ${emotion}`;
+                this.currentEmotion = emotion;
+                
+                setTimeout(() => {
+                    if (this.currentEmotion === emotion) {
+                        mascot.className = 'send-mascot';
+                        this.currentEmotion = 'neutral';
+                    }
+                }, 3000);
+            }
+
+            showMessage(message, options = {}) {
+                const content = document.getElementById('sendDialogueContent');
+                const actions = document.getElementById('sendDialogueActions');
+                const dialogue = document.getElementById('sendDialogue');
+                
+                content.textContent = message;
+                
+                if (options.actions) {
+                    actions.innerHTML = '';
+                    options.actions.forEach(action => {
+                        const button = document.createElement('button');
+                        button.className = `send-dialogue-btn ${action.primary ? '' : action.secondary ? 'secondary' : ''}`;
+                        button.innerHTML = `<i class="fas fa-${action.icon || 'check'}"></i> ${action.text}`;
+                        button.onclick = () => this.handleAction(action.action, action.data);
+                        actions.appendChild(button);
+                    });
+                } else {
+                    actions.innerHTML = '';
+                }
+                
+                if (options.tip) {
+                    dialogue.classList.add('tip');
+                } else {
+                    dialogue.classList.remove('tip');
+                }
+
+                if (options.urgent) {
+                    dialogue.classList.add('urgent');
+                } else {
+                    dialogue.classList.remove('urgent');
+                }
+                
+                dialogue.classList.add('visible');
+                this.setEmotion('talking');
+                
+                if (options.autoHide !== false) {
+                    setTimeout(() => {
+                        dialogue.classList.remove('visible');
+                    }, options.duration || 8000);
+                }
+            }
+
+            handleAction(action, data) {
+                switch(action) {
+                    case 'startTour':
+                        this.startGuidedTour();
+                        break;
+                    case 'hideSend':
+                        this.hideDialogue();
+                        break;
+                    case 'showRestaurants':
+                        showRestaurants();
+                        break;
+                    case 'activateLocation':
+                        requestLocation();
+                        break;
+                    case 'guideService':
+                        this.guideService(data);
+                        break;
+                    case 'celebrate':
+                        this.celebrate();
+                        break;
+                    case 'retry':
+                        if (this.currentService === 'location') {
+                            requestLocation();
+                        }
+                        break;
+                    case 'helpShoppingList':
+                        this.showShoppingTips();
+                        break;
+                    case 'budgetTips':
+                        this.showBudgetTips();
+                        break;
+                    case 'helpMedicineList':
+                        this.showMedicineTips();
+                        break;
+                    case 'ordonnanceInfo':
+                        this.showOrdonnanceInfo();
+                        break;
+                    case 'focusSearch':
+                        document.getElementById('platSearch').focus();
+                        break;
+                    case 'checkout':
+                        showOrderModal();
+                        break;
+                }
+            }
+
+            startGuidedTour() {
+                this.hideDialogue();
+                this.setEmotion('excited');
+                this.tourStep = 1;
+                
+                this.moveTo('center', document.getElementById('getLocationBtn'), 'normal');
+                setTimeout(() => {
+                    this.showMessage('🎯 Première étape : activons votre géolocalisation pour que je puisse calculer les frais de livraison optimaux pour tous nos services !', {
+                        actions: [
+                            { text: '📍 Activer GPS', action: 'activateLocation', primary: true, icon: 'location-arrow' }
+                        ],
+                        urgent: true
+                    });
+                }, 1000);
+            }
+
+            showWelcomeMessage() {
+                setTimeout(() => {
+                    this.showMessage('Salut ! 👋 Moi c\'est Send ! Je vais vous guider pour utiliser tous nos services : Restauration, Courses et Pharmacie ! Prêt pour une expérience exceptionnelle ?', {
+                        actions: [
+                            { text: '🚀 Commencer !', action: 'startTour', primary: true },
+                        ]
+                    });
+                }, 2000);
+            }
+
+            onLocationSuccess() {
+                this.setEmotion('celebrating');
+                this.currentService = null;
+                this.tourStep = 2;
+                
+                this.showMessage('🎉 Parfait ! Géolocalisation activée ! Maintenant vous pouvez explorer tous nos services !', { duration: 3000 });
+                
+                setTimeout(() => {
+                    this.guideServicesOverview();
+                }, 3500);
+            }
+
+            guideServicesOverview() {
+                this.moveTo('middle-right', document.getElementById('servicesSection'));
+                this.showMessage('🏪 Voici nos 3 services principaux ! Cliquez sur un service pour que je vous guide !', {
+                    actions: [
+                        { text: '🍽️ Restaurants', action: 'guideService', data: 'food', primary: true },
+                        { text: '🛒 Courses', action: 'guideService', data: 'shopping' },
+                        { text: '💊 Pharmacie', action: 'guideService', data: 'pharmacy' }
+                    ],
+                    tip: true
+                });
+            }
+
+            guideService(serviceType) {
+                this.currentService = serviceType;
+                this.hideDialogue();
+                
+                // Ouvrir le service
+                toggleService(serviceType);
+                
+                // Positionner la mascotte selon le service
+                const container = document.getElementById('sendContainer');
+                container.className = 'send-container';
+                
+                if (serviceType === 'food') {
+                    container.classList.add('service-food');
+                } else {
+                    container.classList.add(`service-${serviceType}`);
+                }
+                
+                setTimeout(() => {
+                    this.moveTo('service', document.getElementById(`${serviceType}Service`));
+                    
+                    const serviceMessages = {
+                        food: {
+                            message: '🍽️ Service Restauration ! Ici vous pouvez commander vos plats favoris ! Utilisez la recherche ou explorez les restaurants !',
+                            actions: [
+                                { text: '🏪 Voir restaurants', action: 'showRestaurants', primary: true },
+                                { text: '🔍 Rechercher plat', action: 'focusSearch' }
+                            ]
+                        },
+                        shopping: {
+                            message: '🛒 Service Courses ! Parfait pour vos achats de supérette et marché ! Créez votre liste et je m\'occupe du reste !',
+                            actions: [
+                                { text: '📝 Aide liste', action: 'helpShoppingList', primary: true },
+                                { text: '💡 Conseils budget', action: 'budgetTips' }
+                            ]
+                        },
+                        pharmacy: {
+                            message: '💊 Service Pharmacie ! Commandez vos médicaments en toute sécurité ! N\'oubliez pas votre ordonnance !',
+                            actions: [
+                                { text: '📋 Aide médicaments', action: 'helpMedicineList', primary: true },
+                                { text: '📸 Info ordonnance', action: 'ordonnanceInfo' }
+                            ]
+                        }
+                    };
+                    
+                    const service = serviceMessages[serviceType];
+                    this.showMessage(service.message, {
+                        actions: service.actions,
+                        tip: true
+                    });
+                }, 1000);
+            }
+
+            showShoppingTips() {
+                this.showMessage('📝 Conseils pour vos courses : Soyez précis dans vos descriptions, indiquez les marques préférées, mentionnez les substitutions possibles ! Plus c\'est détaillé, mieux c\'est !', {
+                    duration: 6000,
+                    tip: true
+                });
+            }
+
+            showBudgetTips() {
+                this.showMessage('💰 Budget intelligent : Indiquez un budget réaliste, le livreur vous contactera si dépassement, pensez aux articles de saison ! Send optimise vos achats !', {
+                    duration: 6000,
+                    tip: true
+                });
+            }
+
+            showMedicineTips() {
+                this.showMessage('💊 Médicaments en sécurité : Utilisez les noms exacts, mentionnez les dosages, précisez si générique acceptable ! La précision évite les erreurs !', {
+                    duration: 6000,
+                    tip: true
+                });
+            }
+
+            showOrdonnanceInfo() {
+                this.showMessage('📸 Photo ordonnance : Photo claire et nette, tous les médicaments visibles, date de validité lisible. Cela aide énormément le pharmacien et évite les erreurs !', {
+                    duration: 8000,
+                    tip: true
+                });
+            }
+
+            onLocationError() {
+                this.setEmotion('worried');
+                this.currentService = 'location';
+                this.showMessage('😅 Oops ! Pas de souci, je vais utiliser une position par défaut. Vous pourrez quand même utiliser tous nos services !', {
+                    actions: [
+                        { text: '🔄 Réessayer', action: 'retry' },
+                        { text: '🍽️ Continuer', action: 'guideService', data: 'food' }
+                    ]
+                });
+            }
+
+            onCartUpdate() {
+                this.setEmotion('happy');
+                this.showMessage('🛒 Super ! Votre panier est mis à jour ! Ajoutez d\'autres plats ou finalisez votre commande !', { duration: 3000 });
+            }
+
+            onServiceInteraction(serviceType, action) {
+                const serviceActions = {
+                    food: {
+                        itemAdded: '🍽️ Excellent choix ! Continuez à explorer le menu ou finalisez votre commande !',
+                        menuOpened: '📋 Voici le menu ! Cliquez sur les plats pour les ajouter à votre panier !',
+                        searchUsed: '🔍 Bonne idée ! Tapez le nom d\'un plat pour le trouver rapidement !',
+                        restaurantSelected: '🏪 Excellent restaurant ! Explorez leur menu délicieux !'
+                    },
+                    shopping: {
+                        itemAdded: '📝 Article ajouté ! N\'oubliez pas d\'indiquer vos préférences dans les notes !',
+                        budgetSet: '💰 Budget configuré ! Je vais faire attention aux prix pour vous !',
+                        formStarted: '🛒 Parfait ! Listez vos articles et je m\'occupe du reste !',
+                        phoneEntered: '📞 Contact enregistré ! Nous vous appellerons pour confirmer !'
+                    },
+                    pharmacy: {
+                        medicineAdded: '💊 Médicament ajouté ! Pensez à joindre votre ordonnance si nécessaire !',
+                        ordonnanceUploaded: '📸 Ordonnance reçue ! Cela aidera le pharmacien à mieux vous servir !',
+                        urgencyNoted: '🚨 Urgence notée ! Je vais prioriser votre commande !',
+                        phoneEntered: '📞 Contact enregistré ! Le pharmacien vous contactera !'
+                    }
+                };
+
+                const serviceMessages = serviceActions[serviceType];
+                if (serviceMessages && serviceMessages[action]) {
+                    this.showMessage(serviceMessages[action], { duration: 4000, tip: true });
+                }
+            }
+
+            celebrate() {
+                this.setEmotion('celebrating');
+                this.moveTo('center', null, 'fast');
+                this.createCelebrationParticles();
+                
+                const celebrationMessages = [
+                    '🎉 Félicitations ! Votre commande a été envoyée avec succès !',
+                    '🚀 Super ! Les livreurs Send sont en route !',
+                    '✨ Parfait ! Votre commande est traitée par notre équipe !'
+                ];
+                
+                const message = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+                
+                this.showMessage(message + ' Merci de faire confiance à Send ! 🙏', { 
+                    duration: 8000,
+                    actions: [
+                        { text: '🔄 Nouvelle commande', action: 'startTour', primary: true }
+                    ]
+                });
+            }
+
+            createCelebrationParticles() {
+                const container = document.getElementById('celebrationParticles');
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.background = ['#667eea', '#10B981', '#F59E0B'][Math.floor(Math.random() * 3)];
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 3000);
+                }
+            }
+
+            hideDialogue() {
+                document.getElementById('sendDialogue').classList.remove('visible');
+            }
+
+            handleSendClick() {
+                this.interactionCount++;
+                
+                const dialogue = document.getElementById('sendDialogue');
+                if (dialogue.classList.contains('visible')) {
+                    this.hideDialogue();
+                } else {
+                    this.showContextualMessage();
+                }
+            }
+
+            showContextualMessage() {
+                if (!appState.location) {
+                    this.showMessage('📍 Activons d\'abord votre géolocalisation pour tous nos services !', {
+                        actions: [
+                            { text: '📍 Activer GPS', action: 'activateLocation', primary: true }
+                        ]
+                    });
+                } else if (appState.cart.length === 0 && !this.hasActiveService()) {
+                    this.showMessage('🏪 Choisissez un service ! Restauration, Courses ou Pharmacie - je vous guide !', {
+                        actions: [
+                            { text: '🍽️ Restaurants', action: 'guideService', data: 'food', primary: true },
+                            { text: '🛒 Courses', action: 'guideService', data: 'shopping' },
+                            { text: '💊 Pharmacie', action: 'guideService', data: 'pharmacy' }
+                        ]
+                    });
+                } else if (appState.cart.length > 0) {
+                    this.showMessage(`🛒 Vous avez ${appState.cart.length} article(s) dans votre panier ! Prêt à commander ?`, {
+                        actions: [
+                            { text: '✅ Commander', action: 'checkout', primary: true }
+                        ]
+                    });
+                } else {
+                    this.showMessage('🤔 Besoin d\'aide ? Je suis là pour vous guider dans tous nos services ! 😊');
+                }
+            }
+
+            hasActiveService() {
+                const activeContent = document.querySelector('.service-content.active');
+                return activeContent !== null;
+            }
+
+            onFormInteraction(serviceType, fieldType) {
+                const tips = {
+                    shopping: {
+                        item: '💡 Conseil : Soyez précis dans vos descriptions pour éviter les erreurs !',
+                        budget: '💰 Astuce : Indiquez un budget réaliste pour un meilleur service !',
+                        phone: '📞 Important : Votre numéro doit être correct pour la livraison !'
+                    },
+                    pharmacy: {
+                        medicine: '💊 Conseil : Utilisez les noms exacts des médicaments !',
+                        ordonnance: '📸 Astuce : Une photo claire aide le pharmacien !',
+                        urgency: '🚨 Urgence ? Notez-le clairement dans vos notes !'
+                    }
+                };
+
+                const serviceTips = tips[serviceType];
+                if (serviceTips && serviceTips[fieldType]) {
+                    this.showMessage(serviceTips[fieldType], { duration: 3000, tip: true });
+                }
+            }
+
+            onPaymentMethodSelected(method) {
+                const messages = {
+                    online: '💳 Paiement en ligne sélectionné ! Actuellement en maintenance, mais bientôt disponible !',
+                    on_delivery: '🚚 Paiement à la livraison choisi ! Préparez la somme exacte !'
+                };
+                
+                this.showMessage(messages[method], { duration: 3000, tip: true });
+            }
+
+            onSearchPerformed(searchTerm, results) {
+                if (results.length > 0) {
+                    this.setEmotion('excited');
+                    this.showMessage(`🎯 Super ! J'ai trouvé ${results.length} plat(s) correspondant à "${searchTerm}" ! Cliquez sur celui qui vous intéresse !`, { duration: 4000 });
+                } else {
+                    this.setEmotion('worried');
+                    this.showMessage(`😅 Désolé, aucun plat trouvé pour "${searchTerm}". Essayez un autre terme ou explorez nos restaurants !`, {
+                        actions: [
+                            { text: '🏪 Voir restaurants', action: 'showRestaurants', primary: true }
+                        ]
+                    });
+                }
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            appState.sendMascot = new SendMascot();
+            initApplication();
+        });
+
+        function initApplication() {
+            setupEventListeners();
+            setupPaymentButtons();
+            setupFilters();
+            setupSearch();
+        }
+
+        function setupEventListeners() {
+            // Géolocalisation
+            document.getElementById('getLocationBtn').addEventListener('click', requestLocation);
+            
+            // Services
+            document.querySelectorAll('.service-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!e.target.closest('.service-content')) {
+                        const serviceType = this.dataset.service;
+                        toggleService(serviceType);
+                        appState.sendMascot.onServiceInteraction(serviceType, 'formStarted');
+                    }
+                });
+            });
+            
+            // Restaurants et recherche
+            document.getElementById('showRestaurantsBtn').addEventListener('click', showRestaurants);
+            document.getElementById('searchBtn').addEventListener('click', searchFood);
+            
+            // Focus sur champs pour conseils Send
+            document.getElementById('platSearch').addEventListener('focus', () => {
+                appState.sendMascot.onServiceInteraction('food', 'searchUsed');
+            });
+
+            // Animation lors de la saisie de recherche
+            document.getElementById('platSearch').addEventListener('input', function() {
+                if (this.value.length >= 2) {
+                    animateMascotOnSearch();
+                }
+            });
+            
+            // Panier
+            document.getElementById('clearCartBtn').addEventListener('click', clearCart);
+            document.getElementById('checkoutBtn').addEventListener('click', showOrderModal);
+            
+            // Modals
+            setupModalEvents();
+            
+            // Formulaires
+            setupFormEvents();
+            
+            // Articles dynamiques
+            setupDynamicItems();
+        }
+
+        function setupModalEvents() {
+            // Modal restaurants
+            document.getElementById('closeRestaurantsModal').addEventListener('click', () => {
+                document.getElementById('restaurantsModal').classList.remove('visible');
+            });
+            
+            // Modal menu
+            document.getElementById('closeMenuModal').addEventListener('click', () => {
+                document.getElementById('menuModal').classList.remove('visible');
+            });
+            
+            // Modal image
+            document.getElementById('closeImageModal').addEventListener('click', () => {
+                document.getElementById('imageModal').classList.remove('visible');
+            });
+            
+            // Modal commande
+            document.getElementById('closeOrderModal').addEventListener('click', () => {
+                document.getElementById('orderModal').classList.remove('visible');
+            });
+            
+            // Fermer modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('visible');
+                    }
+                });
+            });
+        }
+
+        function setupFormEvents() {
+            // Formulaire shopping
+            document.getElementById('shoppingForm').addEventListener('submit', handleShoppingSubmit);
+            
+            // Formulaire pharmacie
+            document.getElementById('pharmacyForm').addEventListener('submit', handlePharmacySubmit);
+            
+            // Formulaire commande
+            document.getElementById('orderForm').addEventListener('submit', handleOrderSubmit);
+
+            // Conseils Send sur focus des champs
+            document.getElementById('budgetMin').addEventListener('focus', () => {
+                appState.sendMascot.onFormInteraction('shopping', 'budget');
+            });
+
+            document.getElementById('shoppingPhone').addEventListener('focus', () => {
+                appState.sendMascot.onFormInteraction('shopping', 'phone');
+            });
+
+            document.getElementById('shoppingPhone').addEventListener('input', () => {
+                if (document.getElementById('shoppingPhone').value.length === 8) {
+                    appState.sendMascot.onServiceInteraction('shopping', 'phoneEntered');
+                }
+            });
+
+            document.getElementById('pharmacyPhone').addEventListener('focus', () => {
+                appState.sendMascot.onFormInteraction('pharmacy', 'phone');
+            });
+
+            document.getElementById('pharmacyPhone').addEventListener('input', () => {
+                if (document.getElementById('pharmacyPhone').value.length === 8) {
+                    appState.sendMascot.onServiceInteraction('pharmacy', 'phoneEntered');
+                }
+            });
+
+            document.getElementById('ordonnancePhoto').addEventListener('change', () => {
+                appState.sendMascot.onFormInteraction('pharmacy', 'ordonnance');
+            });
+        }
+
+        function setupDynamicItems() {
+            // Bouton ajouter article shopping
+            document.getElementById('addShoppingItemBtn').addEventListener('click', () => {
+                addShoppingItem();
+                appState.sendMascot.onServiceInteraction('shopping', 'itemAdded');
+            });
+            
+            // Bouton ajouter médicament
+            document.getElementById('addMedicamentBtn').addEventListener('click', () => {
+                addMedicamentItem();
+                appState.sendMascot.onServiceInteraction('pharmacy', 'medicineAdded');
+            });
+            
+            // Gestion des suppressions
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-remove')) {
+                    const item = e.target.closest('.shopping-item, .medicament-item');
+                    const container = item.closest('#shoppingItemsContainer, #medicamentItemsContainer');
+                    const items = container.querySelectorAll('.shopping-item, .medicament-item');
+                    
+                    if (items.length > 1) {
+                        item.remove();
+                    } else {
+                        // Réinitialiser le premier item
+                        const inputs = item.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            if (input.type === 'number') {
+                                input.value = 1;
+                            } else {
+                                input.value = '';
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function setupPaymentButtons() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('payment-btn')) {
+                    e.preventDefault();
+                    
+                    const container = e.target.closest('[id$="PaymentContainer"]');
+                    const method = e.target.dataset.payment;
+                    
+                    // Désélectionner tous les boutons du container
+                    container.querySelectorAll('.payment-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // Sélectionner le bouton cliqué
+                    e.target.classList.add('selected');
+                    appState.selectedPaymentMethod = method;
+                    
+                    // Notification Send
+                    appState.sendMascot.onPaymentMethodSelected(method);
+                }
+            });
+        }
+
+        function setupFilters() {
+            // Recherche de restaurants
+            document.getElementById('restaurantSearch').addEventListener('input', filterRestaurants);
+            
+            // Filtre cuisine
+            document.getElementById('cuisineFilter').addEventListener('change', filterRestaurants);
+            
+            // Filtre distance
+            const distanceSlider = document.getElementById('distanceFilter');
+            const distanceDisplay = document.getElementById('distanceDisplay');
+            
+            distanceSlider.addEventListener('input', function() {
+                const value = this.value;
+                distanceDisplay.textContent = `≤ ${value} km`;
+                appState.currentFilters.distance = parseInt(value);
+                filterRestaurants();
+            });
+            
+            // Boutons de tri
+            document.querySelectorAll('.filter-btn[data-sort]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn[data-sort]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    appState.currentFilters.sort = this.dataset.sort;
+                    filterRestaurants();
+                });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('platSearch');
+            const searchResults = document.getElementById('searchResults');
+            
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim().toLowerCase();
+                
+                if (query.length < 2) {
+                    hideSearchResults();
+                    return;
+                }
+                
+                // Animation de recherche
+                if (query.length >= 2) {
+                    animateMascotOnSearch();
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+            
+            // Cacher les résultats en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#platSearch') && !e.target.closest('#searchResults')) {
+                    hideSearchResults();
+                }
+            });
+        }
+
+        async function loadAllMenuItems() {
+            try {
+                const restaurants = await fetchRestaurants();
+                appState.allMenuItems = [];
+                
+                restaurants.forEach(restaurant => {
+                    if (restaurant.menu) {
+                        restaurant.menu.forEach(item => {
+                            appState.allMenuItems.push({
+                                ...item,
+                                restaurant: restaurant,
+                                restaurantName: restaurant.nom,
+                                restaurantId: restaurant._id
+                            });
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement des menus:', error);
+            }
+        }
+
+        function showSearchResults(query) {
+            const searchResults = document.getElementById('searchResults');
+            const results = appState.allMenuItems.filter(item => 
+                item.nom.toLowerCase().includes(query) ||
+                (item.description && item.description.toLowerCase().includes(query)) ||
+                item.restaurantName.toLowerCase().includes(query)
+            );
+            
+            if (results.length === 0) {
+                hideSearchResults();
+                appState.sendMascot.onSearchPerformed(query, results);
+                return;
+            }
+            
+            searchResults.innerHTML = '';
+            
+            results.slice(0, 5).forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'search-result-item';
+                
+                const itemImage = item.photo ? 
+                    `<img src="data:${item.photo.type};base64,${item.photo.data}" alt="${item.nom}" class="search-result-image">` :
+                    '<div class="search-result-image" style="display: flex; align-items: center; justify-content: center; background: var(--gray-100);"><i class="fas fa-utensils" style="color: var(--gray-400);"></i></div>';
+                
+                resultItem.innerHTML = `
+                    ${itemImage}
+                    <div class="search-result-info">
+                        <div class="search-result-name">${item.nom}</div>
+                        <div class="search-result-restaurant">${item.restaurantName}</div>
+                    </div>
+                    <div class="search-result-price">${parseInt(item.prix)} FCFA</div>
+                `;
+                
+                resultItem.addEventListener('click', () => {
+                    selectSearchResult(item);
+                });
+                
+                searchResults.appendChild(resultItem);
+            });
+            
+            searchResults.style.display = 'block';
+            appState.sendMascot.onSearchPerformed(query, results);
+        }
+
+        function hideSearchResults() {
+            document.getElementById('searchResults').style.display = 'none';
+        }
+
+        function selectSearchResult(item) {
+            hideSearchResults();
+            document.getElementById('platSearch').value = '';
+            
+            // Ouvrir directement le restaurant et afficher le menu
+            showRestaurantMenu(item.restaurant);
+            appState.sendMascot.onServiceInteraction('food', 'restaurantSelected');
+        }
+
+        function filterRestaurants() {
+            if (!appState.restaurants.length) return;
+            
+            const search = document.getElementById('restaurantSearch').value.toLowerCase();
+            const cuisine = document.getElementById('cuisineFilter').value;
+            const maxDistance = appState.currentFilters.distance;
+            
+            let filtered = appState.restaurants.filter(resto => {
+                // Filtre par recherche
+                const matchesSearch = !search || 
+                    resto.nom.toLowerCase().includes(search) || 
+                    resto.adresse.toLowerCase().includes(search) ||
+                    (resto.cuisine && resto.cuisine.toLowerCase().includes(search));
+                
+                // Filtre par cuisine
+                const matchesCuisine = !cuisine || resto.cuisine === cuisine;
+                
+                // Filtre par distance
+                const matchesDistance = resto.distance <= maxDistance;
+                
+                return matchesSearch && matchesCuisine && matchesDistance;
+            });
+            
+            // Tri
+            switch(appState.currentFilters.sort) {
+                case 'distance':
+                    filtered.sort((a, b) => a.distance - b.distance);
+                    break;
+                case 'name':
+                    filtered.sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
+                    break;
+                case 'cuisine':
+                    filtered.sort((a, b) => (a.cuisine || '').localeCompare(b.cuisine || '', 'fr'));
+                    break;
+            }
+            
+            appState.filteredRestaurants = filtered;
+            displayRestaurants(filtered);
+        }
+
+// GÉOLOCALISATION STRICTE (aucune position par défaut autorisée)
+async function requestLocation() {
+    if (appState.location) return;
+
+    const btn = document.getElementById('getLocationBtn');
+    setButtonLoading(btn, true, 'Send localise...');
+    updateLocationStatus('searching', 'Send analyse votre position GPS...');
+    appState.sendMascot.setEmotion('processing');
+
+    if (!navigator.geolocation) {
+        appState.sendMascot.onLocationError();
+        updateLocationStatus('error', 'Géolocalisation non supportée');
+        showNotification('error', '🚫 Géolocalisation non supportée par votre navigateur');
+        setButtonLoading(btn, false);
+        return;
+    }
+
+    try {
+        const position = await getCurrentPosition();
+        const { latitude, longitude, accuracy } = position.coords;
+
+        appState.location = {
+            latitude: parseFloat(latitude.toFixed(6)),
+            longitude: parseFloat(longitude.toFixed(6)),
+            accuracy: Math.round(accuracy)
+        };
+
+        updateLocationStatus('found', `Position Send validée (±${Math.round(accuracy)}m)`);
+        document.getElementById('accuracyText').textContent = `±${Math.round(accuracy)}m`;
+
+        appState.sendMascot.onLocationSuccess();
+        enableServices(); // déverrouille les services
+
+    } catch (error) {
+        console.error('❌ Erreur géolocalisation:', error);
+        appState.sendMascot.onLocationError();
+        handleStrictLocationError(error);
+    } finally {
+        setButtonLoading(btn, false);
+    }
+}
+
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, CONFIG.location);
+    });
+}
+
+function updateLocationStatus(status, message) {
+    const iconClasses = {
+        waiting: 'fas fa-satellite-dish',
+        searching: 'fas fa-spinner',
+        found: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-triangle'
+    };
+
+    const titles = {
+        waiting: 'GPS en attente',
+        searching: 'Send localise...',
+        found: 'Position Send trouvée',
+        error: 'Erreur GPS'
+    };
+
+    document.getElementById('geoStatusIcon').className = `geo-icon ${status}`;
+    document.getElementById('geoStatusIcon').innerHTML = `<i class="${iconClasses[status]}"></i>`;
+    document.getElementById('geoStatusTitle').textContent = titles[status];
+    document.getElementById('geoStatusDesc').textContent = message;
+}
+
+// 🔒 Erreur stricte : aucune position par défaut
+function handleStrictLocationError(error) {
+    updateLocationStatus('error', 'Position GPS requise pour continuer');
+
+    let message = '❌ Erreur de géolocalisation.';
+
+    if (error.code === 1) {
+        message = '⛔ Permission refusée. Activez la localisation dans les paramètres.';
+    } else if (error.code === 2) {
+        message = '📡 Position non disponible. Activez le GPS et réessayez.';
+    } else if (error.code === 3) {
+        message = '⏳ Temps de réponse dépassé. Veuillez réessayer.';
+    }
+
+    showNotification('error', message);
+
+    // Blocage complet : message d’alerte et arrêt
+    alert("⚠️ La géolocalisation est obligatoire pour utiliser Send.\n\nVeuillez activer la localisation dans les paramètres ou en tirant la barre du haut de votre téléphone, puis cliquez à nouveau sur le bouton.");
+
+    // Optionnel : tu peux désactiver des éléments tant que la localisation n’est pas activée
+    // document.getElementById('someServiceBtn').disabled = true;
+}
+
+function enableServices() {
+            const servicesSection = document.getElementById('servicesSection');
+            servicesSection.style.opacity = '1';
+            servicesSection.style.pointerEvents = 'auto';
+        }
+
+        // SERVICES
+        function toggleService(serviceType) {
+            document.querySelectorAll('.service-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const serviceContent = document.getElementById(`${serviceType}ServiceContent`);
+            if (serviceContent) {
+                serviceContent.classList.add('active');
+                appState.currentServiceContext = serviceType;
+                
+                // Positionner la mascotte selon le service
+                const container = document.getElementById('sendContainer');
+                container.className = 'send-container';
+                
+                if (serviceType === 'food') {
+                    container.classList.add('service-food');
+                } else {
+                    container.classList.add(`service-${serviceType}`);
+                }
+            }
+        }
+
+        // RESTAURANTS
+async function showRestaurants() {
+    try {
+        showLoading('Send charge les restaurants...');
+        const restaurants = await fetchRestaurants();
+        
+        appState.restaurants = restaurants;
+        appState.filteredRestaurants = restaurants;
+        
+        displayRestaurants(restaurants);
+        document.getElementById('restaurantsModal').classList.add('visible');
+
+        // 👇 Déplacement automatique de la mascotte vers le coin droit-centre
+        appState.sendMascot?.moveTo?.('middle-right');
+
+        // Interaction (animation / réaction) de la mascotte
+        appState.sendMascot.onServiceInteraction('food', 'menuOpened');
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('error', 'Impossible de charger les restaurants');
+    } finally {
+        hideLoading();
+    }
+}
+
+        async function fetchRestaurants() {
+            const response = await fetch(CONFIG.apiEndpoints.restaurants);
+            
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            
+            const restaurants = await response.json();
+            
+            return restaurants
+                .filter(resto => resto.hasValidLocation && resto.menu && resto.menu.length > 0)
+                .map(resto => {
+                    const distance = calculateDistance(
+                        appState.location.latitude,
+                        appState.location.longitude,
+                        resto.location.latitude,
+                        resto.location.longitude
+                    );
+                    
+                    return {
+                        ...resto,
+                        distance: distance,
+                        displayDistance: distance < 1 ? 
+                            `${Math.round(distance * 1000)} m` : 
+                            `${distance.toFixed(1)} km`
+                    };
+                })
+                .sort((a, b) => a.distance - b.distance);
+        }
+
+        function displayRestaurants(restaurants) {
+            const grid = document.getElementById('restaurantsGrid');
+            grid.innerHTML = '';
+
+            if (!restaurants?.length) {
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                        <i class="fas fa-utensils" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Aucun restaurant trouvé avec ces critères</p>
+                    </div>
+                `;
+                return;
+            }
+
+            restaurants.forEach(resto => {
+                const card = document.createElement('div');
+                card.className = 'restaurant-card';
+                card.dataset.id = resto._id;
+                
+                const distanceColor = resto.distance <= 2 ? 'var(--success)' : 
+                                    resto.distance <= 5 ? 'var(--warning)' : 'var(--danger)';
+
+                const logoImage = resto.logo ? 
+                    `<img src="data:${resto.logo.type};base64,${resto.logo.data}" alt="${resto.nom}" class="restaurant-image">` :
+                    '<div class="restaurant-image" style="display: flex; align-items: center; justify-content: center; background: var(--gray-100);"><i class="fas fa-utensils" style="color: var(--gray-400);"></i></div>';
+                
+                card.innerHTML = `
+                    ${logoImage}
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">${resto.nom}</div>
+                        <div class="restaurant-meta">
+                            <span>${resto.cuisine || 'Cuisine variée'}</span>
+                            <span class="restaurant-distance" style="color: ${distanceColor}">${resto.displayDistance}</span>
+                        </div>
+<div class="restaurant-address">${resto.adresse}</div>
+<div class="restaurant-actions">
+  <button class="call-button" onclick="callRestaurant('${resto.telephone}')">
+    <i class="fas fa-phone-alt"></i> Appeler le restaurant
+</button>
+</div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => showRestaurantMenu(resto));
+                grid.appendChild(card);
+            });
+        }
+
+
+        function callRestaurant(phoneNumber) {
+    if (phoneNumber) {
+        window.location.href = `tel:${phoneNumber}`;
+    } else {
+        showNotification('warning', 'Numéro de téléphone non disponible');
+    }
+}
+
+
+function showRestaurantMenu(restaurant) {
+    appState.currentRestaurant = restaurant;
+
+    document.getElementById('modalRestaurantName').textContent = restaurant.nom;
+
+    const menuContainer = document.getElementById('menuItemsContainer');
+    menuContainer.innerHTML = '';
+
+    if (!restaurant.menu?.length) {
+        menuContainer.innerHTML = '<p style="color: var(--gray-500); text-align: center;">Aucun plat disponible</p>';
+    } else {
+        restaurant.menu.forEach(item => {
+            const menuItem = createMenuItemElement(item, restaurant);
+            menuContainer.appendChild(menuItem);
+        });
+    }
+
+    document.getElementById('restaurantsModal').classList.remove('visible');
+    document.getElementById('menuModal').classList.add('visible');
+
+    // 👇 Déplacer la mascotte vers le bas-centre
+    appState.sendMascot?.moveTo?.('bottom-center');
+
+    appState.sendMascot.onServiceInteraction('food', 'restaurantSelected');
+}
+
+
+        function createMenuItemElement(item, restaurant) {
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-item';
+            
+            // Générer un ID unique AMÉLIORÉ
+            const uniqueId = `${restaurant._id}_${item.id}_${++appState.uniqueIdCounter}_${Date.now()}`;
+            
+            const deliveryFee = calculateDeliveryFee(restaurant, appState.location);
+            const itemWithQuantity = appState.cart.find(cartItem => cartItem.uniqueId === uniqueId) || { quantity: 0 };
+            
+            const dishImage = item.photo ? 
+                `<img src="data:${item.photo.type};base64,${item.photo.data}" alt="${item.nom}" class="menu-item-image" onclick="showImageModal('${escapeHtml(item.nom)}', 'data:${item.photo.type};base64,${item.photo.data}', '${escapeHtml(item.description || '')}', '${item.prix} FCFA')">` :
+                '<div class="menu-item-image" style="display: flex; align-items: center; justify-content: center; background: var(--gray-100);"><i class="fas fa-utensils" style="color: var(--gray-400);"></i></div>';
+            
+            menuItem.innerHTML = `
+                <div class="menu-item-header">
+                    ${dishImage}
+                    <div class="menu-item-info">
+                        <div class="menu-item-name">${item.nom}</div>
+                        <div class="menu-item-description">${item.description || ''}</div>
+                        <div class="menu-item-price">${parseInt(item.prix)} FCFA</div>
+                    </div>
+                </div>
+                <div class="menu-item-actions">
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity('${uniqueId}', -1, event)" ${itemWithQuantity.quantity <= 0 ? 'disabled' : ''}>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity-display" id="qty-${uniqueId}">${itemWithQuantity.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity('${uniqueId}', 1, event)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart('${uniqueId}', '${item.id}', '${escapeHtml(item.nom)}', ${parseInt(item.prix)}, '${escapeHtml(restaurant.nom)}', '${deliveryFee}', event)">
+                        <i class="fas fa-cart-plus"></i> Ajouter
+                    </button>
+                </div>
+            `;
+            
+            return menuItem;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateQuantity(uniqueId, change, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const qtyDisplay = document.getElementById(`qty-${uniqueId}`);
+            if (!qtyDisplay) return;
+            
+            let currentQty = parseInt(qtyDisplay.textContent) || 0;
+            let newQty = Math.max(0, currentQty + change);
+            
+            qtyDisplay.textContent = newQty;
+            
+            // Mettre à jour les boutons
+            const container = qtyDisplay.closest('.quantity-controls');
+            const minusBtn = container.querySelector('.quantity-btn:first-child');
+            minusBtn.disabled = newQty <= 0;
+            
+            // Mettre à jour le panier si l'item existe déjà
+            const cartItem = appState.cart.find(item => item.uniqueId === uniqueId);
+            if (cartItem) {
+                if (newQty === 0) {
+                    removeFromCart(uniqueId);
+                } else {
+                    cartItem.quantity = newQty;
+                    updateCartDisplay();
+                }
+            }
+        }
+
+function addToCart(uniqueId, itemId, itemName, itemPrice, restaurantName, deliveryFee, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const qtyDisplay = document.getElementById(`qty-${uniqueId}`);
+    if (!qtyDisplay) return;
+    
+    let quantity = parseInt(qtyDisplay.textContent) || 0;
+    
+    if (quantity === 0) {
+        quantity = 1;
+        qtyDisplay.textContent = '1';
+        const container = qtyDisplay.closest('.quantity-controls');
+        const minusBtn = container.querySelector('.quantity-btn:first-child');
+        minusBtn.disabled = false;
+    }
+    
+    const existingItem = appState.cart.find(item => item.uniqueId === uniqueId);
+    
+    if (existingItem) {
+        existingItem.quantity = quantity;
+    } else {
+        appState.cart.push({
+            uniqueId: uniqueId,
+            id: itemId,
+            name: itemName,
+            price: itemPrice,
+            quantity: quantity,
+            restaurant: restaurantName,
+            deliveryFee: deliveryFee
+        });
+    }
+    
+    updateCartDisplay();
+
+    // 👇 Déplacer la mascotte en bas à droite
+    appState.sendMascot?.moveTo?.('bottom-right');
+
+    appState.sendMascot.onServiceInteraction('food', 'itemAdded');
+    showNotification('success', `${itemName} ajouté au panier !`);
+}
+
+        function removeFromCart(uniqueId) {
+            const index = appState.cart.findIndex(item => item.uniqueId === uniqueId);
+            if (index > -1) {
+                appState.cart.splice(index, 1);
+                updateCartDisplay();
+                
+                // Réinitialiser la quantité dans le menu
+                const qtyDisplay = document.getElementById(`qty-${uniqueId}`);
+                if (qtyDisplay) {
+                    qtyDisplay.textContent = '0';
+                    const container = qtyDisplay.closest('.quantity-controls');
+                    const minusBtn = container.querySelector('.quantity-btn:first-child');
+                    minusBtn.disabled = true;
+                }
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartContainer');
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const sendContainer = document.getElementById('sendContainer');
+
+            if (appState.cart.length === 0) {
+                cartContainer.classList.remove('visible');
+                sendContainer.classList.remove('cart-open');
+            } else {
+                cartContainer.classList.add('visible');
+                sendContainer.classList.add('cart-open');
+                cartCount.textContent = appState.cart.length;
+                
+                // Déplacer la mascotte vers le haut
+                appState.sendMascot.moveTo('top-right');
+            }
+
+            // Calculer le total
+            const subtotal = appState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryFee = appState.cart.length > 0 ? (appState.currentRestaurant ? calculateDeliveryFee(appState.currentRestaurant, appState.location) : 700) : 0;
+            const total = subtotal + deliveryFee;
+            
+            cartTotal.textContent = `${total} FCFA`;
+            
+            // Afficher les items
+            cartItems.innerHTML = '';
+            appState.cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                
+                cartItem.innerHTML = `
+                    <div class="cart-item-image" style="background: var(--gray-100); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-utensils" style="color: var(--gray-400);"></i>
+                    </div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${item.price} FCFA × ${item.quantity}</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="cart-control-btn" onclick="updateCartItemQuantity('${item.uniqueId}', -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="cart-quantity">${item.quantity}</span>
+                        <button class="cart-control-btn" onclick="updateCartItemQuantity('${item.uniqueId}', 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+        }
+
+        function updateCartItemQuantity(uniqueId, change) {
+            const cartItem = appState.cart.find(item => item.uniqueId === uniqueId);
+            if (cartItem) {
+                cartItem.quantity = Math.max(1, cartItem.quantity + change);
+                updateCartDisplay();
+                
+                // Mettre à jour l'affichage dans le menu aussi
+                const qtyDisplay = document.getElementById(`qty-${uniqueId}`);
+                if (qtyDisplay) {
+                    qtyDisplay.textContent = cartItem.quantity;
+                }
+            }
+        }
+
+        function clearCart() {
+            appState.cart = [];
+            updateCartDisplay();
+            
+            // Réinitialiser toutes les quantités dans le menu
+            document.querySelectorAll('[id^="qty-"]').forEach(qtyDisplay => {
+                qtyDisplay.textContent = '0';
+                const container = qtyDisplay.closest('.quantity-controls');
+                if (container) {
+                    const minusBtn = container.querySelector('.quantity-btn:first-child');
+                    minusBtn.disabled = true;
+                }
+            });
+            
+            showNotification('info', 'Panier vidé');
+        }
+
+        // COMMANDE
+        function showOrderModal() {
+            if (appState.cart.length === 0) {
+                showNotification('warning', 'Votre panier est vide');
+                return;
+            }
+            
+            // Calculer les totaux
+            const subtotal = appState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryFee = appState.currentRestaurant ? calculateDeliveryFee(appState.currentRestaurant, appState.location) : 700;
+            const total = subtotal + deliveryFee;
+            
+            // Mettre à jour l'affichage des prix
+            document.getElementById('orderSubtotal').textContent = `${subtotal} FCFA`;
+            document.getElementById('orderDeliveryFee').textContent = `${deliveryFee} FCFA`;
+            document.getElementById('orderFinalTotal').textContent = `${total} FCFA`;
+            
+            document.getElementById('orderModal').classList.add('visible');
+        }
+
+// Dans services.html, remplacez l'ancienne fonction handleOrderSubmit par celle-ci
+
+async function handleOrderSubmit(e) {
+    e.preventDefault();
+    
+    if (!appState.selectedPaymentMethod) {
+        showNotification('error', 'Veuillez choisir une méthode de paiement');
+        return;
+    }
+    
+    showLoading('Send traite votre commande...');
+
+    try {
+        // CORRECTION : On s'assure que currentRestaurant est bien l'objet complet
+        if (!appState.currentRestaurant || !appState.currentRestaurant._id) {
+            throw new Error("Aucun restaurant n'a été sélectionné correctement.");
+        }
+
+        const orderData = {
+            type: 'food',
+            client: {
+                name: document.getElementById('clientName').value.trim(),
+                phone: document.getElementById('clientPhone').value.trim(),
+                address: document.getElementById('deliveryAddress').value.trim(),
+                position: appState.location
+            },
+            currentRestaurant: appState.currentRestaurant, // On envoie l'objet complet
+            items: appState.cart,
+            subtotal: appState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            deliveryFee: calculateDeliveryFee(appState.currentRestaurant, appState.location),
+            total: appState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + calculateDeliveryFee(appState.currentRestaurant, appState.location),
+            notes: document.getElementById('orderNotes').value.trim(),
+            payment_method: appState.selectedPaymentMethod,
+            payment_status: appState.selectedPaymentMethod === 'online' ? 'paid' : 'pending',
+            orderDate: new Date().toISOString()
+        };
+
+        // On ne garde plus l'objet "restaurant" redondant
+        // delete orderData.restaurant; 
+
+        if (orderData.payment_method === 'online') {
+            // ... votre logique CinetPay ...
+        } else {
+            orderData.payment_reference = `DELIVERY_${Date.now()}`;
+        }
+        
+        const response = await fetch(CONFIG.apiEndpoints.createOrder, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+        
+        // CORRECTION : Meilleure gestion de la réponse
+        if (!response.ok) {
+            // Essayer de lire le message d'erreur du serveur
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (jsonError) {
+                // Si la réponse n'est pas du JSON, utiliser le statut HTTP
+                throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+            }
+            throw new Error(errorData.message || 'Erreur serveur lors de la création de la commande.');
+        }
+        
+        const result = await response.json();
+        
+        appState.sendMascot.celebrate();
+        showNotification('success', `Commande ${result.codeCommande} envoyée avec succès !`);
+        
+        document.getElementById('orderModal').classList.remove('visible');
+        clearCart();
+        
+    } catch (error) {
+        console.error('Erreur commande:', error);
+        showNotification('error', error.message || 'Une erreur est survenue lors de la commande.');
+    } finally {
+        hideLoading();
+    }
+}
+
+        // AUTRES SERVICES
+        function addShoppingItem() {
+            const container = document.getElementById('shoppingItemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'shopping-item';
+            newItem.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px;';
+            
+            newItem.innerHTML = `
+                <input type="text" class="form-input item-name" placeholder="Article" style="flex: 2;" required>
+                <input type="number" class="form-input item-quantity" min="1" value="1" style="width: 80px;" required>
+                <input type="text" class="form-input item-notes" placeholder="Notes" style="flex: 1;">
+                <button type="button" class="btn secondary btn-remove" style="width: auto; padding: 12px;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            container.appendChild(newItem);
+        }
+
+        function addMedicamentItem() {
+            const container = document.getElementById('medicamentItemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'medicament-item';
+            newItem.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px;';
+            
+            newItem.innerHTML = `
+                <input type="text" class="form-input med-name" placeholder="Médicament" style="flex: 2;" required>
+                <input type="number" class="form-input med-quantity" value="1" min="1" style="width: 80px;" required>
+                <input type="text" class="form-input med-notes" placeholder="Instructions" style="flex: 1;">
+                <button type="button" class="btn secondary btn-remove" style="width: auto; padding: 12px;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            container.appendChild(newItem);
+        }
+
+        async function handleShoppingSubmit(e) {
+            e.preventDefault();
+
+            if (!appState.selectedPaymentMethod) {
+                showNotification('error', 'Veuillez choisir une méthode de paiement');
+                return;
+            }
+
+            try {
+                showLoading('Send traite votre commande courses...');
+
+                // Récupération des articles
+                const shoppingItems = [];
+                document.querySelectorAll('.shopping-item').forEach(item => {
+                    const name = item.querySelector('.item-name').value.trim();
+                    const quantity = parseInt(item.querySelector('.item-quantity').value);
+                    const notes = item.querySelector('.item-notes').value.trim();
+
+                    if (name) {
+                        shoppingItems.push({
+                            nom: name,
+                            quantite: isNaN(quantity) ? 1 : quantity,
+                            instruction: notes
+                        });
+                    }
+                });
+
+                if (shoppingItems.length === 0) {
+                    throw new Error('Veuillez ajouter au moins un article');
+                }
+
+                const orderData = {
+                    serviceType: 'shopping',
+                    shoppingList: shoppingItems,
+                    budgetMin: document.getElementById('budgetMin').value.trim() || null,
+                    budgetMax: document.getElementById('budgetMax').value.trim() || null,
+                    specialInstructions: document.getElementById('specialInstructions').value.trim(),
+                    phone1: document.getElementById('shoppingPhone').value.trim(),
+                    deliveryFee: 1000,
+                    clientPosition: appState.location,
+                    orderDate: new Date().toISOString(),
+                    status: 'pending',
+                    payment_method: appState.selectedPaymentMethod,
+                    payment_status: appState.selectedPaymentMethod === 'online' ? 'paid' : 'pending'
+                };
+
+                // Paiement en ligne si sélectionné
+                if (appState.selectedPaymentMethod === 'online') {
+                    try {
+                        const paymentResult = await initiatePayment(1000, 'Commande SEND2.0 - Courses', {
+                            customer_name: 'Client SEND2.0',
+                            customer_phone: orderData.phone1
+                        });
+
+                        orderData.payment_reference = paymentResult.payment_token;
+                    } catch (paymentError) {
+                        throw new Error('Paiement échoué : ' + paymentError.message);
+                    }
+                } else {
+                    orderData.payment_reference = `DELIVERY_${Date.now()}`;
+                }
+
+                const response = await fetch(CONFIG.apiEndpoints.shopping, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur serveur');
+                }
+
+                // Succès
+                appState.sendMascot.celebrate();
+                showNotification('success', 'Commande courses envoyée !');
+
+                // Réinitialiser le formulaire
+                document.getElementById('shoppingForm').reset();
+                appState.selectedPaymentMethod = null;
+                document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('selected'));
+
+                // Réinitialiser les articles (ne garder que le premier)
+                const container = document.getElementById('shoppingItemsContainer');
+                const itemElements = container.querySelectorAll('.shopping-item');
+                for (let i = 1; i < itemElements.length; i++) {
+                    itemElements[i].remove();
+                }
+
+            } catch (error) {
+                console.error('Erreur commande courses:', error);
+                showNotification('error', error.message || 'Erreur lors de la commande');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handlePharmacySubmit(e) {
+            e.preventDefault();
+            
+            if (!appState.selectedPaymentMethod) {
+                showNotification('error', 'Veuillez choisir une méthode de paiement');
+                return;
+            }
+            
+            try {
+                showLoading('Send traite votre commande pharmacie...');
+                
+                const medicaments = [];
+                document.querySelectorAll('.medicament-item').forEach(item => {
+                    const name = item.querySelector('.med-name').value.trim();
+                    const quantity = parseInt(item.querySelector('.med-quantity').value);
+                    const notes = item.querySelector('.med-notes').value.trim();
+                    
+                    if (name) {
+                        medicaments.push({ name, quantity, notes });
+                    }
+                });
+                
+                if (medicaments.length === 0) {
+                    throw new Error('Veuillez ajouter au moins un médicament');
+                }
+                
+                let ordonnanceBase64 = null;
+                const ordonnanceInput = document.getElementById('ordonnancePhoto');
+                if (ordonnanceInput.files.length > 0) {
+                    ordonnanceBase64 = await fileToBase64(ordonnanceInput.files[0]);
+                }
+                
+                const orderData = {
+                    serviceType: 'pharmacy',
+                    medicaments,
+                    phoneNumber: document.getElementById('pharmacyPhone').value.trim(),
+                    notes: document.getElementById('pharmacyNotes').value.trim(),
+                    clientPosition: appState.location,
+                    orderDate: new Date().toISOString(),
+                    status: 'pending',
+                    deliveryFee: 1000,
+                    payment_method: appState.selectedPaymentMethod,
+                    payment_status: appState.selectedPaymentMethod === 'online' ? 'paid' : 'pending',
+                    ordonnance: ordonnanceBase64 ? {
+                        data: ordonnanceBase64,
+                        name: ordonnanceInput.files[0]?.name || 'ordonnance.jpg',
+                        type: ordonnanceInput.files[0]?.type || 'image/jpeg'
+                    } : null
+                };
+                
+                if (appState.selectedPaymentMethod === 'online') {
+                    try {
+                        const paymentResult = await initiatePayment(1000, 'Commande SEND2.0 - Pharmacie', {
+                            customer_name: 'Client SEND2.0',
+                            customer_phone: orderData.phoneNumber
+                        });
+                        
+                        orderData.payment_reference = paymentResult.payment_token;
+                    } catch (paymentError) {
+                        throw new Error('Paiement échoué: ' + paymentError.message);
+                    }
+                } else {
+                    orderData.payment_reference = `DELIVERY_${Date.now()}`;
+                }
+                
+                const response = await fetch(CONFIG.apiEndpoints.pharmacy, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur serveur');
+                }
+                
+                appState.sendMascot.celebrate();
+                showNotification('success', 'Commande pharmacie envoyée !');
+                
+                // Réinitialiser le formulaire
+                document.getElementById('pharmacyForm').reset();
+                appState.selectedPaymentMethod = null;
+                document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('selected'));
+                
+                // Réinitialiser les médicaments (garder seulement le premier)
+                const container = document.getElementById('medicamentItemsContainer');
+                const items = container.querySelectorAll('.medicament-item');
+                for (let i = 1; i < items.length; i++) {
+                    items[i].remove();
+                }
+                
+            } catch (error) {
+                console.error('Erreur commande pharmacie:', error);
+                showNotification('error', error.message || 'Erreur lors de la commande');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // PAIEMENT CINETPAY
+        async function initiatePayment(amount, description, metadata = {}) {
+            return new Promise((resolve, reject) => {
+                try {
+                    CinetPay.setConfig({
+                        apikey: CONFIG.cinetpay.apikey,
+                        site_id: CONFIG.cinetpay.site_id,
+                        notify_url: CONFIG.cinetpay.notify_url,
+                        mode: CONFIG.cinetpay.mode
+                    });
+                    
+                    const transaction_id = `SEND_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+                    
+                    CinetPay.getCheckout({
+                        transaction_id: transaction_id,
+                        amount: amount,
+                        currency: 'XOF',
+                        channels: 'MOBILE_MONEY',
+                        description: description,
+                        customer_name: metadata.customer_name || '',
+                        customer_surname: '',
+                        customer_phone_number: metadata.customer_phone || '',
+                        customer_email: '',
+                        customer_address: metadata.customer_address || '',
+                        customer_city: 'Ouagadougou',
+                        customer_country: 'BF',
+                        customer_state: 'BF',
+                        customer_zip_code: ''
+                    });
+                    
+                    CinetPay.waitResponse(function(data) {
+                        if (data.status === "ACCEPTED") {
+                            resolve(data);
+                        } else {
+                            reject(new Error(data.description || 'Paiement échoué'));
+                        }
+                    });
+                    
+                    CinetPay.onError(function(data) {
+                        reject(new Error(data.description || 'Erreur de paiement'));
+                    });
+                    
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+// RECHERCHE DE PLATS AVEC ANIMATION DE CHARGEMENT
+function searchFood() {
+    const searchInput = document.getElementById('platSearch');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    const spinner = document.getElementById('loadingSpinner');
+    const resultsContainer = document.getElementById('searchResults');
+    const searchBtn = document.getElementById('searchBtn');
+
+    if (!searchTerm) {
+        showNotification('info', 'Veuillez entrer un terme de recherche');
+        return;
+    }
+
+    // Affiche l'animation de chargement
+    spinner.style.display = 'block';
+    resultsContainer.style.display = 'none';
+    searchBtn.disabled = true;
+
+    // Simulation d'un délai (remplace par ton fetch ou appel réel)
+    setTimeout(() => {
+        performSearch(searchTerm);
+
+        // Cache l'animation de chargement et réactive le bouton
+        spinner.style.display = 'none';
+        searchBtn.disabled = false;
+    }, 1000); // Ajuste le délai selon ton besoin
+}
+
+        // UTILITAIRES
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Rayon de la Terre en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function calculateDeliveryFee(restaurant, clientLocation) {
+            if (!restaurant?.location || !clientLocation) return CONFIG.deliveryFee.base;
+            
+            const distance = calculateDistance(
+                restaurant.location.latitude,
+                restaurant.location.longitude,
+                clientLocation.latitude,
+                clientLocation.longitude
+            );
+            
+            if (distance <= 5) return CONFIG.deliveryFee.base;
+            
+            const additionalKm = Math.ceil(distance - 5);
+            return CONFIG.deliveryFee.base + (additionalKm * CONFIG.deliveryFee.perKmExtra);
+        }
+
+        function showImageModal(title, imageSrc, description, price) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('modalImageTitle').textContent = title;
+            document.getElementById('modalImageDescription').textContent = description;
+            document.getElementById('modalImagePrice').textContent = price;
+            document.getElementById('imageModal').classList.add('visible');
+        }
+
+        function setButtonLoading(button, loading, text = null) {
+            if (loading) {
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text || 'Chargement...'}`;
+                button.disabled = true;
+            } else {
+                button.disabled = false;
+                // Restaurer le texte original
+                if (button.id === 'getLocationBtn') {
+                    button.innerHTML = '<i class="fas fa-location-arrow"></i> Activer la Géolocalisation Send';
+                }
+            }
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showNotification(type, message) {
+            const system = document.getElementById('notificationSystem');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            notification.innerHTML = `
+                <div class="notification-icon ${type}">
+                    <i class="${iconMap[type]}"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            system.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+            });
+        }
+
+        // Fonctions globales
+        window.startSendTour = () => appState.sendMascot.startGuidedTour();
+        window.hideSendDialogue = () => appState.sendMascot.hideDialogue();
+        window.updateQuantity = updateQuantity;
+        window.addToCart = addToCart;
+        window.updateCartItemQuantity = updateCartItemQuantity;
+        window.showImageModal = showImageModal;
+
+        console.log('🚀🤖 SEND2.0 Services avec Assistant Send Multi-Services chargé avec succès');
+    </script>
+</body>
+</html>

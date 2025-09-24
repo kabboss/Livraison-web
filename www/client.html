@@ -1,0 +1,4165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="SEND 2.0 - Réception et suivi de colis avec Send, votre assistant intelligent">
+    <meta name="theme-color" content="#667eea">
+    <title>SEND 2.0 | Client avec Send</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CinetPay SDK -->
+    <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
+
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #4c63d2;
+            --primary-light: #818cf8;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+            --send-primary: #667eea;
+            --send-secondary: #10B981;
+            --send-accent: #F59E0B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 25%, #2D1B69 50%, #1E1548 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundFlow 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundFlow {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0.8; transform: translateY(-10px); }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* SYSTÈME MASCOTTE SEND DYNAMIQUE */
+        .send-container {
+            position: fixed;
+            z-index: 1000;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+            width: 110px;
+            height: 130px;
+        }
+
+        .send-container.moving {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .send-mascot {
+            width: 110px;
+            height: 130px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            pointer-events: all;
+            transform-origin: center;
+            animation: floatBounce 6s ease-in-out infinite;
+        }
+
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(2deg); }
+            75% { transform: translateY(-4px) rotate(-2deg); }
+        }
+
+        .send-mascot:hover {
+            transform: scale(1.05);
+        }
+
+        .send-mascot.bouncing {
+            animation: sendBounce 0.6s ease-in-out;
+        }
+
+        .send-mascot.excited {
+            animation: sendExcited 1s ease-in-out infinite;
+        }
+
+        .send-mascot.analyzing {
+            animation: sendAnalyze 2s ease-in-out infinite;
+        }
+
+        .send-mascot.celebrating {
+            animation: sendCelebrate 2s ease-in-out;
+        }
+
+        .send-mascot.thinking {
+            animation: sendThink 1.5s ease-in-out infinite;
+        }
+
+        .send-mascot.guiding {
+            animation: sendGuide 2s ease-in-out infinite;
+        }
+
+        @keyframes sendBounce {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1) rotate(-3deg); }
+            50% { transform: scale(1.08) rotate(3deg); }
+            75% { transform: scale(1.12) rotate(-1deg); }
+        }
+
+        @keyframes sendExcited {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.08) rotate(2deg); }
+            75% { transform: scale(1.08) rotate(-2deg); }
+        }
+
+        @keyframes sendAnalyze {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes sendCelebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(8deg); }
+            50% { transform: scale(1.15) rotate(-8deg); }
+            75% { transform: scale(1.2) rotate(4deg); }
+        }
+
+        @keyframes sendThink {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.03) rotate(2deg); }
+        }
+
+        @keyframes sendGuide {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .send-body {
+            width: 85px;
+            height: 110px;
+            background: linear-gradient(135deg, var(--send-primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50px 50px 25px 25px;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            animation: sendFloat 4s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        @keyframes sendFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-4px) rotate(1deg); }
+            50% { transform: translateY(-8px) rotate(0deg); }
+            75% { transform: translateY(-4px) rotate(-1deg); }
+        }
+
+        .send-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+            background-size: 200% 200%;
+            animation: sendBodyShimmer 6s linear infinite;
+        }
+
+        @keyframes sendBodyShimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .send-face {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 32px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .send-eyes {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .send-eye {
+            width: 14px;
+            height: 14px;
+            background: var(--gray-800);
+            border-radius: 50%;
+            position: relative;
+            animation: sendBlink 4s infinite;
+            transition: var(--transition);
+        }
+
+        .send-mascot.searching .send-eye {
+            animation: sendScan 2s linear infinite;
+        }
+
+        .send-mascot.focusing .send-eye {
+            animation: sendFocus 1.5s ease-in-out infinite;
+        }
+
+        .send-mascot.processing .send-eye {
+            animation: sendProcess 1s ease-in-out infinite;
+        }
+
+        @keyframes sendBlink {
+            0%, 94% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+            97% { transform: scaleY(0.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        @keyframes sendScan {
+            0%, 100% { transform: translateX(0) scaleY(1); }
+            25% { transform: translateX(-3px) scaleY(1.3); }
+            75% { transform: translateX(3px) scaleY(1.3); }
+        }
+
+        @keyframes sendFocus {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        @keyframes sendProcess {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
+        }
+
+        .send-eye::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .send-mouth {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            top: 34px;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 10px;
+            border: 3px solid var(--gray-700);
+            border-top: none;
+            border-radius: 0 0 18px 18px;
+            transition: var(--transition);
+        }
+
+        .send-mascot.talking .send-mouth {
+            animation: sendTalk 0.3s ease-in-out infinite alternate;
+        }
+
+        .send-mascot.happy .send-mouth {
+            border-radius: 18px 18px 0 0;
+            border-bottom: none;
+            border-top: 3px solid var(--gray-700);
+        }
+
+        .send-mascot.concerned .send-mouth {
+            width: 14px;
+            height: 8px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+            border-top: 2px solid var(--gray-700);
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        @keyframes sendTalk {
+            0% { transform: translateX(-50%) scaleY(0.6); }
+            100% { transform: translateX(-50%) scaleY(1.3); }
+        }
+
+
+        @keyframes sendArmWave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(18deg); }
+            75% { transform: rotate(-18deg); }
+        }
+
+        @keyframes sendDirect {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(50deg); }
+        }
+
+        @keyframes sendWelcome {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(45deg); }
+        }
+
+        @keyframes sendPoint {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(60deg); }
+        }
+
+        .send-antenna {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 25px;
+            background: var(--send-accent);
+            border-radius: 3px;
+        }
+
+        .send-antenna::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--send-accent);
+            border-radius: 50%;
+            animation: sendAntennaGlow 2s ease-in-out infinite alternate;
+        }
+
+        .send-mascot.searching .send-antenna::after {
+            animation: sendSearch 1s linear infinite;
+        }
+
+        .send-mascot.processing .send-antenna::after {
+            animation: sendProcessing 1s linear infinite;
+        }
+
+        .send-mascot.payment .send-antenna::after {
+            animation: sendPayment 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sendAntennaGlow {
+            0% { box-shadow: 0 0 8px var(--send-accent); }
+            100% { box-shadow: 0 0 20px var(--send-accent), 0 0 30px rgba(245, 158, 11, 0.6); }
+        }
+
+        @keyframes sendSearch {
+            0% { 
+                box-shadow: 0 0 12px var(--primary); 
+                background: var(--primary);
+            }
+            33% { 
+                box-shadow: 0 0 15px var(--secondary); 
+                background: var(--secondary);
+            }
+            66% { 
+                box-shadow: 0 0 12px var(--info); 
+                background: var(--info);
+            }
+            100% { 
+                box-shadow: 0 0 12px var(--primary); 
+                background: var(--primary);
+            }
+        }
+
+        @keyframes sendProcessing {
+            0% { 
+                box-shadow: 0 0 12px var(--primary); 
+                background: var(--primary);
+            }
+            50% { 
+                box-shadow: 0 0 20px var(--secondary); 
+                background: var(--secondary);
+            }
+            100% { 
+                box-shadow: 0 0 12px var(--primary); 
+                background: var(--primary);
+            }
+        }
+
+        @keyframes sendPayment {
+            0%, 100% { 
+                box-shadow: 0 0 10px var(--accent); 
+                background: var(--accent);
+                transform: translateX(-50%) scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 25px var(--accent), 0 0 35px rgba(245, 158, 11, 0.8); 
+                background: var(--warning);
+                transform: translateX(-50%) scale(1.2);
+            }
+        }
+
+        .send-name-badge {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--send-accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            animation: sendBadgePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes sendBadgePulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* SYSTÈME DE DIALOGUE DYNAMIQUE */
+        .send-dialogue {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
+            min-width: 280px;
+            max-width: 380px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px) scale(0.8);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1001;
+        }
+
+        .send-dialogue.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0) scale(1);
+        }
+
+        .send-dialogue.urgent {
+            border-color: var(--warning);
+            animation: sendUrgentDialogue 2s ease-in-out infinite;
+        }
+
+        .send-dialogue.tip {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 0.98) 100%);
+        }
+
+        .send-dialogue.success {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(255, 255, 255, 0.98) 100%);
+        }
+
+        @keyframes sendUrgentDialogue {
+            0%, 100% { box-shadow: var(--shadow-xl); }
+            50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.5); }
+        }
+
+        .send-dialogue::after {
+            content: '';
+            position: absolute;
+            right: -11px;
+            top: 35px;
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.98);
+            border-right: 2px solid rgba(102, 126, 234, 0.25);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.25);
+            transform: rotate(-45deg);
+            backdrop-filter: blur(20px);
+        }
+
+        .send-dialogue-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .send-dialogue-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--success);
+        }
+
+        .send-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: sendStatusPulse 2s infinite;
+        }
+
+        @keyframes sendStatusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.9); }
+        }
+
+        .send-dialogue-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--gray-700);
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .send-dialogue-tip {
+            background: rgba(102, 126, 234, 0.12);
+            border-left: 3px solid var(--primary);
+            padding: 10px 14px;
+            margin: 10px 0;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .send-dialogue-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .send-dialogue-btn {
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-dialogue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-dialogue-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .send-dialogue-btn:hover::before {
+            left: 100%;
+        }
+
+        .send-dialogue-btn.secondary {
+            background: var(--gray-400);
+        }
+
+        .send-dialogue-btn.success {
+            background: var(--success);
+        }
+
+        .send-dialogue-btn.warning {
+            background: var(--warning);
+        }
+
+        .send-dialogue-btn.danger {
+            background: var(--danger);
+        }
+
+        /* INDICATEURS D'INTERACTION */
+        .send-indicator {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 28px;
+            height: 28px;
+            background: var(--danger);
+            border-radius: 50%;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: sendIndicatorPulse 2s infinite;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .send-indicator.visible {
+            opacity: 1;
+        }
+
+        .send-indicator.searching {
+            background: var(--info);
+            animation: sendIndicatorScan 2s linear infinite;
+        }
+
+        .send-indicator.success {
+            background: var(--success);
+            animation: sendIndicatorSuccess 1s ease-out;
+        }
+
+        .send-indicator.warning {
+            background: var(--warning);
+        }
+
+        .send-indicator.processing {
+            background: var(--primary);
+            animation: sendIndicatorProcess 1.5s ease-in-out infinite;
+        }
+
+        .send-indicator.payment {
+            background: var(--accent);
+            animation: sendIndicatorPayment 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sendIndicatorPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes sendIndicatorScan {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        @keyframes sendIndicatorSuccess {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes sendIndicatorProcess {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes sendIndicatorPayment {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* HEADER AVEC ANIMATION DE LIVRAISON */
+        .header {
+            position: relative;
+            background:#0f1123;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            margin-bottom: 32px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            font-size: 46px;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 10px 0 0;
+            z-index: 10;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            font-style: italic;
+            opacity: 0.9;
+            z-index: 10;
+            position: relative;
+        }
+
+        .delivery-scene {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+        }
+
+        .delivery-man, .client, .box {
+            position: absolute;
+            font-size: 40px;
+            opacity: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .delivery-man {
+            left: -60px;
+            bottom: 10px;
+            animation: drive 6s linear infinite;
+            color: #ffcc00;
+        }
+
+        .box {
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: showBox 6s infinite ease-in-out;
+            color: #e0e0e0;
+        }
+
+        .client {
+            right: 40px;
+            bottom: 10px;
+            animation: clientWave 6s infinite ease-in-out;
+            color: #00ffcc;
+        }
+
+        @keyframes drive {
+            0% { left: -60px; }
+            40% { left: 45%; }
+            60% { left: 45%; }
+            100% { left: 120%; }
+        }
+
+        @keyframes showBox {
+            0%, 30% { opacity: 0; }
+            40%, 60% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes clientWave {
+            0%, 40% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            60% { transform: translateY(0); }
+            100% { transform: translateY(0); }
+        }
+
+        /* CARTE DE RECHERCHE ET PACKAGE */
+        .search-card, .package-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: cardSlideIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .search-card:hover, .package-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .search-card::before, .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+            background-size: 300% 100%;
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .search-icon {
+            font-size: 3.5rem;
+            margin: 0 auto 16px;
+            color: var(--primary);
+            display: block;
+            text-align: center;
+            animation: searchPulse 2.5s infinite;
+        }
+
+        @keyframes searchPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .search-title {
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--gray-800);
+            text-align: center;
+        }
+
+        .search-description {
+            font-size: clamp(0.9rem, 4vw, 1.05rem);
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* STATUT DE GÉOLOCALISATION */
+        .location-status-container {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(129, 140, 248, 0.04) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .location-status-container.show {
+            display: block;
+            animation: locationSlideIn 0.6s ease-out;
+        }
+
+        @keyframes locationSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .location-status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .location-status-icon.searching {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            animation: spin 2s linear infinite;
+        }
+
+        .location-status-icon.found {
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+            animation: bounce 0.8s ease-out;
+        }
+
+        .location-status-icon.error {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            animation: shake 0.6s ease-in-out;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .location-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .location-status-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .location-status-desc {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .location-accuracy {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* FORMULAIRE AVANCÉ */
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input {
+            padding: 16px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+            font-family: inherit;
+            color: var(--gray-800);
+            min-height: 56px;
+            position: relative;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-input.success {
+            border-color: var(--success);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+
+        .input-feedback {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .input-feedback.visible {
+            opacity: 1;
+        }
+
+        .input-feedback.success { color: var(--success); }
+        .input-feedback.error { color: var(--danger); }
+
+        .code-input {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* BOUTONS INTELLIGENTS */
+        .btn {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 56px;
+            font-family: inherit;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        }
+
+        .btn.orange {
+            background: linear-gradient(135deg, #FF6B2B 0%, #FF8E53 100%);
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        /* INFORMATIONS PACKAGE AVANCÉES */
+        .package-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 28px;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+            background-size: 200% 200%;
+            animation: headerShimmer 4s linear infinite;
+        }
+
+        @keyframes headerShimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .package-code {
+            font-size: clamp(1.6rem, 6vw, 2rem);
+            font-weight: 900;
+            font-family: var(--font-mono);
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-status {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: inline-block;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-date {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* SECTIONS D'INFORMATIONS */
+        .info-section {
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: sectionSlideIn 0.6s ease-out forwards;
+        }
+
+        .info-section:nth-child(2) { animation-delay: 0.1s; }
+        .info-section:nth-child(3) { animation-delay: 0.2s; }
+        .info-section:nth-child(4) { animation-delay: 0.3s; }
+        .info-section:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-100);
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 48px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 1px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 18px;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(2px);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--gray-800);
+            font-size: 1rem;
+            word-break: break-word;
+        }
+
+        /* AFFICHAGE DU PRIX AVANCÉ */
+        .price-display {
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: priceSlideIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes priceSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .price-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+            background-size: 200% 200%;
+            animation: priceShimmer 6s linear infinite;
+        }
+
+        @keyframes priceShimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .price-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-amount {
+            font-size: clamp(1.8rem, 8vw, 2.2rem);
+            font-weight: 800;
+            margin: 12px 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-details {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-note {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 12px;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* SECTION PAIEMENT INTELLIGENTE */
+        .payment-section {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .payment-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+            background-size: 200% 100%;
+            animation: paymentGlow 3s linear infinite;
+        }
+
+        @keyframes paymentGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .payment-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gray-800);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .payment-description {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .payment-option {
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .payment-option.selected {
+            transform: translateY(-2px);
+        }
+
+        .payment-method-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--success);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+            z-index: 1;
+            animation: badgeAppear 0.5s ease-out;
+        }
+
+        @keyframes badgeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* GALERIE PHOTO INTELLIGENTE */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--gray-200);
+            background: var(--gray-100);
+            position: relative;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .photo-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .photo-item:hover::after {
+            opacity: 1;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-photos {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+        }
+
+        /* BOUTONS D'ACTION */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .action-message {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(251,191,36,0.1) 0%, transparent 50%, rgba(251,191,36,0.1) 100%);
+            background-size: 200% 200%;
+            animation: messageShimmer 4s linear infinite;
+        }
+
+        @keyframes messageShimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .action-message-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-message-text {
+            color: #92400E;
+            font-weight: 500;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* MODALES AVANCÉES */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(32px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            padding: 32px 28px;
+            max-width: calc(100vw - 40px);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transform: scale(0.9) translateY(40px);
+            transition: var(--transition);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .modal.visible .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .confirm-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: iconBounceIn 0.8s ease-out;
+        }
+
+        .confirm-icon.accept { color: var(--success); }
+        .confirm-icon.decline { color: var(--danger); }
+
+        @keyframes iconBounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .confirm-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--gray-800);
+        }
+
+        .confirm-message {
+            color: var(--gray-600);
+            margin-bottom: 28px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 16px;
+            flex-direction: column;
+        }
+
+        /* TOASTS INTELLIGENTS */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-xl);
+            border-left: 4px solid var(--primary);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            max-width: 480px;
+            animation: toastSlideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        .toast-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .toast-icon.success { color: var(--success); }
+        .toast-icon.error { color: var(--danger); }
+        .toast-icon.warning { color: var(--warning); }
+        .toast-icon.info { color: var(--info); }
+
+        .toast-message {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.9rem;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* OVERLAY DE CHARGEMENT INTELLIGENT */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(102, 126, 234, 0.95);
+            backdrop-filter: blur(32px);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-out;
+            padding: 24px;
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-spinner-large {
+            width: 64px;
+            height: 64px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+        }
+
+        .loading-message {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .loading-submessage {
+            font-size: 1rem;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* CONSEILS INTELLIGENTS */
+        .smart-tip {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transform: translateX(-10px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .smart-tip.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .smart-tip-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .smart-tip-content {
+            flex: 1;
+        }
+
+        .smart-tip-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .smart-tip-text {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                gap: 20px;
+            }
+            
+            .send-container {
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                top: auto;
+                left: auto;
+                transform: none;
+            }
+            
+            .send-dialogue {
+                right: 20px;
+                left: 20px;
+                bottom: 120px;
+                top: auto;
+                max-width: calc(100vw - 40px);
+            }
+            
+            .send-dialogue::after {
+                right: auto;
+                left: 30px;
+                top: 100%;
+                bottom: auto;
+                transform: rotate(45deg);
+            }
+
+            .search-card, .package-card {
+                padding: 24px;
+            }
+
+            .btn {
+                padding: 14px 18px;
+                min-height: 52px;
+                font-size: 0.95rem;
+            }
+
+            .form-input {
+                padding: 14px 16px;
+                min-height: 52px;
+            }
+
+            .photo-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .modal-content {
+                padding: 28px 24px;
+                margin: 16px;
+            }
+
+            .location-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+                gap: 16px;
+            }
+            
+            .send-mascot {
+                width: 90px;
+                height: 110px;
+            }
+            
+            .send-body {
+                width: 70px;
+                height: 100px;
+            }
+
+            .search-card, .package-card {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                min-height: 48px;
+                font-size: 0.9rem;
+            }
+
+            .form-input {
+                padding: 12px 14px;
+                min-height: 48px;
+            }
+
+            .modal-content {
+                padding: 24px 20px;
+                margin: 12px;
+            }
+
+            .send-dialogue {
+                max-width: 320px;
+                min-width: 250px;
+            }
+        }
+
+
+        @keyframes mascot-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.send-mascot.idle {
+  animation: mascot-breath 4s ease-in-out infinite;
+}
+
+
+
+@keyframes wakeup {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.send-mascot.wakeup {
+  animation: wakeup 0.6s ease-in-out 1;
+}
+
+
+
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+<!-- Menu Hamburger -->
+<div class="menu-btn" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND Logo" class="menu-logo">
+        <span class="menu-title">SEND 2.0</span>
+        <i class="fas fa-times menu-close" id="menuClose"></i>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item"><a href="index.html" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="menu-item"><a href="client.html" class="menu-link"><i class="fas fa-shopping-bag"></i> Recevoir</a></li>
+        <li class="menu-item"><a href="expediteur.html" class="menu-link"><i class="fas fa-paper-plane"></i> Expédier</a></li>
+        <li class="menu-item"><a href="suivi.html" class="menu-link"><i class="fas fa-search-location"></i> Suivi de colis</a></li>
+        <li class="menu-item"><a href="inscription_restau.html" class="menu-link"><i class="fas fa-utensils"></i> Partenariat Restaurant</a></li>
+        <li class="menu-item"><a href="services.html" class="menu-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li class="menu-item"><a href="inscription.html" class="menu-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+        <li class="menu-item"><a href="Connection.html" class="menu-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+        <li class="menu-item"><a href="assistance.html" class="menu-link"><i class="fas fa-headset"></i> Assistance</a></li>
+    </ul>
+
+    <div class="menu-footer">
+        SEND 2.0 &copy; 2025<br>
+        Tous droits réservés
+    </div>
+</div>
+
+<style>
+    /* ====== Menu Hamburger ====== */
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1rem;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-drawer.active {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.menu-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #0066FF;
+}
+
+.menu-close {
+    margin-left: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #1f2937;
+    background: none;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-close:hover {
+    transform: rotate(90deg);
+}
+
+.menu-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    z-index: -1;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.menu-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu-link:hover::before {
+    width: 100%;
+}
+
+.menu-link i {
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2);
+}
+
+.menu-link.active {
+    color: white;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: center;
+}
+</style>
+
+
+<script>
+    // ====== Gestion du Menu Hamburger ======
+const menuBtn = document.getElementById('menuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuDrawer = document.getElementById('menuDrawer');
+const menuClose = document.getElementById('menuClose');
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+    menuOverlay.classList.add('active');
+    menuDrawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+    menuOverlay.classList.remove('active');
+    menuDrawer.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Événements
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Mettre en surbrillance l'élément du menu actif
+document.querySelectorAll('.menu-link').forEach(link => {
+    if(link.href === window.location.href) {
+        link.classList.add('active');
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+    <div class="container">
+        <!-- MASCOTTE SEND DYNAMIQUE -->
+        <div class="send-container" id="sendContainer">
+            <div class="send-mascot" id="sendClientMascot">
+                <div class="send-body">
+                    <div class="send-face">
+                        <div class="send-eyes">
+                            <div class="send-eye"></div>
+                            <div class="send-eye"></div>
+                        </div>
+                        <div class="send-mouth"></div>
+                    </div>
+                    <div class="send-antenna"></div>
+                </div>
+                <div class="send-name-badge">Send</div>
+                <div class="send-indicator" id="sendIndicator">🔍</div>
+            </div>
+
+            <div class="send-dialogue" id="sendDialogue">
+                
+                <div class="send-dialogue-content" id="sendDialogueContent">
+                    Salut ! Moi c'est Send Je vais vous aider à retrouver et recevoir votre colis étape par étape ! Prêt ?
+                </div>
+                <div class="send-dialogue-actions" id="sendDialogueActions">
+                    <button class="send-dialogue-btn" onclick="startSendGuide()">
+                        <i class="fas fa-search"></i> Rechercher mon colis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header avec animation -->
+        <header class="header">
+            <div class="logo" style="font-size: 50px;">
+                <i class="fas fa-search"></i>
+            </div>
+            <h1 class="title">SEND 2.0</h1>
+            <p class="subtitle">Suivi et Réception avec Send</p>
+
+            <!-- Animation : livraison -->
+            <div class="delivery-scene">
+                <div class="delivery-man"><i class="fas fa-motorcycle"></i></div>
+                <div class="box"><i class="fas fa-box"></i></div>
+                <div class="client"><i class="fas fa-user"></i></div>
+            </div>
+        </header>
+
+        <!-- Section de recherche intelligente -->
+        <div id="searchSection" class="search-card">
+            <i class="search-icon fas fa-search"></i>
+            <h2 class="search-title">Recherche avec Send</h2>
+            <p class="search-description">
+                Saisissez vos informations et Send trouvera instantanément votre colis avec une précision maximale.
+            </p>
+            
+            <!-- Statut de géolocalisation intelligente -->
+            <div id="locationStatusContainer" class="location-status-container">
+                <div class="location-header">
+                    <div id="locationStatusIcon" class="location-status-icon searching">
+                        <i class="fas fa-satellite-dish"></i>
+                    </div>
+                    <div class="location-text">
+                        <div id="locationStatusTitle" class="location-status-title">Send analyse votre position</div>
+                        <div id="locationStatusDesc" class="location-status-desc">Calcul du prix de livraison en cours...</div>
+                    </div>
+                    <div id="accuracyText" class="location-accuracy">--</div>
+                </div>
+            </div>
+            
+            <div class="smart-tip visible">
+                <div class="smart-tip-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="smart-tip-content">
+                    <div class="smart-tip-title">Sécurité Send</div>
+                    <div class="smart-tip-text">Toutes vos informations sont vérifiées et protégées par Send.</div>
+                </div>
+            </div>
+            
+            <form id="searchForm" class="search-form">
+                <div class="form-group">
+                    <label class="form-label" for="recipientName">
+                        <i class="fas fa-user"></i>
+                        Votre nom complet
+                    </label>
+                    <input type="text" id="recipientName" class="form-input" placeholder="Nom et prénom exactement comme sur le colis" required autocomplete="name">
+                    <div class="input-feedback" id="nameValidation"></div>
+                </div>
+                
+<div class="form-group">
+    <label class="form-label" for="recipientPhone">
+        <i class="fas fa-phone"></i>
+        Votre numéro de téléphone
+    </label>
+    <input type="tel" id="recipientPhone" class="form-input" placeholder="+226 XX XX XX XX" value="+226 " required autocomplete="tel">
+    <div class="input-feedback" id="phoneValidation"></div>
+</div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="trackingCode">
+                        <i class="fas fa-barcode"></i>
+                        Code de suivi Send
+                    </label>
+                    <input type="text" id="trackingCode" class="form-input code-input" placeholder="XXXXXXXX" maxlength="20" required autocomplete="off">
+                    <div class="input-feedback" id="codeValidation"></div>
+                </div>
+                
+                <button type="submit" id="searchBtn" class="btn">
+                    <i class="fas fa-search"></i>
+                    Recherche Send
+                </button>
+            </form>
+        </div>
+
+        <!-- Section d'informations du colis -->
+        <div id="packageSection" class="package-card hidden">
+            <div id="packageInfo">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation avancée -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <i id="confirmIcon" class="confirm-icon"></i>
+            <h3 id="confirmTitle" class="confirm-title"></h3>
+            <p id="confirmMessage" class="confirm-message"></p>
+            <div class="confirm-buttons">
+                <button id="confirmYes" class="btn"></button>
+                <button id="confirmNo" class="btn" style="background: linear-gradient(135deg, var(--gray-500) 0%, var(--gray-600) 100%);">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement intelligent -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner-large"></div>
+        <div id="loadingMessage" class="loading-message">Send traite votre demande</div>
+        <div id="loadingSubmessage" class="loading-submessage">En cours...</div>
+    </div>
+
+    <script>
+        // Configuration avancée pour client Send
+        const CONFIG = {
+            apiEndpoint: 'https://send20.netlify.app/.netlify/functions/client-handler',
+            location: {
+                timeout: 30000,
+                maximumAge: 60000,
+                enableHighAccuracy: true
+            },
+            cinetpay: {
+                apikey: '463682317687456a8df3143.47147531',
+                site_id: '105901861',
+                mode: 'PRODUCTION'
+            },
+            packageTypes: {
+                petit: { basePrice: 700, additionalPrice: 100 },
+                moyen: { basePrice: 1000, additionalPrice: 120 },
+                gros: { basePrice: 2000, additionalPrice: 250 },
+                fragile: { basePrice: 1500, additionalPrice: 200 }
+            },
+            sendClient: {
+                messages: {
+                    welcome: [
+                        "👋 Salut ! Moi c'est Send ! Je vais vous aider à recevoir votre colis !",
+                        "🚀 Bonjour ! Send à votre service pour une réception parfaite !",
+                        "✨ Hey ! Je suis Send, prêt à localiser votre colis ensemble !"
+                    ],
+                    nameField: [
+                        "👤 Parfait ! Tapez votre nom EXACTEMENT comme sur le colis !",
+                        "📝 Super ! Nom et prénom complets pour que je vous identifie !",
+                        "✍️ Excellent ! Orthographe précise pour éviter toute erreur !"
+                    ],
+                    phoneField: [
+                        "📱 Génial ! Votre numéro au format +226 XX XX XX XX !",
+                        "📞 Super nom ! Maintenant votre téléphone en format international !",
+                        "🔢 Parfait ! Ce numéro me permettra de vous contacter !"
+                    ],
+                    codeField: [
+                        "📦 Excellent ! Le code de suivi qu'on vous a donné !",
+                        "🔍 Parfait ! Code de 8 caractères reçu par SMS ou WhatsApp !",
+                        "🎯 Super ! Ce code unique identifie votre colis !"
+                    ],
+                    searching: [
+                        "🔍 Excellente saisie ! Send scanne toute sa base de données !",
+                        "⚡ Super ! Je cherche votre colis !",
+                        "🚀 Parfait ! Send analyse millions de colis pour vous !"
+                    ],
+                    found: [
+                        "🎉 TROUVÉ ! Send a localisé votre colis avec succès !",
+                        "✨ BRAVO ! Votre colis est dans le système Send !",
+                        "🏆 PARFAIT ! Send a identifié votre expédition !"
+                    ],
+                    location: [
+                        "📍 Send active la géolocalisation pour calculer le prix !",
+                        "🛰️ Position trouvée ! Send optimise votre livraison !",
+                        "📡 Excellent ! Localisation précise pour prix exact !"
+                    ],
+                    payment: [
+                        "💳 Paiement sécurisé ! Send protège votre transaction !",
+                        "🛡️ Parfait ! Système de paiement activé !",
+                        "🔐 Super ! Paiement sécurisé par la technologie Send !"
+                    ],
+                    success: [
+                        "🎉 BRAVO ! Colis accepté ! Send organise votre livraison !",
+                        "✨ FÉLICITATIONS ! Mission accomplie ! Livreur en route !",
+                        "🏆 PARFAIT ! Send a tout organisé pour vous !"
+                    ],
+                    error: [
+                        "😅 Oups ! Une petite erreur, mais Send va arranger ça !",
+                        "💪 Pas de souci ! Send trouve toujours une solution !",
+                        "🔧 Hmm... Je vais corriger ça immédiatement !"
+                    ],
+                    validation: [
+                        "✅ Excellent ! Cette information est parfaite !",
+                        "👍 Super ! Send valide cette donnée !",
+                        "🎯 Parfait ! Continuez comme ça !"
+                    ],
+                    guidance: [
+                        "💡 Conseil Send : Vérifiez l'orthographe de votre nom !",
+                        "🎯 Astuce Send : Le code doit correspondre exactement !",
+                        "📝 Guide Send : Plus c'est précis, plus c'est rapide !"
+                    ]
+                }
+            }
+        };
+
+        // État de l'application client avec Send
+        let appState = {
+            location: null,
+            currentPackage: null,
+            isProcessing: false,
+            paymentVerified: false,
+            paymentMethod: null,
+            sessionId: generateSessionId(),
+            sendState: 'idle',
+            sendContext: {},
+            userInteractions: 0,
+            validationState: {
+                name: false,
+                phone: false,
+                code: false
+            },
+            currentField: null
+        };
+
+        // Éléments DOM
+        const elements = {
+            searchSection: document.getElementById('searchSection'),
+            searchForm: document.getElementById('searchForm'),
+            searchBtn: document.getElementById('searchBtn'),
+            packageSection: document.getElementById('packageSection'),
+            packageInfo: document.getElementById('packageInfo'),
+            confirmModal: document.getElementById('confirmModal'),
+            confirmIcon: document.getElementById('confirmIcon'),
+            confirmTitle: document.getElementById('confirmTitle'),
+            confirmMessage: document.getElementById('confirmMessage'),
+            confirmYes: document.getElementById('confirmYes'),
+            confirmNo: document.getElementById('confirmNo'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            loadingSubmessage: document.getElementById('loadingSubmessage'),
+            locationStatusContainer: document.getElementById('locationStatusContainer'),
+            locationStatusIcon: document.getElementById('locationStatusIcon'),
+            locationStatusTitle: document.getElementById('locationStatusTitle'),
+            locationStatusDesc: document.getElementById('locationStatusDesc'),
+            accuracyText: document.getElementById('accuracyText'),
+            
+            // Éléments du Send client
+            sendClientMascot: document.getElementById('sendClientMascot'),
+            sendDialogue: document.getElementById('sendDialogue'),
+            sendIndicator: document.getElementById('sendIndicator'),
+            sendDialogueContent: document.getElementById('sendDialogueContent'),
+            sendDialogueActions: document.getElementById('sendDialogueActions'),
+            sendContainer: document.getElementById('sendContainer')
+        };
+
+        // CLASSE SEND CLIENT INTERACTIVE
+class SendClientMascot {
+    constructor() {
+        this.currentEmotion = 'neutral';
+        this.currentPosition = 'default';
+        this.isMoving = false;
+        this.isDragging = false;
+        this.dragOffset = { x: 0, y: 0 };
+        this.contextMemory = new Map();
+        this.interactionCount = 0;
+        this.currentField = null;
+        this.guidanceQueue = [];
+        this.livenessTimer = null;
+        this.defaultPosition = { x: 20, y: 20 };
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.showWelcomeMessage();
+        this.startIdleAnimations();
+        this.startLivenessSystem();
+        this.enableManualDragging();
+        this.positionSendAtDefault();
+    }
+
+positionSendAtDefault() {
+    const container = document.getElementById('sendContainer');
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    
+    const mascotWidth = container.offsetWidth || 80;
+    const mascotHeight = container.offsetHeight || 80;
+
+    const margin = 10;
+
+    const x = margin; // ← Position à gauche avec marge
+    const y = (viewport.height - mascotHeight) / 2;
+
+    container.style.left = `${x}px`;
+    container.style.top = `${Math.max(margin, y)}px`;
+
+    this.currentPosition = 'center-left';
+}
+
+    setupEventListeners() {
+        const mascot = document.getElementById('sendClientMascot');
+        mascot.addEventListener('click', () => this.handleSendClick());
+        
+        // Écoute des interactions utilisateur
+        document.addEventListener('input', (e) => this.onUserInput(e));
+        document.addEventListener('click', (e) => this.onUserClick(e));
+        document.addEventListener('focus', (e) => this.onUserFocus(e), true);
+        document.addEventListener('blur', (e) => this.onUserBlur(e), true);
+        
+        this.initializeFieldTracking();
+    }
+
+    enableManualDragging() {
+        const mascot = document.getElementById('sendClientMascot');
+        const container = document.getElementById('sendContainer');
+
+        let startX, startY;
+
+        mascot.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            this.isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const rect = container.getBoundingClientRect();
+            this.dragOffset.x = startX - rect.left;
+            this.dragOffset.y = startY - rect.top;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (this.isDragging) {
+                const x = e.clientX - this.dragOffset.x;
+                const y = e.clientY - this.dragOffset.y;
+                this.manualMoveTo(x, y);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            this.isDragging = false;
+        });
+
+        mascot.addEventListener('touchstart', (e) => {
+            this.isDragging = true;
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            this.dragOffset.x = touch.clientX - rect.left;
+            this.dragOffset.y = touch.clientY - rect.top;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (this.isDragging) {
+                const touch = e.touches[0];
+                const x = touch.clientX - this.dragOffset.x;
+                const y = touch.clientY - this.dragOffset.y;
+                this.manualMoveTo(x, y);
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            this.isDragging = false;
+        });
+    }
+
+    manualMoveTo(x, y) {
+        const container = document.getElementById('sendContainer');
+        this.isMoving = true;
+
+        container.style.transition = 'none';
+        container.style.left = `${x}px`;
+        container.style.top = `${y}px`;
+        container.style.right = 'auto';
+        container.style.transform = 'none';
+
+        this.currentPosition = 'custom';
+        this.isMoving = false;
+
+
+
+const mascotWidth = container.offsetWidth;
+const mascotHeight = container.offsetHeight;
+const viewportWidth = window.innerWidth;
+const viewportHeight = window.innerHeight;
+const margin = 10;
+
+const clampedX = Math.max(margin, Math.min(x, viewportWidth - mascotWidth - margin));
+const clampedY = Math.max(margin, Math.min(y, viewportHeight - mascotHeight - margin));
+
+container.style.left = `${clampedX}px`;
+container.style.top = `${clampedY}px`;
+
+
+
+    }
+
+    startIdleAnimations() {
+        setInterval(() => {
+            if (this.currentEmotion === 'neutral' && !this.isMoving && !this.isDragging) {
+                this.performIdleAction();
+            }
+        }, 8000);
+    }
+
+    startLivenessSystem() {
+let lastInteractionTime = Date.now();
+
+document.addEventListener('mousemove', () => lastInteractionTime = Date.now());
+document.addEventListener('keydown', () => lastInteractionTime = Date.now());
+
+setInterval(() => {
+    const now = Date.now();
+    if (now - lastInteractionTime > 30000) {
+        this.setEmotion('wakeup'); // ajoute une classe CSS .wakeup avec animation subtile
+    }
+}, 10000);
+    }
+
+    checkContextAndReact() {
+        const activeField = this.currentField;
+        const formFilled = Object.values(appState.validationState).every(Boolean);
+        
+        if (formFilled && Math.random() < 0.4) {
+            this.showContextualEncouragement();
+        } else if (activeField && Math.random() < 0.3) {
+            this.showFieldTip(activeField);
+        } else if (Math.random() < 0.2) {
+            this.showRandomTip();
+        }
+    }
+
+    performLivelyAction() {
+        const actions = ['scanning', 'thinking', 'guiding', 'excited'];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+        
+        const mascot = document.getElementById('sendClientMascot');
+        mascot.classList.add(action);
+        
+        setTimeout(() => {
+            mascot.classList.remove(action);
+        }, 2000);
+    }
+
+    performIdleAction() {
+        const actions = ['scanning', 'thinking', 'guiding'];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+        
+        const mascot = document.getElementById('sendClientMascot');
+        mascot.classList.add('idle');
+setTimeout(() => {
+    mascot.classList.remove('idle');
+}, 5000);
+
+    }
+
+    showContextualEncouragement() {
+        const filledFields = Object.values(appState.validationState).filter(Boolean).length;
+        const messages = [
+            `🎯 ${filledFields}/3 champs complétés ! Continuez comme ça !`,
+            '✨ Excellent travail ! Presque terminé !',
+            '🚀 Super progression ! Send est impressionné !'
+        ];
+        
+        this.showMessage(messages[Math.floor(Math.random() * messages.length)], { 
+            duration: 3000,
+            tip: true
+        });
+    }
+
+    showFieldTip(fieldId) {
+        const tips = {
+            recipientName: [
+                '📝 Conseil Send : Vérifiez l\'orthographe exact comme sur le colis',
+                '👤 Astuce : Prénom et nom complets sans abréviation'
+            ],
+            recipientPhone: [
+                '📱 Format : +226 XX XX XX XX ou 0X XX XX XX',
+                '📞 Important : Numéro actif pour la livraison'
+            ],
+            trackingCode: [
+                '🔍 Code de 6 à 12 caractères (chiffres et lettres)',
+                '📦 Trouvez le code dans votre SMS/WhatsApp Send'
+            ]
+        };
+        
+        const fieldTips = tips[fieldId];
+        if (fieldTips) {
+            this.showMessage(fieldTips[Math.floor(Math.random() * fieldTips.length)], { 
+                duration: 4000,
+                tip: true
+            });
+        }
+    }
+
+
+celebrate() {
+    // Animation de célébration
+    this.setEmotion('celebrating');
+    this.setIndicator('visible', 'success');
+    
+    // Créer des effets visuels
+    this.createCelebrationEffect();
+    
+    // Message de célébration
+    const messages = [
+        "🎉 Mission accomplie ! Livraison confirmée !",
+        "✨ Félicitations ! Votre colis est en route !",
+        "🏆 Succès ! Send a tout organisé pour vous !"
+    ];
+    
+    this.showMessage(messages[Math.floor(Math.random() * messages.length)], {
+        duration: 5000,
+        success: true
+    });
+    
+    // Animation supplémentaire
+    const mascot = document.getElementById('sendClientMascot');
+    mascot.classList.add('celebrating');
+    
+    setTimeout(() => {
+        mascot.classList.remove('celebrating');
+    }, 3000);
+}
+
+
+    showRandomTip() {
+        const tips = [
+            '🌟 Send vérifie automatiquement vos informations en temps réel !',
+            '⚡ Plus vos informations sont précises, plus Send est efficace !',
+            '🎯 Send utilise la géolocalisation pour calculer les frais optimaux',
+            '📞 Nos livreurs vous contacteront avant la livraison !',
+            '🔒 Toutes vos données sont sécurisées avec Send'
+        ];
+
+        this.showMessage(tips[Math.floor(Math.random() * tips.length)], { 
+            duration: 5000,
+            tip: true
+        });
+    }
+
+    // Gestion du mouvement intelligent
+    async moveTo(position, element = null, speed = 'normal') {
+        if (this.isMoving || this.isDragging) return;
+
+        this.isMoving = true;
+        const container = document.getElementById('sendContainer');
+        const mascot = document.getElementById('sendClientMascot');
+
+        container.classList.add('moving');
+        mascot.classList.add('bouncing');
+
+        let targetX, targetY, targetPosition = position;
+        const viewport = { width: window.innerWidth, height: window.innerHeight };
+        const isMobile = window.innerWidth <= 480;
+
+        if (element) {
+            const rect = element.getBoundingClientRect();
+
+            if (isMobile) {
+                targetX = viewport.width - 110;
+                targetY = 20;
+                targetPosition = 'mobile-top-right';
+            } else {
+                targetX = viewport.width - 120;
+                targetY = Math.max(80, rect.top);
+                targetPosition = 'desktop-right';
+            }
+        } else {
+            const positions = {
+                'top-right': { x: viewport.width - 110, y: 80 },
+                'middle-right': { x: viewport.width - 110, y: viewport.height / 2 - 60 },
+                'bottom-right': { x: viewport.width - 110, y: viewport.height - 180 }
+            };
+
+            const pos = positions[position] || positions['middle-right'];
+            targetX = pos.x;
+            targetY = pos.y;
+        }
+
+        const duration = speed === 'fast' ? 600 : speed === 'slow' ? 1200 : 800;
+
+        container.style.transition = `all ${duration}ms cubic-bezier(0.68, -0.55, 0.265, 1.55)`;
+        container.style.left = `${targetX}px`;
+        container.style.top = `${targetY}px`;
+        container.style.right = 'auto';
+        container.style.transform = 'none';
+
+        this.updateDialoguePosition(targetPosition);
+
+        await new Promise(resolve => setTimeout(resolve, duration));
+
+        mascot.classList.remove('bouncing');
+        this.currentPosition = targetPosition;
+        this.isMoving = false;
+    }
+
+    updateDialoguePosition(position) {
+        const dialogue = document.getElementById('sendDialogue');
+        dialogue.className = 'send-dialogue';
+
+        const top = dialogue.getBoundingClientRect().top;
+        if (top < 0) {
+            dialogue.style.marginTop = `${Math.abs(top) + 10}px`;
+        }
+
+        if (['top-right', 'middle-right', 'bottom-right', 'mobile-top-right', 'desktop-right'].includes(position)) {
+            dialogue.classList.add('position-right');
+        } else {
+            dialogue.classList.add('position-left');
+        }
+    }
+
+    // Gestion des émotions
+    setEmotion(emotion) {
+        const mascot = document.getElementById('sendClientMascot');
+        mascot.className = `send-mascot ${emotion}`;
+        this.currentEmotion = emotion;
+        
+        setTimeout(() => {
+            if (this.currentEmotion === emotion) {
+                mascot.className = 'send-mascot';
+                this.currentEmotion = 'neutral';
+            }
+        }, 3000);
+    }
+
+    // Système de dialogue avancé
+    showMessage(message, options = {}) {
+        const content = document.getElementById('sendDialogueContent');
+        const actions = document.getElementById('sendDialogueActions');
+        const dialogue = document.getElementById('sendDialogue');
+        
+        content.textContent = message;
+        
+        if (options.actions) {
+            actions.innerHTML = '';
+            options.actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = `send-dialogue-btn ${action.primary ? '' : action.secondary ? 'secondary' : ''}`;
+                button.innerHTML = `<i class="fas fa-${action.icon || 'check'}"></i> ${action.text}`;
+                button.onclick = () => this.handleAction(action.action, action.data);
+                actions.appendChild(button);
+            });
+        } else {
+            actions.innerHTML = '';
+        }
+        
+        if (options.tip) {
+            dialogue.classList.add('tip');
+        } else {
+            dialogue.classList.remove('tip');
+        }
+
+        if (options.urgent) {
+            dialogue.classList.add('urgent');
+        } else {
+            dialogue.classList.remove('urgent');
+        }
+        
+        dialogue.classList.add('visible');
+        this.setEmotion('talking');
+        
+        if (options.autoHide !== false) {
+            setTimeout(() => {
+                dialogue.classList.remove('visible');
+            }, options.duration || 5000);
+        }
+    }
+
+    handleAction(action, data) {
+        switch(action) {
+            case 'startTour':
+                this.startGuidedTour();
+                break;
+            case 'hideSend':
+                this.hideDialogue();
+                break;
+            case 'focusField':
+                this.focusField(data);
+                break;
+            case 'validateData':
+                this.validateCurrentForm();
+                break;
+            case 'search':
+                document.getElementById('searchBtn').click();
+                break;
+        }
+    }
+
+    // Système de guidage intelligent
+    startGuidedTour() {
+        this.hideDialogue();
+        this.setEmotion('excited');
+        
+        this.moveTo('center', document.getElementById('recipientName'), 'normal');
+        setTimeout(() => {
+            this.showMessage('🎯 Commençons par votre nom complet (exactement comme sur le colis)', {
+                actions: [
+                    { text: '📝 Saisir nom', action: 'focusField', data: 'recipientName', primary: true }
+                ],
+                urgent: true
+            });
+        }, 1000);
+    }
+
+    showWelcomeMessage() {
+        const messages = [
+            "👋 Salut ! Je suis Send, votre assistant pour retrouver vos colis !",
+            "🚀 Bienvenue ! Send est là pour vous guider étape par étape !",
+            "✨ Bonjour ! Prêt à retrouver votre colis avec mon aide ?"
+        ];
+        
+        setTimeout(() => {
+            this.showMessage(messages[Math.floor(Math.random() * messages.length)], {
+                actions: [
+                    { text: '🚀 Commencer', action: 'startTour', primary: true },
+                    { text: '💬 Plus tard', action: 'hideDialogue' }
+                ]
+            });
+        }, 2000);
+    }
+
+    // Gestion des champs de formulaire
+    initializeFieldTracking() {
+        const fields = ['recipientName', 'recipientPhone', 'trackingCode'];
+        
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('focus', () => {
+                    this.currentField = fieldId;
+                    this.moveToField(field);
+                    this.showFieldGuidance(fieldId);
+                });
+
+                field.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        if (document.activeElement.id !== fieldId) {
+                            this.currentField = null;
+                        }
+                    }, 300);
+                });
+                
+                field.addEventListener('input', () => {
+                    this.validateField(fieldId, field.value);
+                });
+            }
+        });
+    }
+
+    validateField(fieldId, value) {
+        switch(fieldId) {
+            case 'recipientName':
+                this.validateName(value);
+                break;
+            case 'recipientPhone':
+                this.validatePhone(value);
+                break;
+            case 'trackingCode':
+                this.validateCode(value);
+                break;
+        }
+    }
+
+    validateName(value) {
+        const isValid = value.length >= 2 && /^[a-zA-ZÀ-ÿ\s]{2,}$/.test(value);
+        this.updateValidationUI('recipientName', 'nameValidation', isValid);
+        appState.validationState.name = isValid;
+        
+        if (isValid && !this.contextMemory.has('nameValid')) {
+            this.contextMemory.set('nameValid', true);
+            this.showMessage('✅ Nom valide !', { duration: 2000 });
+            this.setEmotion('happy');
+        }
+    }
+
+    validatePhone(value) {
+        const isValid = /^(\+226|0)[0-9]{8}$/.test(value.replace(/\s+/g, ''));
+        this.updateValidationUI('recipientPhone', 'phoneValidation', isValid);
+        appState.validationState.phone = isValid;
+        
+        if (isValid && !this.contextMemory.has('phoneValid')) {
+            this.contextMemory.set('phoneValid', true);
+            this.setEmotion('happy');
+        }
+    }
+
+    validateCode(value) {
+        const isValid = /^[A-Z0-9]{6,12}$/.test(value.toUpperCase());
+        this.updateValidationUI('trackingCode', 'codeValidation', isValid);
+        appState.validationState.code = isValid;
+        
+        if (isValid && !this.contextMemory.has('codeValid')) {
+            this.contextMemory.set('codeValid', true);
+            this.setEmotion('excited');
+            this.showMessage('🔍 Send peut maintenant rechercher votre colis !', { duration: 3000 });
+        }
+    }
+
+    updateValidationUI(fieldId, validationId, isValid) {
+        const field = document.getElementById(fieldId);
+        const validation = document.getElementById(validationId);
+        const icon = isValid ? 'fas fa-check' : 'fas fa-times';
+        
+        field?.classList.toggle('success', isValid && field.value.length > 0);
+        field?.classList.toggle('error', !isValid && field.value.length > 0);
+        
+        if (validation) {
+            validation.innerHTML = `<i class="${icon}"></i>`;
+            validation.classList.toggle('visible', field.value.length > 0);
+            validation.classList.toggle('success', isValid);
+            validation.classList.toggle('error', !isValid);
+        }
+    }
+
+    validateCurrentForm() {
+        const fields = ['recipientName', 'recipientPhone', 'trackingCode'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) this.validateField(fieldId, field.value);
+        });
+        
+        this.setEmotion('analyzing');
+    }
+
+    // Événements utilisateur
+    onUserInput(e) {
+        this.interactionCount++;
+        
+        if (e.target.id === 'recipientName') {
+            this.validateName(e.target.value);
+        } else if (e.target.id === 'recipientPhone') {
+            this.validatePhone(e.target.value);
+        } else if (e.target.id === 'trackingCode') {
+            this.validateCode(e.target.value);
+        }
+    }
+
+    onUserClick(e) {
+        this.interactionCount++;
+        
+        if (e.target.id === 'searchBtn') {
+            this.onSearchStart();
+        }
+    }
+
+    onUserFocus(e) {
+        if (!e.target.classList.contains('form-input')) return;
+        
+        this.currentField = e.target.id;
+        this.moveToField(e.target);
+        this.showFieldGuidance(e.target.id);
+    }
+
+    onUserBlur(e) {
+        if (!e.target.classList.contains('form-input')) return;
+        
+        setTimeout(() => {
+            if (!document.activeElement || !document.activeElement.classList.contains('form-input')) {
+                this.returnToDefaultPosition();
+                this.setEmotion('neutral');
+            }
+        }, 100);
+    }
+
+    // Événements spécifiques
+    onSearchStart() {
+        this.setEmotion('searching');
+        this.setIndicator('visible', 'searching');
+        
+        this.showMessage('🔍 Send recherche votre colis dans la base de données...', {
+            autoHide: false
+        });
+    }
+
+    onSearchSuccess(packageData) {
+        this.setEmotion('celebrating');
+        this.setIndicator('visible', 'success');
+        
+        this.showMessage('🎉 Colis trouvé ! Send affiche les détails...', {
+            duration: 3000,
+            success: true
+        });
+    }
+
+    onSearchError(error) {
+        this.setEmotion('concerned');
+        this.setIndicator('visible', 'warning');
+        
+        this.showMessage(`😅 Oups ! ${error.message || 'Erreur lors de la recherche'}`, {
+            actions: [
+                { text: '🔄 Réessayer', action: 'search' },
+                { text: '💬 Aide', action: 'showHelp' }
+            ]
+        });
+    }
+
+    onLocationStart() {
+        this.setEmotion('processing');
+        this.showMessage('📍 Send active la géolocalisation...', { duration: 3000 });
+    }
+
+    onLocationSuccess() {
+        this.setEmotion('happy');
+        this.showMessage('🎯 Position trouvée ! Send calcule les frais...', { duration: 3000 });
+    }
+
+    onPaymentStart() {
+        this.setEmotion('payment');
+        this.setIndicator('visible', 'payment');
+        this.showMessage('💳 Send prépare le paiement sécurisé...', { duration: 4000 });
+    }
+
+    onPaymentSuccess() {
+        this.setEmotion('celebrating');
+        this.setIndicator('visible', 'success');
+        this.showMessage('🎉 Paiement confirmé ! Send organise la livraison !', { duration: 5000 });
+    }
+
+    // Utilitaires
+    hideDialogue() {
+        document.getElementById('sendDialogue').classList.remove('visible');
+    }
+
+    handleSendClick() {
+        this.interactionCount++;
+        
+        if (document.getElementById('sendDialogue').classList.contains('visible')) {
+            this.hideDialogue();
+        } else {
+            this.showContextualMessage();
+        }
+    }
+
+    showContextualMessage() {
+        const { name, phone, code } = appState.validationState;
+        
+        if (!name && !phone && !code) {
+            this.showWelcomeMessage();
+        } else if (appState.currentPackage) {
+            this.showMessage('🎉 Votre colis a été trouvé ! Que souhaitez-vous faire ?', {
+                actions: [
+                    { text: '✅ Accepter', action: 'acceptPackage', primary: true },
+                    { text: '❌ Refuser', action: 'declinePackage' }
+                ]
+            });
+        } else if (name && phone && code) {
+            this.showMessage('🔍 Tous les champs sont remplis ! Prêt à rechercher ?', {
+                actions: [
+                    { text: '🚀 Rechercher', action: 'search', primary: true },
+                    { text: '📝 Vérifier', action: 'validateData' }
+                ]
+            });
+        } else {
+            this.showMessage('🤔 Besoin d\'aide ? Send peut vous guider !', {
+                actions: [
+                    { text: '🎯 Guide', action: 'startTour', primary: true },
+                    { text: '💬 Plus tard', action: 'hideDialogue' }
+                ]
+            });
+        }
+    }
+
+    setIndicator(visibility, type = 'info') {
+        const icons = {
+            'searching': '🔍',
+            'success': '✅',
+            'warning': '⚠️',
+            'processing': '⚡',
+            'payment': '💳'
+        };
+
+        const indicator = document.getElementById('sendIndicator');
+        indicator.className = `send-indicator ${visibility} ${type}`;
+        indicator.textContent = icons[type] || '👋';
+    }
+
+    createCelebrationEffect() {
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                const celebration = document.createElement('div');
+                celebration.style.position = 'fixed';
+                celebration.style.right = '70px';
+                celebration.style.top = '50%';
+                celebration.style.fontSize = '20px';
+                celebration.style.zIndex = '9999';
+                celebration.style.pointerEvents = 'none';
+                celebration.textContent = ['🎉', '✨', '🎊', '🚀'][Math.floor(Math.random() * 4)];
+                
+                document.body.appendChild(celebration);
+                
+                let x = 0, y = 0;
+                const angle = (Math.PI * 2 * i) / 20;
+                const velocity = 50 + Math.random() * 50;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                
+                const animate = () => {
+                    x += vx * 0.05;
+                    y += vy * 0.05;
+                    celebration.style.transform = `translate(${x}px, ${y}px)`;
+                    celebration.style.opacity = Math.max(0, 1 - Math.abs(x) / 200);
+                    
+                    if (Math.abs(x) < 200) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        celebration.remove();
+                    }
+                };
+                requestAnimationFrame(animate);
+            }, i * 50);
+        }
+    }
+}
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        let sendClientMascot;
+
+        function initializeApp() {
+            console.log('🚀 SEND 2.0 Client avec Send initialisé');
+            sendClientMascot = new SendClientMascot();
+            setupEventListeners();
+            
+            // Auto-démarrage de la géolocalisation
+            setTimeout(requestLocation, 2000);
+            
+            // Auto-fill du code depuis l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code') || urlParams.get('tracking');
+            if (code) {
+                const input = document.getElementById('trackingCode');
+                if (input) {
+                    input.value = code.toUpperCase();
+                    sendClientMascot.validateCode(input);
+                    showToast('🎯 Code Send pré-rempli automatiquement !', 'success');
+                }
+            }
+        }
+
+        function setupEventListeners() {
+            // Formulaire de recherche
+            elements.searchForm?.addEventListener('submit', handleSearch);
+            
+            // Modal
+            elements.confirmModal?.addEventListener('click', (e) => {
+                if (e.target === elements.confirmModal) closeConfirmModal();
+            });
+            
+            elements.confirmNo?.addEventListener('click', closeConfirmModal);
+        }
+
+// Géolocalisation stricte (aucune position par défaut utilisée)
+async function requestLocation() {
+    if (appState.location) return;
+
+    showLocationStatus();
+    updateLocationStatus('searching', 'Send analyse votre position GPS...');
+    sendClientMascot.onLocationStart();
+
+    if (!navigator.geolocation) {
+        handleLocationError({ message: 'GEOLOCATION_NOT_SUPPORTED' });
+        return;
+    }
+
+    try {
+        const position = await getCurrentPosition();
+        handleLocationSuccess(position);
+    } catch (error) {
+        handleLocationError(error);
+    }
+}
+
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, CONFIG.location);
+    });
+}
+
+function updateLocationStatus(status, message) {
+    const iconClasses = {
+        searching: 'fas fa-spinner',
+        found: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-triangle'
+    };
+
+    const statusTitles = {
+        searching: 'Send localise...',
+        found: 'Position GPS détectée',
+        error: 'Erreur GPS'
+    };
+
+    elements.locationStatusIcon.className = `location-status-icon ${status}`;
+    elements.locationStatusIcon.innerHTML = `<i class="${iconClasses[status] || 'fas fa-satellite-dish'}"></i>`;
+    elements.locationStatusTitle.textContent = statusTitles[status] || 'Géolocalisation';
+    elements.locationStatusDesc.textContent = message;
+}
+
+function handleLocationSuccess(position) {
+    const { latitude, longitude, accuracy } = position.coords;
+
+    appState.location = { latitude, longitude, accuracy };
+
+    updateLocationStatus('found', `Position Send validée (±${Math.round(accuracy)}m)`);
+    elements.accuracyText.textContent = `±${Math.round(accuracy)}m`;
+
+    sendClientMascot.onLocationSuccess();
+    showToast(`✅ Position GPS obtenue ! Précision: ±${Math.round(accuracy)}m`, 'success');
+
+    setTimeout(hideLocationStatus, 3000);
+}
+
+function handleLocationError(error) {
+    console.error('❌ Erreur de localisation Send:', error);
+
+    updateLocationStatus('error', 'Localisation GPS non disponible');
+
+    let message = '⚠️ Erreur de géolocalisation.';
+
+    if (error.message === 'GEOLOCATION_NOT_SUPPORTED') {
+        message = '🚫 Géolocalisation non supportée par votre navigateur.';
+    } else if (error.code === 1) {
+        message = '⛔ Permission refusée. Vous devez autoriser l’accès à la localisation.';
+    } else if (error.code === 2) {
+        message = '📡 Position introuvable. Activez le GPS et vérifiez votre connexion.';
+    } else if (error.code === 3) {
+        message = '⏳ Délai dépassé. Veuillez réessayer après avoir activé la localisation.';
+    }
+
+    showToast(message, 'error');
+
+    // ❗ Interdiction de continuer sans localisation active
+    alert("⚠️ La géolocalisation est obligatoire pour utiliser Send.\n\nVeuillez activer le GPS dans les paramètres de votre téléphone, ou tirer la barre du haut pour activer la localisation, puis réessayez.");
+
+    // Optionnel : désactiver certains boutons ou interactions ici si tu veux forcer encore plus
+    // ex: elements.continueBtn.disabled = true;
+
+    // On ne définit **aucune position par défaut**
+}
+
+function showLocationStatus() {
+    elements.locationStatusContainer.classList.add('show');
+}
+
+function hideLocationStatus() {
+    elements.locationStatusContainer.classList.remove('show');
+}
+
+        // Recherche de colis intelligente
+        async function handleSearch(e) {
+            e.preventDefault();
+            
+            if (appState.isProcessing) return;
+            
+            // Vérification des champs avec validation intelligente
+            const recipientName = document.getElementById('recipientName').value.trim();
+            const recipientPhone = document.getElementById('recipientPhone').value.trim();
+            const trackingCode = document.getElementById('trackingCode').value.trim().toUpperCase();
+            
+            if (!recipientName || !recipientPhone || !trackingCode) {
+                sendClientMascot.showMessage('error', {
+                    actions: [{ text: '📝 Compléter', action: 'validateData' }]
+                });
+                showToast('⚠️ Veuillez remplir tous les champs Send', 'warning');
+                return;
+            }
+            
+            // Vérification de la localisation
+            if (!appState.location) {
+                showToast('📍 Send utilise la localisation par défaut...', 'info');
+                appState.location = { latitude: 12.3714, longitude: -1.5197, accuracy: 50000 };
+            }
+            
+            const formData = {
+                action: 'search',
+                nom: recipientName,
+                numero: recipientPhone,
+                code: trackingCode,
+                location: appState.location,
+                timestamp: new Date().toISOString(),
+                sessionId: appState.sessionId,
+                sendContext: {
+                    userInteractions: appState.userInteractions,
+                    validationState: appState.validationState,
+                    sendInteractions: sendClientMascot.interactionCount
+                }
+            };
+            
+            appState.isProcessing = true;
+            setButtonLoading(elements.searchBtn, true, '🔍 Send recherche...');
+            sendClientMascot.onSearchStart();
+            
+            try {
+                console.log('🔍 Recherche Send de colis:', formData);
+                
+                const response = await fetch(CONFIG.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Erreur HTTP ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Erreur lors de la recherche Send');
+                }
+                
+                if (!result.colis) {
+                    throw new Error('Aucun colis trouvé dans la base Send avec ces informations');
+                }
+                
+                console.log('✅ Colis Send trouvé:', result.colis);
+                appState.currentPackage = result.colis;
+                sendClientMascot.onSearchSuccess(result.colis);
+                displayPackageInfo(result.colis);
+                showToast('🎉 Colis localisé par Send avec succès !', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erreur de recherche Send:', error);
+                sendClientMascot.onSearchError(error);
+                showToast(error.message || 'Erreur lors de la recherche Send du colis', 'error');
+            } finally {
+                appState.isProcessing = false;
+                setButtonLoading(elements.searchBtn, false);
+            }
+        }
+
+        // Calculs intelligents
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function calculateDeliveryPrice(packageType, distanceKm) {
+            const config = CONFIG.packageTypes[packageType] || CONFIG.packageTypes.petit;
+            const basePrice = config.basePrice;
+            const additionalKmPrice = config.additionalPrice;
+            
+            if (distanceKm <= 5) {
+                return basePrice;
+            } else {
+                const additionalKm = Math.ceil(distanceKm - 5);
+                return basePrice + (additionalKm * additionalKmPrice);
+            }
+        }
+
+        // Affichage des informations du colis avec Send
+        function displayPackageInfo(packageData) {
+            const createdDate = new Date(packageData.createdAt || packageData.timestamp);
+            const formattedDate = createdDate.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Calcul du prix de livraison intelligent
+            let distanceKm = 0;
+            let deliveryPrice = 0;
+
+            if (appState.location && packageData.location) {
+                distanceKm = calculateDistance(
+                    appState.location.latitude,
+                    appState.location.longitude,
+                    packageData.location.latitude,
+                    packageData.location.longitude
+                );
+                deliveryPrice = calculateDeliveryPrice(packageData.packageType || 'petit', distanceKm);
+            }
+
+            // Libellés des types de colis
+            const packageTypeLabels = {
+                petit: '⚡ Petit Colis Express',
+                moyen: '🏍️ Moyen Colis Standard',
+                gros: '🚛 Gros Colis Premium',
+                fragile: '🛡️ Colis Fragile VIP'
+            };
+
+            const packageTypeLabel = packageTypeLabels[packageData.packageType] || 'Colis Standard';
+            const photosHTML = generatePhotosHTML(packageData.photos);
+
+            elements.packageInfo.innerHTML = `
+                <div class="package-header">
+                    <div class="package-code">${packageData.colisID || packageData.trackingCode}</div>
+                    <div class="package-status">🎯 ${(packageData.status || 'En attente').toUpperCase()}</div>
+                    <div class="package-date">📅 Créé le ${formattedDate}</div>
+                </div>
+
+                <!-- Prix de livraison intelligent SEND -->
+                <div class="price-display">
+                    <div class="price-title">
+                        <i class="fas fa-truck"></i>
+                        Prix de livraison Send
+                    </div>
+                    <div class="price-amount">${deliveryPrice.toLocaleString()} FCFA</div>
+                    <div class="price-details">
+                        <span>
+                            <i class="fas fa-route"></i>
+                            ${distanceKm.toFixed(1)} km calculés par Send
+                        </span>
+                        <span>
+                            <i class="fas fa-info-circle"></i>
+                            ${packageTypeLabel}
+                        </span>
+                    </div>
+                    <div class="price-note">
+                        💡 Prix calculé automatiquement par Send
+                    </div>
+                </div>
+
+                <!-- Détails du colis -->
+                ${generateInfoSection('👤 Expéditeur', 'user-tie', [
+                    { label: 'Nom complet', value: packageData.sender },
+                    { label: 'Téléphone', value: packageData.senderPhone }
+                ])}
+
+                ${generateInfoSection('📍 Destinataire', 'map-marker-alt', [
+                    { label: 'Nom complet', value: packageData.recipient },
+                    { label: 'Téléphone', value: packageData.recipientPhone },
+                    { label: 'Adresse', value: packageData.address }
+                ])}
+
+                ${generateInfoSection('📦 Détails du Colis', 'box', [
+                    { label: 'Type de colis', value: packageTypeLabel },
+                    ...(packageData.description ? [{ label: 'Description', value: packageData.description }] : []),
+                    { label: 'Photos', value: packageData.photos?.length ? `${packageData.photos.length} photo(s) sécurisée(s)` : 'Aucune' }
+                ])}
+
+                ${generateInfoSection('📸 Photos du Colis Send', 'camera', [], photosHTML)}
+
+                <!-- Section paiement intelligente -->
+                <div id="paymentSection" class="payment-section">
+                    <div class="payment-title">💳 Paiement Sécurisé Send</div>
+                    <div class="payment-description">
+                        Choisissez votre mode de paiement pour confirmer la réception. Sécurité maximale garantie par Send.
+                    </div>
+                    
+                    <div class="smart-tip visible">
+                        <div class="smart-tip-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="smart-tip-content">
+                            <div class="smart-tip-title">Sécurité Send</div>
+                            <div class="smart-tip-text">Tous les paiements sont sécurisés par notre technologie de pointe et votre assistant Send personnel.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-options">
+<style>
+  .btn-badge {
+    position: absolute;
+    top: -2px;
+    right: -1px;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    z-index: 2;
+  }
+</style>
+
+<button id="cinetpayButton" class="btn orange" style="position: relative;" onclick="initiateCinetPayPayment()">
+    <span class="btn-badge">MAINTENANCE</span>
+    <i class="fas fa-credit-card"></i>
+    💳 Payer en ligne maintenant
+</button>
+
+                        
+                        <button id="payOnDeliveryButton" class="btn success" onclick="selectPayOnDelivery()">
+                            <i class="fas fa-truck"></i>
+                            Payer à la livraison
+                        </button>
+                    </div>
+                    
+                    <div id="paymentStatus" class="hidden">
+                        <!-- Status du paiement -->
+                    </div>
+                </div>
+
+
+                <div class="action-buttons">
+                    <button id="acceptBtn" class="btn" disabled style="background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-500) 100%);">
+                        <i class="fas fa-lock"></i>
+                        🔒 PAIEMENT SEND REQUIS
+                    </button>
+                    <button id="declineBtn" class="btn danger" onclick="declinePackage()">
+                        <i class="fas fa-times-circle"></i>
+                        ❌ REFUSER le Colis
+                    </button>
+                </div>
+            `;
+
+            animateTransition();
+        }
+
+        // CinetPay avec assistance Send
+        function initiateCinetPayPayment() {
+            if (!appState.currentPackage) return;
+            
+            sendClientMascot.onPaymentStart();
+            
+            const deliveryPrice = calculateDeliveryPrice(
+                appState.currentPackage.packageType || 'petit',
+                calculateDistance(
+                    appState.location.latitude,
+                    appState.location.longitude,
+                    appState.currentPackage.location?.latitude || 0,
+                    appState.currentPackage.location?.longitude || 0
+                )
+            );
+
+            if (deliveryPrice <= 0) {
+                showToast('❌ Impossible de calculer le prix Send', 'error');
+                return;
+            }
+
+            try {
+                CinetPay.setConfig({
+                    apikey: CONFIG.cinetpay.apikey,
+                    site_id: CONFIG.cinetpay.site_id,
+                    notify_url: 'https://send20.netlify.app/notifications',
+                    mode: CONFIG.cinetpay.mode
+                });
+                
+                CinetPay.getCheckout({
+                    transaction_id: `SEND_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                    amount: deliveryPrice,
+                    currency: 'XOF',
+                    channels: 'MOBILE_MONEY',
+                    description: `Livraison Send 2.0 - Colis ${appState.currentPackage.trackingCode}`,
+                    
+                    customer_name: document.getElementById('recipientName').value.trim(),
+                    customer_surname: '',
+                    customer_phone_number: document.getElementById('recipientPhone').value.trim(),
+                    customer_email: '',
+                    customer_address: appState.currentPackage.address || '',
+                    customer_city: 'Ouagadougou',
+                    customer_country: 'BF',
+                    customer_state: 'BF',
+                    customer_zip_code: ''
+                });
+                
+                CinetPay.waitResponse(handlePaymentResponse);
+                CinetPay.onError(function(data) {
+                    console.error('Erreur CinetPay Send:', data);
+                    sendClientMascot.setEmotion('concerned');
+                    showToast(`❌ Erreur de paiement Send: ${data.description || data.message}`, 'error');
+                });
+
+            } catch (error) {
+                console.error('Erreur initiation paiement Send:', error);
+                sendClientMascot.setEmotion('concerned');
+                showToast('❌ Erreur lors du démarrage du paiement Send', 'error');
+            }
+        }
+
+        function handlePaymentResponse(data) {
+            const paymentStatus = document.getElementById('paymentStatus');
+            
+            if (data.status === "ACCEPTED") {
+                paymentStatus.innerHTML = `
+                    <div class="verification-result success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>🎉 Paiement Send réussi!</strong>
+                        <div class="verification-details">
+                            <div>📝 Référence: ${data.payment_token}</div>
+                            <div>💰 Montant: ${data.amount} FCFA</div>
+                            <div>📅 Date: ${new Date(data.created_at).toLocaleString()}</div>
+                            <div>🤖 Validé par Send</div>
+                        </div>
+                    </div>
+                `;
+                
+                paymentStatus.classList.remove('hidden');
+                appState.paymentVerified = true;
+                appState.paymentMethod = 'online';
+                enableAcceptButton();
+                sendClientMascot.onPaymentSuccess();
+                showToast('🎉 Paiement Send confirmé avec succès!', 'success');
+                
+            } else if (data.status === "REFUSED") {
+                paymentStatus.innerHTML = `
+                    <div class="verification-result error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>❌ Paiement Send refusé</strong>
+                        <div class="verification-details">
+                            <p>${data.message || 'Votre paiement a été refusé par le système'}</p>
+                            <p>🤖 L'assistant Send peut vous aider à résoudre ce problème</p>
+                        </div>
+                    </div>
+                `;
+                
+                paymentStatus.classList.remove('hidden');
+                sendClientMascot.setEmotion('concerned');
+                showToast('❌ Paiement Send refusé', 'error');
+            }
+        }
+
+        function selectPayOnDelivery() {
+            // Sélectionner le bouton
+            document.querySelectorAll('.payment-options .btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            const payOnDeliveryBtn = document.getElementById('payOnDeliveryButton');
+            payOnDeliveryBtn.classList.add('selected');
+
+            // Ajouter un badge de sélection
+            if (!payOnDeliveryBtn.querySelector('.payment-method-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'payment-method-badge';
+                badge.innerHTML = '<i class="fas fa-check"></i>';
+                payOnDeliveryBtn.style.position = 'relative';
+                payOnDeliveryBtn.appendChild(badge);
+            }
+
+            // Mettre à jour l'état
+            appState.paymentMethod = 'delivery';
+            appState.paymentVerified = true;
+
+            // Activer l'acceptation
+            enableAcceptButton();
+            sendClientMascot.onPaymentSuccess();
+
+            showToast('✅ Paiement à la livraison sélectionné par Send', 'success');
+        }
+
+        function enableAcceptButton() {
+            const acceptBtn = document.getElementById('acceptBtn');
+            if (acceptBtn) {
+                acceptBtn.disabled = false;
+                acceptBtn.style.background = 'linear-gradient(135deg, var(--success) 0%, #16a34a 100%)';
+                
+                if (appState.paymentMethod === 'delivery') {
+                    acceptBtn.innerHTML = '<i class="fas fa-truck"></i> 🚚 ACCEPTER (Paiement à la livraison)';
+                } else {
+                    acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> ✅ ACCEPTER LE COLIS SEND';
+                }
+                
+                acceptBtn.onclick = () => acceptPackage();
+            }
+        }
+
+        // Actions sur les colis avec Send
+        function acceptPackage() {
+            if (!appState.paymentMethod && !appState.paymentVerified) {
+                sendClientMascot.showMessage('payment', {
+                    actions: [{ text: '💳 Payer', action: 'payNow' }]
+                });
+                showToast("⚠️ Veuillez sélectionner un mode de paiement Send", "warning");
+                return;
+            }
+            
+            const message = appState.paymentMethod === 'delivery'
+                ? 'En acceptant ce colis Send, vous confirmez que vous paierez le montant à la livraison avec l\'assistance de Send.'
+                : 'En acceptant ce colis Send, vous confirmez qu\'il vous est destiné et autorisez la livraison.';
+            
+            showConfirmModal(
+                'accept',
+                '✅ Confirmer la Réception Send',
+                message,
+                handleAcceptPackage
+            );
+        }
+
+        function declinePackage() {
+            sendClientMascot.setEmotion('concerned');
+            showConfirmModal(
+                'decline',
+                '❌ Refuser le Colis Send',
+                'En refusant ce colis Send, il sera définitivement supprimé du système . Cette action est irréversible et sera notifiée à l\'expéditeur.',
+                handleDeclinePackage
+            );
+        }
+
+        async function handleAcceptPackage() {
+            if (appState.isProcessing) return;
+            
+            appState.isProcessing = true;
+            closeConfirmModal();
+            
+            showLoadingOverlay(
+                " Send traite votre acceptation",
+                appState.paymentMethod === 'delivery' 
+                    ? "Préparation pour paiement à la livraison..." 
+                    : "Confirmation du paiement par Send..."
+            );
+            
+            try {
+                const requestData = {
+                    action: 'accept',
+                    colisID: appState.currentPackage?.colisID,
+                    location: appState.location,
+                    paymentMethod: appState.paymentMethod,
+                    paymentStatus: appState.paymentVerified ? 'verified' : 'pending',
+                    sessionId: appState.sessionId,
+                    timestamp: new Date().toISOString(),
+                    sendContext: {
+                        sendInteractions: sendClientMascot.interactionCount,
+                        userInteractions: appState.userInteractions
+                    }
+                };
+
+                const response = await fetch(CONFIG.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erreur lors de l\'acceptation Send');
+                }
+                
+                const result = await response.json();
+                
+                hideLoadingOverlay();
+                sendClientMascot.celebrate();
+                showToast(
+                    `🎉 Colis Send accepté ! ${result.livraisonID ? `ID: ${result.livraisonID}` : 'Livraison en préparation !'}`,
+                    "success"
+                );
+                
+setTimeout(() => {
+    // resetToSearch(); // facultatif
+    window.location.href = 'suivi.html';
+}, 4000);
+                
+            } catch (error) {
+                hideLoadingOverlay();
+                console.error('Erreur Send:', error);
+                sendClientMascot.setEmotion('concerned');
+                showToast(error.message || 'Erreur technique Send', 'error');
+            } finally {
+                appState.isProcessing = false;
+            }
+        }
+
+        async function handleDeclinePackage() {
+            if (appState.isProcessing) return;
+            
+            appState.isProcessing = true;
+            closeConfirmModal();
+            
+            showLoadingOverlay(
+                " Send traite votre refus",
+                "Suppression du colis du système..."
+            );
+            
+            try {
+                const response = await fetch(CONFIG.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'decline',
+                        colisID: appState.currentPackage.colisID,
+                        reason: "Refus par le destinataire via assistant Send",
+                        sessionId: appState.sessionId,
+                        timestamp: new Date().toISOString(),
+                        sendContext: {
+                            sendInteractions: sendClientMascot.interactionCount
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erreur lors du refus Send');
+                }
+                
+                hideLoadingOverlay();
+                showToast('✅ Colis Send refusé et supprimé du système ', 'success');
+                
+                setTimeout(resetToSearch, 3000);
+                
+            } catch (error) {
+                hideLoadingOverlay();
+                console.error('❌ Erreur Send:', error);
+                sendClientMascot.setEmotion('concerned');
+                showToast(error.message || 'Erreur technique Send', 'error');
+            } finally {
+                appState.isProcessing = false;
+            }
+        }
+
+        // Fonctions helper avancées
+        function generatePhotosHTML(photos) {
+            if (!photos || photos.length === 0) {
+                return `
+                    <div class="no-photos">
+                        <i class="fas fa-image"></i>
+                        🔍 Aucune photo disponible dans le système Send
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="photo-gallery">
+                    ${photos.map((photo, index) => `
+                        <div class="photo-item">
+                            ${photo.thumbnail ? 
+                                `<img src="${photo.thumbnail}" alt="Photo Send ${index + 1}" loading="lazy">` : 
+                                `<div class="photo-placeholder">📸 Photo Send ${index + 1}</div>`
+                            }
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="smart-tip visible">
+                    <div class="smart-tip-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="smart-tip-content">
+                        <div class="smart-tip-title">Sécurité Photos Send</div>
+                        <div class="smart-tip-text">Toutes les photos sont sécurisées et vérifiées par Send pour garantir l'authenticité du colis.</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateInfoSection(title, icon, items, customContent = '') {
+            return `
+                <div class="info-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-${icon}"></i>
+                        </div>
+                        <h3 class="section-title">${title}</h3>
+                    </div>
+                    ${items.length > 0 ? `
+                        <div class="info-grid">
+                            ${items.map(item => `
+                                <div class="info-item">
+                                    <span class="info-label">${item.label}</span>
+                                    <span class="info-value">${escapeHTML(item.value || 'Non spécifié')}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${customContent}
+                </div>
+            `;
+        }
+
+        // Gestion de l'interface avancée
+        function animateTransition() {
+            elements.searchSection.style.opacity = '0';
+            elements.searchSection.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                elements.searchSection.classList.add('hidden');
+                elements.packageSection.classList.remove('hidden');
+                elements.packageSection.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        function resetToSearch() {
+            appState.currentPackage = null;
+            appState.paymentVerified = false;
+            appState.paymentMethod = null;
+            appState.userInteractions = 0;
+            appState.validationState = { name: false, phone: false, code: false };
+            
+            elements.packageSection.classList.add('hidden');
+            elements.searchSection.classList.remove('hidden');
+            elements.searchSection.style.opacity = '1';
+            elements.searchSection.style.transform = 'translateY(0)';
+            elements.searchForm.reset();
+            
+            hideLocationStatus();
+            elements.accuracyText.textContent = '--';
+            
+            // Reset des validations visuelles
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.classList.remove('success', 'error');
+            });
+            document.querySelectorAll('.input-feedback').forEach(feedback => {
+                feedback.classList.remove('visible');
+            });
+            
+            // Reset Send
+            sendClientMascot.contextMemory.clear();
+            sendClientMascot.setEmotion('neutral');
+            sendClientMascot.setIndicator('');
+            
+            elements.searchSection.scrollIntoView({ behavior: 'smooth' });
+            
+            setTimeout(() => {
+                sendClientMascot.showWelcomeMessage();
+            }, 2000);
+        }
+
+        function showConfirmModal(type, title, message, action) {
+            elements.confirmIcon.className = `confirm-icon ${type} fas ${type === 'accept' ? 'fa-check-circle' : 'fa-exclamation-triangle'}`;
+            elements.confirmTitle.textContent = title;
+            elements.confirmMessage.textContent = message;
+            
+            elements.confirmYes.className = `btn ${type === 'accept' ? 'success' : 'danger'}`;
+            elements.confirmYes.innerHTML = `<i class="fas ${type === 'accept' ? 'fa-check' : 'fa-times'}"></i>${type === 'accept' ? '✅ Oui, Accepter' : '❌ Oui, Refuser'}`;
+            
+            elements.confirmYes.onclick = action;
+            elements.confirmModal.classList.add('visible');
+        }
+
+        function closeConfirmModal() {
+            elements.confirmModal.classList.remove('visible');
+        }
+
+        function showLoadingOverlay(message, submessage) {
+            elements.loadingMessage.textContent = message;
+            elements.loadingSubmessage.textContent = submessage;
+            elements.loadingOverlay.classList.add('visible');
+        }
+
+        function hideLoadingOverlay() {
+            elements.loadingOverlay.classList.remove('visible');
+        }
+
+        function setButtonLoading(button, loading, text = null) {
+            if (loading) {
+                button.innerHTML = `<span class="loading-spinner"></span> ${text || '🤖 Send traite...'}`;
+                button.disabled = true;
+            } else {
+                button.innerHTML = '<i class="fas fa-search"></i>🔍 Recherche Send';
+                button.disabled = false;
+            }
+        }
+
+        function showToast(message, type = 'info', duration = 4000) {
+            // Supprimer les anciens toasts
+            document.querySelectorAll('.toast').forEach(toast => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            });
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="toast-icon ${type} ${iconMap[type]}"></i>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto-suppression
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            document.body.removeChild(toast);
+                        }
+                    }, 300);
+                }
+            }, duration);
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function generateSessionId() {
+            return `send_client_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        // Fonctions globales
+        window.acceptPackage = acceptPackage;
+        window.declinePackage = declinePackage;
+        window.initiateCinetPayPayment = initiateCinetPayPayment;
+        window.selectPayOnDelivery = selectPayOnDelivery;
+        window.startSendGuide = () => sendClientMascot.startSearchGuide();
+        window.hideSendDialogue = () => sendClientMascot.hideDialogue();
+
+        console.log('🎉🤖 Send 2.0 Client - Système avec Assistant Send chargé avec succès');
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "appId": "com.monsite.livreur",
+  "appName": "Livraison2.0",
+  "webDir": "www",
+  "plugins": {
+    "BackgroundGeolocation": {
+      "reset": true,
+      "debug": true,
+      "logLevel": "verbose",
+      "startOnBoot": true,
+      "stopOnTerminate": false,
+      "desiredAccuracy": 0,
+      "distanceFilter": 100,
+      "interval": 300000,
+      "notificationTitle": "Suivi en cours",
+      "notificationText": "Mise à jour de votre position",
+      "locationTemplate": "{\"latitude\":<%= latitude %>,\"longitude\":<%= longitude %>}",
+      "headers": {
+        "X-App-Id": "livraison-2.0"
+      },
+      "url": ""  
+    }
+
+
+
+
+    
+  }
+}

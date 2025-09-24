@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SEND 2.0 - Livraison Nouvelle Génération | Burkina Faso</title>
+    <meta name="description" content="Solution de livraison innovante pour le Burkina Faso. Expédiez et recevez vos colis en toute simplicité avec SEND 2.0.">
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#0066FF">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/moto.png">
+    
+    <style>
+        :root {
+            /* Colors */
+            --primary-blue: #0066FF;
+            --primary-blue-dark: #0052cc;
+            --secondary-orange: #FF6B35;
+            --accent-green: #00C896;
+            --white: #FFFFFF;
+            --black: #000000;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --red-500: #ef4444;
+            --yellow-500: #eab308;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), #0ea5e9);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-orange), #f97316);
+            --gradient-accent: linear-gradient(135deg, var(--accent-green), #059669);
+            --gradient-dark: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Typography */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            --text-5xl: 3rem;
+            --text-6xl: 3.75rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            
+            /* Z-index */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
+            --z-toast: 1080;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: var(--text-base);
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-accent {
+            background: var(--gradient-accent);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn i {
+            margin-right: var(--space-2);
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: translateX(2px);
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: var(--z-toast);
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius-2xl);
+            margin-bottom: var(--space-6);
+            animation: pulse 2s infinite, float 6s ease-in-out infinite;
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .splash-title {
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: var(--space-2);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .splash-subtitle {
+            color: var(--gray-300);
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-8);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .progress-container {
+            width: 280px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-4);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+            border-radius: var(--radius-full);
+        }
+
+        .loading-message {
+            color: var(--gray-300);
+            font-size: var(--text-sm);
+            text-align: center;
+            min-height: 1.5rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: var(--space-4);
+            left: var(--space-4);
+            z-index: var(--z-fixed);
+        }
+
+        .nav-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .nav-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: var(--z-modal);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .nav-drawer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 85%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--white);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .nav-menu.active .nav-drawer {
+            transform: translateX(0);
+        }
+
+        .nav-header {
+            padding: var(--space-6) var(--space-4);
+            background: var(--gradient-primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .nav-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+        }
+
+        .nav-brand {
+            font-size: var(--text-lg);
+            font-weight: 700;
+        }
+
+        .nav-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: var(--text-xl);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .nav-list {
+            flex: 1;
+            padding: var(--space-4) 0;
+            list-style: none;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-1);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3) var(--space-4);
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-blue);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--gray-50);
+            color: var(--primary-blue);
+            transform: translateX(8px);
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link i {
+            margin-right: var(--space-3);
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Delivery Mode Toggle */
+        .delivery-mode-toggle {
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            z-index: var(--z-fixed);
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-3);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .delivery-mode-toggle.active {
+            border-color: var(--accent-green);
+            background: var(--gray-50);
+        }
+
+        .toggle-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .toggle-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: var(--text-lg);
+            transition: all 0.3s ease;
+        }
+
+        .delivery-mode-toggle.active .toggle-icon {
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 200, 150, 0.5);
+        }
+
+        .toggle-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toggle-label {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: var(--gray-300);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-green);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: var(--radius-full);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+
+        .toggle-status {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+
+        .delivery-mode-toggle.active .toggle-status {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('img/Monument des martyrs.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: var(--space-8) var(--space-4);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: clamp(var(--text-4xl), 8vw, var(--text-6xl));
+            font-weight: 900;
+            margin-bottom: var(--space-4);
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-8);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            grid-column: 1 / -1;
+            justify-self: center;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: var(--space-8);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--white);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-indicator:hover {
+            background: var(--white);
+            color: var(--gray-800);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Services Section */
+        .services {
+            padding: var(--space-16) 0;
+            background: var(--gray-50);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+
+        .section-title {
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            color:#e5e7eb;
+            margin-bottom: var(--space-4);
+            position: relative;
+            display: inline-block;
+            top: 20px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+        }
+
+        .section-subtitle {
+            font-size: var(--text-lg);
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-8);
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8) var(--space-6);
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid transparent;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-2xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-6);
+            color: var(--white);
+            font-size: var(--text-2xl);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .service-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-3);
+        }
+
+        .service-description {
+            color: var(--gray-600);
+            margin-bottom: var(--space-6);
+            line-height: 1.6;
+        }
+
+        .service-link {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-link:hover {
+            color: var(--primary-blue-dark);
+        }
+
+        .service-link i {
+            margin-left: var(--space-2);
+            transition: transform 0.3s ease;
+        }
+
+        .service-link:hover i {
+            transform: translateX(4px);
+        }
+
+        /* President Section */
+        .president {
+            padding: var(--space-16) 0;
+            background: var(--gradient-dark);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .president::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .president-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-8);
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .president-text {
+            order: 2;
+        }
+
+        .president-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--secondary-orange);
+            color: var(--white);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-4);
+        }
+
+        .president-badge i {
+            margin-right: var(--space-2);
+        }
+
+        .president-heading {
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            margin-bottom: var(--space-6);
+            background: linear-gradient(45deg, var(--white), #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .president-description {
+            font-size: var(--text-lg);
+            line-height: 1.7;
+            opacity: 0.9;
+            margin-bottom: var(--space-4);
+        }
+
+        .president-image {
+            order: 1;
+            position: relative;
+        }
+
+        .president-img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            transition: transform 0.5s ease;
+        }
+
+        .president-img:hover {
+            transform: scale(1.02);
+        }
+
+        .president-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: var(--space-6);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+        }
+
+        .president-name {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            margin-bottom: var(--space-1);
+        }
+
+        .president-title {
+            font-size: var(--text-sm);
+            opacity: 0.8;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-900);
+            color: var(--white);
+            padding: var(--space-16) 0 var(--space-8);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+
+        .footer-section h3 {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-blue);
+            border-radius: var(--radius-full);
+        }
+
+        .footer-list {
+            list-style: none;
+        }
+
+        .footer-list li {
+            margin-bottom: var(--space-3);
+        }
+
+        .footer-list a {
+            color: var(--gray-300);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            padding: var(--space-1) 0;
+        }
+
+        .footer-list a:hover {
+            color: var(--white);
+            transform: translateX(4px);
+        }
+
+        .footer-list i {
+            margin-right: var(--space-3);
+            width: 20px;
+            text-align: center;
+            color: var(--primary-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .app-downloads {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            background: var(--black);
+            color: var(--white);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-size: var(--text-xs);
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: var(--gray-800);
+            transform: translateY(-2px);
+        }
+
+        .download-btn i {
+            font-size: var(--text-lg);
+            margin-right: var(--space-2);
+        }
+
+        .download-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .download-text {
+            font-size: 8px;
+            opacity: 0.8;
+        }
+
+        .download-store {
+            font-weight: 600;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--space-8);
+            border-top: 1px solid var(--gray-700);
+            color: var(--gray-400);
+            font-size: var(--text-sm);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-4);
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-accent);
+            color: var(--white);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-xl);
+            z-index: var(--z-fixed);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        /* Notification System */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--red-500);
+            color: var(--white);
+            border-radius: var(--radius-full);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: 700;
+        }
+
+        .notification-toast {
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: var(--white);
+            color: var(--gray-800);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: var(--z-toast);
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: var(--text-lg);
+        }
+
+        .toast-body {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .delivery-mode-toggle {
+                position: static;
+                margin: var(--space-4) auto;
+                width: fit-content;
+                order: -1;
+            }
+
+            .hero-content {
+                padding-top: var(--space-16);
+            }
+
+            .toggle-content {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-2);
+            }
+
+            .toggle-info {
+                align-items: center;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 var(--space-6);
+            }
+
+            .hero-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-cta {
+                grid-column: 1 / -1;
+            }
+
+            .president-content {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .president-text {
+                order: 1;
+            }
+
+            .president-image {
+                order: 2;
+            }
+
+            .fab {
+                bottom: var(--space-8);
+                right: var(--space-6);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .navigation {
+                top: var(--space-6);
+                left: var(--space-6);
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Banner Styles */
+        .banner {
+            position: fixed;
+            left: 0;
+            right: 0;
+            background: var(--gradient-dark);
+            color: var(--white);
+            padding: var(--space-3) var(--space-4);
+            z-index: var(--z-sticky);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .banner.top {
+            top: 0;
+        }
+
+        .banner.bottom {
+            bottom: 0;
+            transform: translateY(100%);
+        }
+
+        .banner.show {
+            transform: translateY(0);
+        }
+
+        .banner-content {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .scrolling-text {
+            white-space: nowrap;
+            animation: scroll 30s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .banner-btn {
+            background: var(--accent-green);
+            color: var(--white);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: var(--space-4);
+            transition: all 0.3s ease;
+        }
+
+        .banner-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .banner-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            margin-left: var(--space-3);
+            padding: var(--space-1);
+            transition: transform 0.3s ease;
+        }
+
+        .banner-close:hover {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND 2.0 Logo" class="splash-logo">
+        <h1 class="splash-title">SEND 2.0</h1>
+        <p class="splash-subtitle">Livraison Nouvelle Génération au Burkina Faso</p>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="loading-message" id="loadingMessage">Initialisation...</p>
+    </div>
+
+    <!-- Delivery Mode Toggle -->
+    <div class="delivery-mode-toggle" id="deliveryModeToggle">
+        <div class="toggle-content">
+            <div class="toggle-icon">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="toggle-info">
+                <label class="toggle-label">Mode Livreur</label>
+                <div class="toggle-switch" id="toggleSwitch">
+                    <div class="toggle-slider"></div>
+                </div>
+                <div class="toggle-status" id="toggleStatus">Inactif</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="nav-menu" id="navMenu">
+        <div class="nav-drawer">
+            <div class="nav-header">
+                <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND 2.0">
+                <span class="nav-brand">SEND 2.0</span>
+                <button class="nav-close" id="navClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item"><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Accueil</a></li>
+                <li class="nav-item"><a href="client.html" class="nav-link"><i class="fas fa-shopping-bag"></i> Recevoir un coli</a></li>
+                <li class="nav-item"><a href="expediteur.html" class="nav-link"><i class="fas fa-paper-plane"></i> Expédier un coli</a></li>
+                <li class="nav-item"><a href="suivi.html" class="nav-link"><i class="fas fa-search-location"></i> Suivre un coli</a></li>
+                <li class="nav-item"><a href="services.html" class="nav-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+                <li class="nav-item"><a href="inscription_restau.html" class="nav-link"><i class="fas fa-utensils"></i> Demande Partenariat Restaurants</a></li>
+                <li class="nav-item"><a href="inscription.html" class="nav-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+                <li class="nav-item"><a href="Connection.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+                <li class="nav-item"><a href="assistance.html" class="nav-link"><i class="fas fa-headset"></i> Assistance</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Banners -->
+    <div class="banner top" id="topBanner">
+        <div class="banner-content">
+            <div class="scrolling-text" id="topBannerText">Mise à jour système en cours - Nouvelles fonctionnalités disponibles</div>
+        </div>
+        <a href="#" class="banner-btn" id="downloadBtn">
+            <i class="fas fa-download"></i> Télécharger
+        </a>
+        <button class="banner-close" id="topBannerClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="banner bottom" id="bottomBanner">
+        <div class="banner-content">
+            <div class="scrolling-text" id="bottomBannerText">Service de livraison innovant au Burkina Faso - Contact: 56 66 36 38</div>
+        </div>
+        <button class="banner-close" id="bottomBannerClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">SEND 2.0</h1>
+                <p class="hero-subtitle">
+                    La solution de livraison nouvelle génération au Burkina Faso. 
+                    Rapide, fiable et accessible à tous.
+                </p>
+                <div class="hero-actions">
+                    <a href="client.html" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> Recevoir un colis
+                    </a>
+                    <a href="expediteur.html" class="btn btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Expédier un colis
+                    </a>
+                    <a href="services.html" class="btn btn-accent hero-cta">
+                        <i class="fas fa-cogs"></i> Découvrir nos services
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator" onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nos Services</h2>
+                <p class="section-subtitle">
+                    Une gamme complète de services de livraison adaptés à vos besoins
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <h3 class="service-title">Services </h3>
+                    <p class="service-description">
+                        Nourriture, médicaments, courses - tout en un seul clic avec un service personnalisé.
+                    </p>
+                    <a href="services.html" class="service-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <h3 class="service-title">Devenir Livreur</h3>
+                    <p class="service-description">
+                        Rejoignez notre équipe et générez des revenus en livrant dans votre ville.
+                    </p>
+                    <a href="inscription.html" class="service-link">
+                        S'inscrire <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-search-location"></i>
+                    </div>
+                    <h3 class="service-title">Suivi Temps Réel</h3>
+                    <p class="service-description">
+                        Suivez votre colis en temps réel avec géolocalisation précise et notifications.
+                    </p>
+                    <a href="suivi.html" class="service-link">
+                        Suivre <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3 class="service-title">Partenaires Restaurants</h3>
+                    <p class="service-description">
+                        Développez votre activité avec notre réseau de livraison performant.
+                    </p>
+                    <a href="inscription_restau.html" class="service-link">
+                        Partenariat <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- President Section -->
+    <section class="president" id="president">
+        <div class="container">
+            <div class="president-content">
+                <div class="president-text">
+                    <div class="president-badge">
+                        <i class="fas fa-flag"></i>
+                        <span>Innovation Burkinabè</span>
+                    </div>
+                    <h2 class="president-heading">Soutenu par notre Nation</h2>
+                    <p class="president-description">
+                        SEND 2.0 représente l'excellence de l'innovation burkinabè. Cette solution technologique 
+                        moderne s'inscrit dans la vision d'un Burkina Faso digital et entrepreneurial.
+                    </p>
+                    <p class="president-description">
+                        Notre plateforme de livraison contribue à la création d'emplois pour la jeunesse, 
+                        au développement de l'économie numérique et à la modernisation des services urbains.
+                    </p>
+                </div>
+                <div class="president-image">
+                    <img src="img/ib.jpg" alt="Président Ibrahim Traoré" class="president-img">
+                    <div class="president-overlay">
+                        <h3 class="president-name">Président Ibrahim Traoré</h3>
+                        <p class="president-title">Soutien à l'innovation locale</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-list">
+                        <li><a href="tel:+22656663638"><i class="fas fa-phone"></i> +226 56 66 36 38</a></li>
+                        <li><a href="mailto:contact@send20.bf"><i class="fas fa-envelope"></i> contact@send20.bf</a></li>
+                        <li><a href="https://wa.me/22661229766"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Ouagadougou, Burkina Faso</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul class="footer-list">
+                        <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                        <li><a href="services.html"><i class="fas fa-concierge-bell"></i> Services</a></li>
+                        <li><a href="inscription.html"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+                        <li><a href="assistance.html"><i class="fas fa-headset"></i> Assistance</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Suivez-nous</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Télécharger l'app</h3>
+                    <div class="app-downloads">
+                        <a href="#" class="download-btn">
+                            <i class="fab fa-apple"></i>
+                            <div class="download-info">
+                                <div class="download-text">Disponible sur</div>
+                                <div class="download-store">App Store</div>
+                            </div>
+                        </a>
+                        <a href="#" class="download-btn">
+                            <i class="fab fa-google-play"></i>
+                            <div class="download-info">
+                                <div class="download-text">Disponible sur</div>
+                                <div class="download-store">Play Store</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 SEND 2.0 - Tous droits réservés</p>
+                <p>Solution innovante made in Burkina Faso 🇧🇫</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="fab" id="fab" onclick="window.open('https://wa.me/22661229766', '_blank')">
+        <i class="fas fa-headset"></i>
+        <div class="notification-badge" id="notificationBadge" style="display: none;">1</div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast">
+        <div class="toast-header">
+            <span class="toast-title">Nouvelle commande!</span>
+            <button class="toast-close" onclick="hideNotification()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="toast-body" id="toastBody">
+            Une nouvelle commande est disponible. Connectez-vous pour accepter.
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            API_BASE_URL: 'https://send20.netlify.app/.netlify/functions',
+            NOTIFICATION_CHECK_INTERVAL: 30000, // 30 secondes
+            BANNER_DELAY: 2000,
+            SPLASH_DURATION: 3000,
+            NOTIFICATION_SOUND: true,
+            DELIVERY_MODE_KEY: 'send2_delivery_mode_enabled'
+        };
+
+        // ==================== DELIVERY MODE MANAGER ====================
+// ==================== DELIVERY MODE MANAGER ====================
+class DeliveryModeManager {
+    constructor() {
+        this.isEnabled = false;
+        this.toggleElement = null;
+        this.statusElement = null;
+        this.containerElement = null;
+        this.init();
+    }
+
+init() {
+        this.toggleElement = document.getElementById('toggleSwitch');
+        this.statusElement = document.getElementById('toggleStatus');
+        this.containerElement = document.getElementById('deliveryModeToggle');
+        
+        // Écouter les messages du Service Worker
+        this.setupServiceWorkerCommunication();
+        
+        // Charger et mettre à jour l'état
+        this.loadState();
+        this.updateUI();
+        this.setupEventListeners();
+    }
+
+    setupServiceWorkerCommunication() {
+        // Répondre aux requêtes du Service Worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data.type === 'REQUEST_DELIVERY_MODE_STATUS') {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'RESPONSE_DELIVERY_MODE_STATUS',
+                    enabled: this.isEnabled
+                });
+            }
+        });
+
+        // Envoyer l'état initial au Service Worker
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'DELIVERY_MODE_STATUS',
+                enabled: this.isEnabled
+            });
+        }
+    
+        
+        // Charger l'état depuis localStorage
+        this.loadState();
+        
+        // Mettre à jour l'interface immédiatement
+        this.updateUI();
+        
+        // Ajouter les gestionnaires d'événements
+        this.setupEventListeners();
+        
+        console.log('📱 Gestionnaire mode livreur initialisé:', this.isEnabled);
+    }
+
+    loadState() {
+        // Récupérer depuis localStorage avec une valeur par défaut explicite
+        const saved = localStorage.getItem(CONFIG.DELIVERY_MODE_KEY);
+        this.isEnabled = saved ? JSON.parse(saved) : false;
+    }
+
+    saveState() {
+        // Sauvegarder comme booléen JSON
+        localStorage.setItem(CONFIG.DELIVERY_MODE_KEY, JSON.stringify(this.isEnabled));
+        console.log('💾 État mode livreur sauvegardé:', this.isEnabled);
+        
+        // Informer le Service Worker
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'DELIVERY_MODE_STATUS',
+                enabled: this.isEnabled
+            });
+        }
+    }
+
+    toggle() {
+        this.isEnabled = !this.isEnabled;
+        this.saveState();
+        this.updateUI();
+        this.onStateChange();
+    }
+
+    updateUI() {
+        if (!this.toggleElement || !this.statusElement || !this.containerElement) return;
+
+        // Mettre à jour le switch
+        if (this.toggleElement) {
+            this.toggleElement.classList.toggle('active', this.isEnabled);
+        }
+        
+        // Mettre à jour le conteneur
+        if (this.containerElement) {
+            this.containerElement.classList.toggle('active', this.isEnabled);
+        }
+        
+        // Mettre à jour le texte de statut
+        if (this.statusElement) {
+            this.statusElement.textContent = this.isEnabled ? 'Actif' : 'Inactif';
+            this.statusElement.style.color = this.isEnabled ? '#00C896' : '#6b7280';
+            this.statusElement.style.fontWeight = this.isEnabled ? '600' : '400';
+        }
+        
+        // Animation d'activation
+        if (this.isEnabled && this.containerElement) {
+            this.containerElement.style.animation = 'pulse 0.6s ease-in-out';
+            setTimeout(() => {
+                this.containerElement.style.animation = '';
+            }, 600);
+        }
+    }
+
+    setupEventListeners() {
+        // Gestionnaire pour le switch
+        if (this.toggleElement) {
+            this.toggleElement.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggle();
+            });
+        }
+
+        // Gestionnaire pour le conteneur
+        if (this.containerElement) {
+            this.containerElement.addEventListener('click', (e) => {
+                if (e.target === this.containerElement || e.target.closest('.toggle-content')) {
+                    this.toggle();
+                }
+            });
+        }
+    }
+
+    onStateChange() {
+        // Émettre un événement personnalisé
+        const event = new CustomEvent('deliveryModeChanged', {
+            detail: { enabled: this.isEnabled }
+        });
+        document.dispatchEvent(event);
+        
+        // Afficher un feedback
+        this.showFeedback();
+    }
+
+    showFeedback() {
+        const toast = document.getElementById('notificationToast');
+        const toastBody = document.getElementById('toastBody');
+        
+        if (toast && toastBody) {
+            const message = this.isEnabled 
+                ? 'Mode livreur activé! Vous recevrez maintenant les notifications de nouvelles commandes.'
+                : 'Mode livreur désactivé. Les notifications sont maintenant suspendues.';
+            
+            toastBody.innerHTML = `
+                <strong>${this.isEnabled ? 'Mode Livreur Activé' : '⏸️ Mode Livreur Désactivé'}</strong><br>
+                ${message}
+            `;
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+    }
+
+    isDeliveryModeEnabled() {
+        return this.isEnabled;
+    }
+}
+
+        // ==================== NOTIFICATION SYSTEM ====================
+        class NotificationManager {
+            constructor() {
+                this.lastCheckTime = new Date();
+                this.isCheckingNotifications = false;
+                this.notificationSound = null;
+                this.permissionGranted = false;
+                this.deliveryModeManager = null;
+                this.checkInterval = null;
+            }
+
+            async init(deliveryModeManager) {
+                this.deliveryModeManager = deliveryModeManager;
+                
+                // Écouter les changements de mode livreur
+                document.addEventListener('deliveryModeChanged', (e) => {
+                    this.onDeliveryModeChanged(e.detail.enabled);
+                });
+
+                if (this.deliveryModeManager.isDeliveryModeEnabled()) {
+                    await this.startNotificationSystem();
+                }
+                
+                console.log('🔔 Système de notification initialisé');
+            }
+
+            async startNotificationSystem() {
+                // Demander la permission pour les notifications
+                await this.requestNotificationPermission();
+                
+                // Initialiser le son de notification
+                this.initNotificationSound();
+                
+                // Démarrer la vérification périodique
+                this.startPeriodicCheck();
+                
+                console.log('✅ Système de notification démarré');
+            }
+
+            stopNotificationSystem() {
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                    this.checkInterval = null;
+                }
+                
+                this.clearNotificationBadge();
+                console.log('⏹️ Système de notification arrêté');
+            }
+
+            onDeliveryModeChanged(enabled) {
+                if (enabled) {
+                    this.startNotificationSystem();
+                } else {
+                    this.stopNotificationSystem();
+                }
+            }
+
+            async requestNotificationPermission() {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    this.permissionGranted = permission === 'granted';
+                    
+                    if (this.permissionGranted) {
+                        console.log('✅ Permission de notification accordée');
+                    } else {
+                        console.log('❌ Permission de notification refusée');
+                    }
+                }
+            }
+
+            initNotificationSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    this.playNotificationSound = () => {
+                        if (!CONFIG.NOTIFICATION_SOUND || !this.deliveryModeManager.isDeliveryModeEnabled()) return;
+                        
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                        
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                    };
+                } catch (error) {
+                    console.warn('⚠️ Impossible d\'initialiser le son de notification:', error);
+                    this.playNotificationSound = () => {};
+                }
+            }
+
+            startPeriodicCheck() {
+                if (this.checkInterval) return;
+
+                // Vérification immédiate
+                this.checkForNewOrders();
+                
+                // Vérification périodique
+                this.checkInterval = setInterval(() => {
+                    if (this.deliveryModeManager.isDeliveryModeEnabled()) {
+                        this.checkForNewOrders();
+                    }
+                }, CONFIG.NOTIFICATION_CHECK_INTERVAL);
+            }
+
+            async checkForNewOrders() {
+                if (this.isCheckingNotifications || !this.deliveryModeManager.isDeliveryModeEnabled()) return;
+                
+                this.isCheckingNotifications = true;
+                console.log('🔍 Vérification des nouvelles commandes...');
+
+                try {
+                    const response = await fetch(`${CONFIG.API_BASE_URL}/check-new-orders`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            lastCheckTime: this.lastCheckTime.toISOString()
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.hasNewOrders && data.newOrdersCount > 0) {
+                        this.showNotification(data);
+                        this.lastCheckTime = new Date();
+                    }
+
+                } catch (error) {
+                    console.error('❌ Erreur lors de la vérification des commandes:', error);
+                } finally {
+                    this.isCheckingNotifications = false;
+                }
+            }
+
+            showNotification(data) {
+                if (!this.deliveryModeManager.isDeliveryModeEnabled()) return;
+
+                const { newOrdersCount, orderTypes, totalOrders } = data;
+                
+                // Jouer le son de notification
+                this.playNotificationSound();
+                
+                // Afficher le badge de notification
+                this.showNotificationBadge(newOrdersCount);
+                
+                // Notification push native si permission accordée
+                if (this.permissionGranted) {
+                    this.showPushNotification(data);
+                }
+                
+                // Toast notification dans l'app
+                this.showToastNotification(data);
+                
+                console.log(`🔔 ${newOrdersCount} nouvelle(s) commande(s) détectée(s)`);
+            }
+
+            showNotificationBadge(count) {
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.textContent = count > 99 ? '99+' : count.toString();
+                    badge.style.display = 'flex';
+                    
+                    // Animation du badge
+                    badge.style.animation = 'none';
+                    setTimeout(() => {
+                        badge.style.animation = 'pulse 1s ease-in-out 3';
+                    }, 10);
+                }
+            }
+
+            showPushNotification(data) {
+                const { newOrdersCount, orderTypes } = data;
+                
+                const title = `${newOrdersCount} nouvelle${newOrdersCount > 1 ? 's' : ''} commande${newOrdersCount > 1 ? 's' : ''}!`;
+                const body = `Types: ${orderTypes.join(', ')}. Connectez-vous pour accepter.`;
+                const icon = 'img/ChatGPT Image 30 avr. 2025, 20_34_02.png';
+                
+                const notification = new Notification(title, {
+                    body,
+                    icon,
+                    badge: icon,
+                    tag: 'new-order',
+                    requireInteraction: true,
+                    data: { ordersCount: newOrdersCount }
+                });
+
+                notification.onclick = () => {
+                    window.focus();
+                    window.location.href = 'Connection.html';
+                    notification.close();
+                };
+
+                // Auto fermeture après 10 secondes
+                setTimeout(() => notification.close(), 10000);
+            }
+
+            showToastNotification(data) {
+                const { newOrdersCount, orderTypes } = data;
+                const toast = document.getElementById('notificationToast');
+                const toastBody = document.getElementById('toastBody');
+                
+                if (toast && toastBody) {
+                    toastBody.innerHTML = `
+                        <strong>🚀 ${newOrdersCount} commande${newOrdersCount > 1 ? 's' : ''} disponible${newOrdersCount > 1 ? 's' : ''}</strong><br>
+                        Types: ${orderTypes.join(', ')}<br>
+                        <small>Cliquez pour vous connecter</small>
+                    `;
+                    
+                    toast.classList.add('show');
+                    toast.onclick = () => {
+                        window.location.href = 'Connection.html';
+                    };
+                    
+                    // Auto masquage après 8 secondes
+                    setTimeout(() => {
+                        if (toast.classList.contains('show')) {
+                            this.hideToastNotification();
+                        }
+                    }, 8000);
+                }
+            }
+
+            hideToastNotification() {
+                const toast = document.getElementById('notificationToast');
+                if (toast) {
+                    toast.classList.remove('show');
+                    toast.onclick = null;
+                }
+            }
+
+            clearNotificationBadge() {
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // ==================== APP INITIALIZATION ====================
+        class App {
+            constructor() {
+                this.deliveryModeManager = null;
+                this.notificationManager = null;
+                this.init();
+            }
+
+            async init() {
+                console.log('🚀 Initialisation de SEND 2.0...');
+                
+                // Initialiser les composants
+                await this.initSplashScreen();
+                this.initNavigation();
+                this.initBanners();
+                this.initScrollEffects();
+                
+                // Initialiser le gestionnaire de mode livreur
+                this.deliveryModeManager = new DeliveryModeManager();
+                
+                // Initialiser le système de notification
+                this.notificationManager = new NotificationManager();
+                await this.notificationManager.init(this.deliveryModeManager);
+                
+                console.log('✅ SEND 2.0 initialisé avec succès');
+            }
+
+            async initSplashScreen() {
+                return new Promise((resolve) => {
+                    const splashScreen = document.getElementById('splashScreen');
+                    const progressBar = document.getElementById('progressBar');
+                    const loadingMessage = document.getElementById('loadingMessage');
+                    
+                    const isFirstLoad = !localStorage.getItem('splashShown');
+                    
+                    if (!isFirstLoad) {
+                        splashScreen.style.display = 'none';
+                        resolve();
+                        return;
+                    }
+
+                    const messages = [
+                        'Initialisation du système...',
+                        'Connexion sécurisée...',
+                        'Chargement des modules...',
+                        'Configuration mode livreur...',
+                        'Optimisation notifications...',
+                        'Prêt à démarrer!'
+                    ];
+
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 5;
+                        progressBar.style.width = `${progress}%`;
+                        
+                        if (progress % 20 === 0) {
+                            const messageIndex = Math.min(Math.floor(progress / 20), messages.length - 1);
+                            loadingMessage.textContent = messages[messageIndex];
+                        }
+                        
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                splashScreen.classList.add('hidden');
+                                localStorage.setItem('splashShown', 'true');
+                                
+                                setTimeout(() => {
+                                    splashScreen.style.display = 'none';
+                                    resolve();
+                                }, 500);
+                            }, 500);
+                        }
+                    }, 60);
+                });
+            }
+
+            initNavigation() {
+                const navToggle = document.getElementById('navToggle');
+                const navMenu = document.getElementById('navMenu');
+                const navClose = document.getElementById('navClose');
+
+                const openMenu = () => {
+                    navMenu.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                const closeMenu = () => {
+                    navMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
+
+                navToggle?.addEventListener('click', openMenu);
+                navClose?.addEventListener('click', closeMenu);
+                navMenu?.addEventListener('click', (e) => {
+                    if (e.target === navMenu) closeMenu();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && navMenu?.classList.contains('active')) {
+                        closeMenu();
+                    }
+                });
+            }
+
+            async initBanners() {
+                try {
+                    const response = await fetch(`${CONFIG.API_BASE_URL}/get-baner`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        if (data.showBanner) {
+                            this.updateBannerContent(data);
+                            this.showBanners();
+                        }
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Erreur chargement bannières:', error);
+                    this.showDefaultBanners();
+                }
+
+                document.getElementById('topBannerClose')?.addEventListener('click', () => {
+                    document.getElementById('topBanner')?.classList.remove('show');
+                });
+
+                document.getElementById('bottomBannerClose')?.addEventListener('click', () => {
+                    document.getElementById('bottomBanner')?.classList.remove('show');
+                });
+            }
+
+            updateBannerContent(data) {
+                const topBannerText = document.getElementById('topBannerText');
+                const bottomBannerText = document.getElementById('bottomBannerText');
+                const downloadBtn = document.getElementById('downloadBtn');
+
+                if (topBannerText) topBannerText.textContent = data.updateMessage;
+                if (bottomBannerText) bottomBannerText.textContent = data.infoMessage;
+                if (downloadBtn) downloadBtn.href = data.downloadLink;
+            }
+
+            showDefaultBanners() {
+                const topBannerText = document.getElementById('topBannerText');
+                const bottomBannerText = document.getElementById('bottomBannerText');
+
+                if (topBannerText) {
+                    topBannerText.textContent = 'Nouvelle version disponible avec des améliorations de performance';
+                }
+                if (bottomBannerText) {
+                    bottomBannerText.textContent = 'Service de livraison innovant au Burkina Faso - Contact: 56 66 36 38';
+                }
+
+                this.showBanners();
+            }
+
+            showBanners() {
+                setTimeout(() => {
+                    document.getElementById('topBanner')?.classList.add('show');
+                }, CONFIG.BANNER_DELAY);
+
+                setTimeout(() => {
+                    document.getElementById('bottomBanner')?.classList.add('show');
+                }, CONFIG.BANNER_DELAY + 1000);
+            }
+
+            initScrollEffects() {
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+
+                let ticking = false;
+                
+                const updateParallax = () => {
+                    const scrolled = window.pageYOffset;
+                    const hero = document.getElementById('hero');
+                    
+                    if (hero) {
+                        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                    }
+                    
+                    ticking = false;
+                };
+
+                const requestParallaxUpdate = () => {
+                    if (!ticking) {
+                        requestAnimationFrame(updateParallax);
+                        ticking = true;
+                    }
+                };
+
+                window.addEventListener('scroll', requestParallaxUpdate, { passive: true });
+
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.service-card, .president-text, .president-image').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(el);
+                });
+            }
+        }
+
+        // ==================== FONCTIONS GLOBALES ====================
+        function hideNotification() {
+            const toast = document.getElementById('notificationToast');
+            if (toast) {
+                toast.classList.remove('show');
+            }
+        }
+
+        // ==================== DÉMARRAGE DE L'APPLICATION ====================
+        let app;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new App();
+        });
+
+        // Gestion des erreurs globales
+        window.addEventListener('error', (e) => {
+            console.error('💥 Erreur JavaScript:', e.error);
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('💥 Promesse rejetée:', e.reason);
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`⚡ Page chargée en ${loadTime}ms`);
+            }
+        });
+
+        // Service Worker pour les notifications hors ligne (si disponible)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker enregistré');
+                        
+                        // Passer la référence du DeliveryModeManager au Service Worker
+                        if (app && app.deliveryModeManager) {
+                            registration.active?.postMessage({
+                                type: 'DELIVERY_MODE_STATUS',
+                                enabled: app.deliveryModeManager.isDeliveryModeEnabled()
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log('❌ Échec Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

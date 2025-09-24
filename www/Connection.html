@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Connexion - SEND2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-blue: #0066FF;
+            --primary-blue-dark: #0052CC;
+            --primary-blue-light: #1A73FF;
+            --secondary-blue: #004BCC;
+            --light-blue: #E6F1FF;
+            --ultra-light-blue: #F0F7FF;
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --error: #EF4444;
+            --error-light: #FEE2E2;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --info: #3B82F6;
+            --info-light: #DBEAFE;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--primary-blue-dark) 100%);
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.02"><circle cx="40" cy="40" r="2"/><circle cx="20" cy="20" r="1"/><circle cx="60" cy="60" r="1.5"/></g></g></svg>');
+            pointer-events: none;
+            z-index: 0;
+            animation: patternDrift 25s linear infinite;
+        }
+
+        @keyframes patternDrift {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-80px) translateY(-80px); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            animation: containerSlideIn 1s ease-out;
+        }
+
+        @keyframes containerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .navigation {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            display: flex;
+            gap: 12px;
+            z-index: 2000;
+        }
+
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 100px;
+            animation: headerFadeIn 1.2s ease-out 0.3s both;
+        }
+
+        @keyframes headerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light), var(--secondary-blue));
+            border-radius: var(--border-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: var(--shadow-2xl);
+            animation: logoFloat 4s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--primary-blue), var(--primary-blue-light), var(--secondary-blue), var(--primary-blue));
+            border-radius: calc(var(--border-radius-xl) + 3px);
+            z-index: -1;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-6px) rotate(1deg); }
+            50% { transform: translateY(-3px) rotate(0deg); }
+            75% { transform: translateY(-6px) rotate(-1deg); }
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.8px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            font-weight: 400;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--ultra-light-blue), rgba(255, 255, 255, 0.9));
+            border: 1px solid rgba(0, 102, 255, 0.15);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            animation: cardSlideIn 1s ease-out 0.6s both;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            animation: borderPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% { opacity: 0.8; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.02); }
+        }
+
+        .welcome-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        .welcome-card .highlight {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .form-container {
+            animation: formSlideIn 1s ease-out 0.8s both;
+        }
+
+        @keyframes formSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+            animation: formItemSlideIn 0.7s ease-out both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 1s; }
+        .form-group:nth-child(2) { animation-delay: 1.1s; }
+        .form-group:nth-child(3) { animation-delay: 1.2s; }
+
+        @keyframes formItemSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--error);
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .input-wrapper:hover {
+            transform: translateY(-1px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            width: 22px;
+            height: 22px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 18px 16px 18px 50px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            color: var(--gray-900);
+            background: var(--white);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1), var(--shadow-lg);
+            transform: translateY(-2px);
+            background: var(--ultra-light-blue);
+        }
+
+        .form-input:focus + .input-icon, .form-select:focus + .input-icon {
+            color: var(--primary-blue);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .form-input.error, .form-select.error {
+            border-color: var(--error);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1), var(--shadow-lg);
+            background: var(--error-light);
+        }
+
+        .form-input.success, .form-select.success {
+            border-color: var(--success);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1), var(--shadow-lg);
+            background: var(--success-light);
+        }
+
+        .form-select {
+            padding-right: 50px;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus + .input-icon + .select-arrow {
+            color: var(--primary-blue);
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-blue);
+            background: rgba(0, 102, 255, 0.1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .form-help.error {
+            color: var(--error);
+            animation: errorShake 0.6s ease-in-out;
+        }
+
+        .form-help.success {
+            color: var(--success);
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 20px 28px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-top: 32px;
+            margin-bottom: 28px;
+            min-height: 64px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+            background: linear-gradient(135deg, var(--primary-blue-dark), var(--primary-blue));
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            left: 16px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-2xl);
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-left: 4px solid var(--primary-blue);
+            animation: toastSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, var(--success-light), rgba(255, 255, 255, 0.95));
+        }
+
+        .toast.error {
+            border-left-color: var(--error);
+            background: linear-gradient(135deg, var(--error-light), rgba(255, 255, 255, 0.95));
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+            background: linear-gradient(135deg, var(--warning-light), rgba(255, 255, 255, 0.95));
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .toast-icon {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .toast-icon.success { color: var(--success); }
+        .toast-icon.error { color: var(--error); }
+        .toast-icon.warning { color: var(--warning); }
+        .toast-icon.info { color: var(--info); }
+
+        .toast-message {
+            flex: 1;
+            font-size: 15px;
+            color: var(--gray-700);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+            transform: scale(1.1);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-bottom: 24px;
+        }
+
+        .form-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding-top: 80px;
+                margin-bottom: 32px;
+            }
+
+            .title {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .form-input, .form-select {
+                padding: 16px 14px 16px 46px;
+                font-size: 16px;
+            }
+
+            .submit-btn {
+                padding: 18px 24px;
+                margin-bottom: 40px;
+            }
+
+            .navigation {
+                top: 12px;
+                left: 12px;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .welcome-card {
+                padding: 20px;
+                margin-bottom: 28px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .navigation {
+                gap: 190px;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .nav-btn, .password-toggle, .submit-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .form-input, .form-select {
+                border-width: 3px;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+<!-- Menu Hamburger -->
+<div class="menu-btn" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND Logo" class="menu-logo">
+        <span class="menu-title">SEND 2.0</span>
+        <i class="fas fa-times menu-close" id="menuClose"></i>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item"><a href="index.html" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="menu-item"><a href="client.html" class="menu-link"><i class="fas fa-shopping-bag"></i> Recevoir</a></li>
+        <li class="menu-item"><a href="expediteur.html" class="menu-link"><i class="fas fa-paper-plane"></i> Expédier</a></li>
+        <li class="menu-item"><a href="suivi.html" class="menu-link"><i class="fas fa-search-location"></i> Suivi de colis</a></li>
+        <li class="menu-item"><a href="inscription_restau.html" class="menu-link"><i class="fas fa-utensils"></i> Partenariat Restaurant</a></li>
+        <li class="menu-item"><a href="services.html" class="menu-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li class="menu-item"><a href="inscription.html" class="menu-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+        <li class="menu-item"><a href="Connection.html" class="menu-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+        <li class="menu-item"><a href="assistance.html" class="menu-link"><i class="fas fa-headset"></i> Assistance</a></li>
+    </ul>
+
+    <div class="menu-footer">
+        SEND 2.0 &copy; 2025<br>
+        Tous droits réservés
+    </div>
+</div>
+
+<style>
+    /* ====== Menu Hamburger ====== */
+.menu-btn {
+    position: fixed;
+    top: 70px;
+    left: 20px;
+    z-index: 1000;
+    background:#F59E0B;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1rem;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-drawer.active {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.menu-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #0066FF;
+}
+
+.menu-close {
+    margin-left: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #1f2937;
+    background: none;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-close:hover {
+    transform: rotate(90deg);
+}
+
+.menu-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    z-index: -1;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.menu-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu-link:hover::before {
+    width: 100%;
+}
+
+.menu-link i {
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2);
+}
+
+.menu-link.active {
+    color: white;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: center;
+}
+</style>
+
+
+<script>
+    // ====== Gestion du Menu Hamburger ======
+const menuBtn = document.getElementById('menuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuDrawer = document.getElementById('menuDrawer');
+const menuClose = document.getElementById('menuClose');
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+    menuOverlay.classList.add('active');
+    menuDrawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+    menuOverlay.classList.remove('active');
+    menuDrawer.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Événements
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Mettre en surbrillance l'élément du menu actif
+document.querySelectorAll('.menu-link').forEach(link => {
+    if(link.href === window.location.href) {
+        link.classList.add('active');
+    }
+});
+</script>
+
+
+
+
+
+
+
+    
+<div class="navigation">
+    <!-- Bouton "Retour" (flèche gauche) -->
+    <a href="index.html" class="nav-btn" title="Retour">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </a>
+
+    <!-- Bouton "Suivant" (flèche droite) 
+    <a href="inscrip" class="nav-btn" title="Suivant">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </a> 
+    -->
+
+    <!-- Bouton Actualiser -->
+    <button class="nav-btn" title="Actualiser" onclick="location.reload()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23,4 23,10 17,10"/>
+            <polyline points="1,20 1,14 7,14"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+        </svg>
+    </button>
+</div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h1 class="title">Bienvenue sur SEND2.0</h1>
+            <p class="subtitle">Connectez-vous à votre espace professionnel et accédez à votre tableau de bord</p>
+        </div>
+
+        <div class="welcome-card">
+            <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+                Bon retour parmi nous !
+            </h3>
+            <p>Connectez-vous avec vos identifiants <span class="highlight">SEND2.0</span> pour accéder à votre tableau de bord personnalisé et gérer vos activités professionnelles.</p>
+        </div>
+
+        <div class="form-container">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label required">Nom d'utilisateur</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input type="text" id="username" name="username" 
+                               class="form-input" placeholder="Saisissez votre nom d'utilisateur" 
+                               required>
+                    </div>
+                    <div class="form-help" id="usernameHelp"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="type" class="form-label required">Type de compte</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <select id="type" name="type" class="form-select" required>
+                            <option value="">-- Sélectionnez votre type de compte --</option>
+                            <option value="livreur">🚚 Livreur</option>
+                            <option value="admin">👨‍💼 Administrateur</option>
+                        </select>
+                        <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6,9 12,15 18,9"/>
+                        </svg>
+                    </div>
+                    <div class="form-help" id="typeHelp"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label required">Mot de passe</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <circle cx="12" cy="16" r="1"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" id="password" name="password" 
+                               class="form-input" placeholder="Saisissez votre mot de passe" 
+                               required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <svg id="password-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="form-help" id="passwordHelp"></div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-5-4l4-4-4-4m4 4H3"/>
+                    </svg>
+                    Se connecter
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <a href="inscription.html">Pas encore de compte livreur ? S'inscrire</a><br>
+                <a href="inscription_restau.html" style="margin-top: 8px; display: inline-block;">Restaurant ? Rejoindre le réseau</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        class LoginManager {
+            constructor() {
+                this.form = document.getElementById('loginForm');
+                this.submitBtn = document.getElementById('submitBtn');
+                this.toastContainer = document.getElementById('toastContainer');
+                this.API_URL = 'https://send20.netlify.app/.netlify/functions/Authentification';
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupRealTimeValidation();
+                this.addLoadedClass();
+            }
+
+            addLoadedClass() {
+                setTimeout(() => {
+                    document.body.classList.add('loaded');
+                }, 100);
+            }
+
+            setupEventListeners() {
+                this.form.addEventListener('submit', this.handleSubmit.bind(this));
+                
+                const inputs = this.form.querySelectorAll('.form-input, .form-select');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', this.handleInputFocus.bind(this));
+                    input.addEventListener('blur', this.handleInputBlur.bind(this));
+                });
+            }
+
+            handleInputFocus(e) {
+                const wrapper = e.target.closest('.input-wrapper');
+                const label = e.target.closest('.form-group').querySelector('.form-label');
+                if (wrapper) {
+                    wrapper.style.transform = 'translateY(-2px) scale(1.01)';
+                }
+                if (label) {
+                    label.style.color = 'var(--primary-blue)';
+                }
+            }
+
+            handleInputBlur(e) {
+                const wrapper = e.target.closest('.input-wrapper');
+                const label = e.target.closest('.form-group').querySelector('.form-label');
+                if (wrapper) {
+                    wrapper.style.transform = 'translateY(0) scale(1)';
+                }
+                if (label) {
+                    label.style.color = 'var(--gray-700)';
+                }
+                this.validateField(e.target);
+            }
+
+            setupRealTimeValidation() {
+                const username = document.getElementById('username');
+                const type = document.getElementById('type');
+                const password = document.getElementById('password');
+
+                username.addEventListener('input', () => {
+                    this.clearFieldError(username);
+                    if (username.value.length >= 3) {
+                        this.setFieldSuccess(username, 'Nom d\'utilisateur valide');
+                    }
+                });
+
+                type.addEventListener('change', () => {
+                    this.clearFieldError(type);
+                    if (type.value) {
+                        this.setFieldSuccess(type, 'Type de compte sélectionné');
+                    }
+                });
+
+                password.addEventListener('input', () => {
+                    this.clearFieldError(password);
+                    if (password.value.length >= 6) {
+                        this.setFieldSuccess(password, 'Mot de passe saisi');
+                    }
+                });
+            }
+
+            validateField(field) {
+                const value = field.value.trim();
+                
+                if (field.hasAttribute('required') && !value) {
+                    this.setFieldError(field, 'Ce champ est requis');
+                    return false;
+                }
+
+                switch (field.name) {
+                    case 'username':
+                        if (value.length < 3) {
+                            this.setFieldError(field, 'Le nom d\'utilisateur doit contenir au moins 3 caractères');
+                            return false;
+                        }
+                        break;
+                    
+                    case 'password':
+                        if (value.length < 6) {
+                            this.setFieldError(field, 'Le mot de passe doit contenir au moins 6 caractères');
+                            return false;
+                        }
+                        break;
+                }
+
+                this.setFieldSuccess(field, 'Valide');
+                return true;
+            }
+
+            setFieldError(field, message) {
+                field.classList.remove('success');
+                field.classList.add('error');
+                
+                const helpId = field.id + 'Help';
+                const helpElement = document.getElementById(helpId);
+                if (helpElement) {
+                    helpElement.innerHTML = `
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        ${message}
+                    `;
+                    helpElement.className = 'form-help error';
+                }
+            }
+
+            setFieldSuccess(field, message = 'Valide') {
+                field.classList.remove('error');
+                field.classList.add('success');
+                
+                const helpId = field.id + 'Help';
+                const helpElement = document.getElementById(helpId);
+                if (helpElement) {
+                    helpElement.innerHTML = `
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22,4 12,14.01 9,11.01"/>
+                        </svg>
+                        ${message}
+                    `;
+                    helpElement.className = 'form-help success';
+                }
+            }
+
+            clearFieldError(field) {
+                field.classList.remove('error', 'success');
+                
+                const helpId = field.id + 'Help';
+                const helpElement = document.getElementById(helpId);
+                if (helpElement) {
+                    helpElement.innerHTML = '';
+                    helpElement.className = 'form-help';
+                }
+            }
+
+async handleSubmit(e) {
+    e.preventDefault();
+    
+    // Bloque le bouton pendant le traitement
+    if (this.submitBtn.disabled) return;
+    
+    // Récupération des données du formulaire
+    const formData = new FormData(this.form);
+    const data = Object.fromEntries(formData);
+    
+    // Validation côté client
+    if (!this.validateForm(data)) {
+        this.showToast('Veuillez remplir tous les champs requis', 'error');
+        return;
+    }
+    
+    // Activation du loader
+    this.setLoading(true);
+    
+    try {
+        // Envoi de la requête de connexion
+        const result = await this.submitLogin({
+            action: 'login',
+            username: data.username.trim().toLowerCase(),
+            type: data.type,
+            password: data.password
+        });
+
+        // Vérification de la réponse
+        if (!result.success) {
+            throw new Error(result.message || 'Authentification échouée');
+        }
+
+        // Stockage des données utilisateur
+        sessionStorage.setItem('user', JSON.stringify(result.user));
+        localStorage.setItem('authToken', result.token);
+        
+        // Notification et redirection
+        this.showToast('Connexion réussie !', 'success');
+        
+        setTimeout(() => {
+            // Redirection sécurisée
+            const redirectUrl = data.type === 'livreur' 
+                ? 'livreur.html' 
+                : 'admin.html';
+            
+            window.location.href = redirectUrl;
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Erreur de connexion:', error);
+        
+        // Messages d'erreur spécifiques
+        const errorMessage = error.message.includes('NetworkError')
+            ? 'Problème de connexion internet'
+            : error.message || 'Identifiants incorrects';
+        
+        this.showToast(errorMessage, 'error');
+        
+    } finally {
+        // Désactivation du loader
+        this.setLoading(false);
+    }
+}
+
+            validateForm(data) {
+                const errors = [];
+                
+                if (!data.username || data.username.length < 3) {
+                    errors.push('Nom d\'utilisateur invalide');
+                }
+                
+                if (!data.type) {
+                    errors.push('Type de compte requis');
+                }
+                
+                if (!data.password || data.password.length < 6) {
+                    errors.push('Mot de passe requis');
+                }
+                
+                if (errors.length > 0) {
+                    this.showToast(errors[0], 'error');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            async submitLogin(data) {
+                const requestData = {
+                    action: 'login',
+                    username: data.username.toLowerCase().trim(),
+                    type: data.type,
+                    password: data.password
+                };
+
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Erreur de connexion');
+                }
+
+                return result;
+            }
+
+            redirectUser(type, user) {
+                const redirections = {
+                    'livreur': `livreur.html?user=${encodeURIComponent(JSON.stringify(user))}`,
+                    'admin': `admin.html?user=${encodeURIComponent(JSON.stringify(user))}`
+                };
+                
+                const targetPage = redirections[type] || 'dashboard.html';
+                window.location.href = targetPage;
+            }
+
+            setLoading(loading) {
+                this.submitBtn.disabled = loading;
+                
+                if (loading) {
+                    this.submitBtn.innerHTML = `
+                        <div class="spinner"></div>
+                        Connexion en cours...
+                    `;
+                } else {
+                    this.submitBtn.innerHTML = `
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-5-4l4-4-4-4m4 4H3"/>
+                        </svg>
+                        Se connecter
+                    `;
+                }
+            }
+
+            showToast(message, type = 'info') {
+                const toastId = 'toast-' + Date.now();
+                const iconSvg = this.getToastIcon(type);
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.id = toastId;
+                toast.innerHTML = `
+                    <div class="toast-icon ${type}">${iconSvg}</div>
+                    <div class="toast-message">${message}</div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                `;
+                
+                this.toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    const toastElement = document.getElementById(toastId);
+                    if (toastElement) {
+                        toastElement.style.animation = 'toastSlideIn 0.4s ease-out reverse';
+                        setTimeout(() => toastElement.remove(), 400);
+                    }
+                }, 6000);
+            }
+
+            getToastIcon(type) {
+                const icons = {
+                    success: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                    </svg>`,
+                    error: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>`,
+                    warning: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>`,
+                    info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>`
+                };
+                
+                return icons[type] || icons.info;
+            }
+        }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('password-eye');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                `;
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new LoginManager();
+        });
+
+        document.addEventListener('touchstart', function() {}, true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Theme principal de l'application -->
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Couleurs principales : bleu nuit et or doux -->
+        <item name="colorPrimary">#0D47A1</item>           <!-- Bleu nuit -->
+        <item name="colorPrimaryVariant">#002171</item>     <!-- Bleu profond -->
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorSecondary">#FFC107</item>          <!-- Or / Ambre doux -->
+        <item name="colorSecondaryVariant">#FFA000</item>   <!-- Or plus fonce -->
+        <item name="colorOnSecondary">#000000</item>
+
+        <!-- Couleurs d'arriere-plan -->
+        <item name="android:colorBackground">#F5F5F5</item> <!-- Gris tres clair -->
+        <item name="colorSurface">#FFFFFF</item>            <!-- Fond de cartes / boutons -->
+        <item name="colorOnSurface">#212121</item>          <!-- Texte sombre -->
+
+        <!-- Status bar et navigation -->
+        <item name="android:statusBarColor">#002171</item>
+        <item name="android:navigationBarColor">#F5F5F5</item>
+
+    </style>
+
+</resources>

@@ -1,0 +1,4301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SEND2.0 Pro - Administration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            /* Couleurs principales */
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dark: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+            
+            /* Couleurs neutres */
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Dimensions */
+            --header-height: 70px;
+            --sidebar-width: 290px;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            
+            /* Transitions */
+            --transition-fast: all 0.2s ease;
+            --transition-normal: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+            
+            /* Ombre */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* === HEADER === */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle {
+            background: var(--gray-100);
+            border: none;
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            transition: var(--transition-fast);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: var(--gray-100);
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+            font-size: 16px;
+        }
+
+        .header-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 50px;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: -100%;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+            transition: var(--transition-normal);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-section {
+            padding: 16px 24px 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-500);
+            margin-top: 20px;
+        }
+
+        .nav-section:first-child {
+            margin-top: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            cursor: pointer;
+            font-size: 15px;
+            margin: 2px 12px;
+            border-radius: var(--border-radius);
+            position: relative;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+            transform: scaleY(0);
+            transition: var(--transition-fast);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .nav-badge {
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 50px;
+            margin-left: auto;
+            min-width: 22px;
+            text-align: center;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* === MAIN CONTENT === */
+        .main {
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+            transition: var(--transition-normal);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* === VIEWS === */
+        .view {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* === PAGE HEADER === */
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--gray-600);
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* === STATS GRID === */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+            cursor: pointer;
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transition: var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--white);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* === CARDS === */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            transition: var(--transition-normal);
+            border: 1px solid var(--gray-200);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-decoration: none;
+            font-family: inherit;
+            white-space: nowrap;
+            min-height: 44px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition-fast);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info) 0%, #0891b2 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+            min-height: 36px;
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 16px;
+            min-height: 52px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* === FORM ELEMENTS === */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--gray-800);
+            font-size: 14px;
+            transition: var(--transition-normal);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* === FILTERS === */
+        .filters-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding-left: 44px;
+            border-radius: 50px;
+            border: 2px solid var(--gray-200);
+            transition: var(--transition-fast);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 16px;
+        }
+
+        /* === DATA CARDS === */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .data-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transition: var(--transition-fast);
+        }
+
+        .data-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .data-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .data-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .data-card-subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .data-card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .data-card-content {
+            margin: 16px 0;
+        }
+
+        .data-card-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-card-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-card-label {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .data-card-value {
+            font-size: 14px;
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+
+        /* === BADGES === */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .badge-success { 
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: var(--white); 
+        }
+        .badge-warning { 
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: var(--white); 
+        }
+        .badge-danger { 
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: var(--white); 
+        }
+        .badge-info { 
+            background: linear-gradient(135deg, var(--info) 0%, #0891b2 100%);
+            color: var(--white); 
+        }
+        .badge-primary { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white); 
+        }
+        .badge-secondary { 
+            background: var(--gray-200); 
+            color: var(--gray-700); 
+        }
+
+        /* === MODALS === */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9);
+            transition: var(--transition-normal);
+            width: 100%;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal.open .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            transition: var(--transition-fast);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+            color: var(--gray-800);
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            background: var(--white);
+            flex-wrap: wrap;
+        }
+
+        /* === LOADING === */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .loading.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            text-align: center;
+            padding: 32px;
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            color: var(--gray-800);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* === TOAST === */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 4000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 100%;
+            width: 380px;
+        }
+
+        .toast {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--info); }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon.success { background: var(--success); }
+        .toast-icon.error { background: var(--danger); }
+        .toast-icon.warning { background: var(--warning); }
+        .toast-icon.info { background: var(--info); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: var(--border-radius);
+            transition: var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        /* === IMAGE PREVIEW === */
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+            border: 2px solid var(--gray-200);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .image-preview:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        /* === DETAILS GRID === */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-section {
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .detail-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+
+        .detail-value {
+            color: var(--gray-800);
+            font-size: 14px;
+            text-align: right;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        /* === PAGINATION === */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .pagination-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 12px;
+                max-width: calc(100vw - 24px);
+            }
+
+            .toast-container {
+                top: 12px;
+                right: 12px;
+                left: 12px;
+                max-width: none;
+                width: auto;
+            }
+
+            .main {
+                padding: 16px;
+            }
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .hide-animation {
+            animation: slideOutRight 0.3s ease-out forwards;
+        }
+
+        /* === SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          
+            background: var(--gray-400);
+        }
+
+
+.menu-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.menu-img {
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+
+
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Chargement...</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+    
+        </div>
+
+        <div class="header-right">
+            <button class="header-btn" onclick="runCleanup()">
+                <i class="fas fa-broom"></i>
+            </button>
+            <button class="header-btn" onclick="refreshAll()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button class="header-btn" onclick="showNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationCount">0</span>
+            </button>
+            <button class="header-btn" onclick="showProfile()">
+                <i class="fas fa-user-circle"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">Vue d'ensemble</div>
+        <div class="nav-item active" data-view="dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span>Tableau de bord</span>
+        </div>
+        <div class="nav-item" data-view="analytics">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analyses</span>
+        </div>
+        
+        <div class="nav-section">Gestion Colis</div>
+        <div class="nav-item" data-collection="Colis">
+            <i class="fas fa-box"></i>
+            <span>Colis créés</span>
+            <span class="nav-badge" id="badgeColis">0</span>
+        </div>
+        <div class="nav-item" data-collection="Livraison">
+            <i class="fas fa-truck"></i>
+            <span>En livraison</span>
+            <span class="nav-badge" id="badgeLivraison">0</span>
+        </div>
+        <div class="nav-item" data-collection="cour_expedition">
+            <i class="fas fa-shipping-fast"></i>
+            <span>En cours</span>
+            <span class="nav-badge" id="badgeExpedition">0</span>
+        </div>
+        <div class="nav-item" data-collection="LivraisonsEffectuees">
+            <i class="fas fa-check-circle"></i>
+            <span>Livrées</span>
+            <span class="nav-badge" id="badgeLivrees">0</span>
+        </div>
+        <div class="nav-item" data-collection="Refus">
+            <i class="fas fa-times-circle"></i>
+            <span>Refusées</span>
+            <span class="nav-badge" id="badgeRefus">0</span>
+        </div>
+        
+        <div class="nav-section">Services</div>
+        <div class="nav-item" data-collection="Commandes">
+            <i class="fas fa-utensils"></i>
+            <span>Nourriture</span>
+            <span class="nav-badge" id="badgeCommandes">0</span>
+        </div>
+        <div class="nav-item" data-collection="pharmacyOrders">
+            <i class="fas fa-pills"></i>
+            <span>Pharmacie</span>
+            <span class="nav-badge" id="badgePharmacy">0</span>
+        </div>
+        <div class="nav-item" data-collection="shopping_orders">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Courses</span>
+            <span class="nav-badge" id="badgeShopping">0</span>
+        </div>
+        
+        <div class="nav-section">Gestion Équipes</div>
+        <div class="nav-item" data-view="demandes-livreurs">
+            <i class="fas fa-user-plus"></i>
+            <span>Demandes livreurs</span>
+            <span class="nav-badge" id="badgeDemandesLivreurs">0</span>
+        </div>
+        <div class="nav-item" data-view="demandes-restaurants">
+            <i class="fas fa-store"></i>
+            <span>Demandes restaurants</span>
+            <span class="nav-badge" id="badgeDemandesRestaurants">0</span>
+        </div>
+        <div class="nav-item" data-collection="Res_livreur">
+            <i class="fas fa-users"></i>
+            <span>Livreurs actifs</span>
+            <span class="nav-badge" id="badgeResLivreur">0</span>
+        </div>
+        <div class="nav-item" data-collection="Restau">
+            <i class="fas fa-building"></i>
+            <span>Restaurants</span>
+            <span class="nav-badge" id="badgeRestaurants">0</span>
+        </div>
+        <div class="nav-item" data-collection="compte_livreur">
+            <i class="fas fa-id-card"></i>
+            <span>Comptes livreurs</span>
+            <span class="nav-badge" id="badgeCompteLivreur">0</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Tableau de bord</h1>
+                        <p class="page-subtitle">Vue d'ensemble complète de votre plateforme SEND2.0</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="btn btn-info" onclick="runCleanup()">
+                            <i class="fas fa-broom"></i>
+                            Nettoyage
+                        </button>
+                        <button class="btn btn-primary" onclick="exportAllData()">
+                            <i class="fas fa-download"></i>
+                            Export complet
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Les stats seront chargées ici -->
+                </div>
+            </div>
+
+            <!-- Collection View Template -->
+            <div id="collectionView" class="view">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title" id="collectionTitle">Collection</h1>
+                        <p class="page-subtitle" id="collectionSubtitle">Gestion des données</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshCollection()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="btn btn-info" onclick="exportCollection()">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                        <button class="btn btn-danger" onclick="bulkDelete()">
+                            <i class="fas fa-trash"></i>
+                            Suppr. sélection
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-container">
+                    <div class="filters-grid" id="filtersGrid">
+                        <!-- Filtres dynamiques seront ajoutés ici -->
+                    </div>
+                </div>
+
+                <!-- Data Cards Container -->
+                <div class="data-cards" id="dataCardsContainer">
+                    <!-- Cartes de données seront ajoutées ici -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="paginationContainer">
+                    <!-- Pagination sera ajoutée ici -->
+                </div>
+            </div>
+
+            <!-- Demandes Livreurs View -->
+            <div id="demandes-livreursView" class="view">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Demandes de livreurs</h1>
+                        <p class="page-subtitle">Gestion des candidatures et codes d'autorisation</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshDemandesLivreurs()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="btn btn-info" onclick="exportDemandesLivreurs()">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="statsDemandesLivreurs">
+                    <!-- Stats des demandes livreurs -->
+                </div>
+
+                <div class="filters-container">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Statut</label>
+                            <select class="form-select" id="filterStatutLivreurs" onchange="filterDemandesLivreurs()">
+                                <option value="">Tous</option>
+                                <option value="en_attente" selected>En attente</option>
+                                <option value="approuvee">Approuvées</option>
+                                <option value="rejetee">Rejetées</option>
+                                <option value="finalisee">Finalisées</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Recherche</label>
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="searchDemandesLivreurs" 
+                                       placeholder="Nom, téléphone, quartier..." onkeyup="filterDemandesLivreurs()">
+                                <i class="fas fa-search search-icon"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Période</label>
+                            <select class="form-select" id="filterPeriodeLivreurs" onchange="filterDemandesLivreurs()">
+                                <option value="">Toutes</option>
+                                <option value="today">Aujourd'hui</option>
+                                <option value="week">Cette semaine</option>
+                                <option value="month">Ce mois</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-cards" id="demandesLivreursContainer">
+                    <!-- Demandes livreurs seront chargées ici -->
+                </div>
+            </div>
+
+            <!-- Demandes Restaurants View -->
+            <div id="demandes-restaurantsView" class="view">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Demandes de restaurants</h1>
+                        <p class="page-subtitle">Gestion des partenariats et codes d'autorisation</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshDemandesRestaurants()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="btn btn-info" onclick="exportDemandesRestaurants()">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="statsDemandesRestaurants">
+                    <!-- Stats des demandes restaurants -->
+                </div>
+
+                <div class="filters-container">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Statut</label>
+                            <select class="form-select" id="filterStatutRestaurants" onchange="filterDemandesRestaurants()">
+                                <option value="">Tous</option>
+                                <option value="en_attente" selected>En attente</option>
+                                <option value="approuvee">Approuvées</option>
+                                <option value="rejetee">Rejetées</option>
+                                <option value="finalisee">Finalisées</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Recherche</label>
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="searchDemandesRestaurants" 
+                                       placeholder="Nom, adresse, cuisine..." onkeyup="filterDemandesRestaurants()">
+                                <i class="fas fa-search search-icon"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Type de cuisine</label>
+                            <select class="form-select" id="filterCuisine" onchange="filterDemandesRestaurants()">
+                                <option value="">Toutes</option>
+                                <option value="Burkinabè">Burkinabè</option>
+                                <option value="Internationale">Internationale</option>
+                                <option value="Fast Food">Fast Food</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-cards" id="demandesRestaurantsContainer">
+                    <!-- Demandes restaurants seront chargées ici -->
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analyticsView" class="view">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Analyses avancées</h1>
+                        <p class="page-subtitle">Rapports détaillés et insights business</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshAnalytics()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-file-pdf"></i>
+                            Rapport PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="analyticsStatsGrid">
+                    <!-- Analytics stats seront chargées ici -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    
+    <!-- Modal de détails -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailModalTitle">Détails</h3>
+                <button class="modal-close" onclick="closeModal('detailModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="detailModalBody">
+                <!-- Contenu détaillé sera injecté ici -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('detailModal')">
+                    <i class="fas fa-times"></i>
+                    Fermer
+                </button>
+                <button class="btn btn-danger" id="deleteDetailBtn" onclick="deleteCurrentItem()">
+                    <i class="fas fa-trash"></i>
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Confirmer la suppression
+                </h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage">Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                <p style="color: #ef4444; font-weight: 600; margin-top: 16px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Cette action est irréversible et pourrait affecter les données liées.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('deleteModal')">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <button class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i>
+                    Supprimer définitivement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'approbation -->
+    <div class="modal" id="approvalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-check-circle"></i>
+                    Approuver la demande
+                </h3>
+                <button class="modal-close" onclick="closeModal('approvalModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Commentaire d'approbation (optionnel)</label>
+                    <textarea class="form-textarea" id="approvalComment" placeholder="Commentaire sur l'approbation..."></textarea>
+                </div>
+                
+                <div id="generatedCodeContainer" style="display: none;">
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%); border: 2px solid #10b981; border-radius: var(--border-radius-lg); padding: 24px; text-align: center; margin: 20px 0;">
+                        <div style="font-size: 28px; font-weight: 900; font-family: 'Courier New', monospace; color: #10b981; margin-bottom: 16px; letter-spacing: 0.1em;" id="generatedCode"></div>
+                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-secondary" onclick="copyCode()">
+                                <i class="fas fa-copy"></i>
+                                Copier
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="sendWhatsApp()">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="sendSMS()">
+                                <i class="fas fa-sms"></i>
+                                SMS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('approvalModal')">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <button class="btn btn-success" id="confirmApprovalBtn" onclick="confirmApproval()">
+                    <i class="fas fa-check"></i>
+                    Approuver et générer code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de rejet -->
+    <div class="modal" id="rejectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-times-circle"></i>
+                    Rejeter la demande
+                </h3>
+                <button class="modal-close" onclick="closeModal('rejectionModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Motif du rejet *</label>
+                    <textarea class="form-textarea" id="rejectionReason" required 
+                              placeholder="Expliquez clairement le motif du rejet..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recommandations (optionnel)</label>
+                    <textarea class="form-textarea" id="rejectionRecommendations" 
+                              placeholder="Suggestions pour améliorer la candidature..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('rejectionModal')">
+                    <i class="fas fa-arrow-left"></i>
+                    Annuler
+                </button>
+                <button class="btn btn-danger" onclick="confirmRejection()">
+                    <i class="fas fa-times"></i>
+                    Confirmer le rejet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'image -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content" style="max-width: 95vw; max-height: 95vh;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="imageModalTitle">Image</h3>
+                <button class="modal-close" onclick="closeModal('imageModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 0;">
+                <img id="modalImage" src="" alt="" style="max-width: 100%; max-height: 80vh; border-radius: var(--border-radius-lg);">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('imageModal')">
+                    <i class="fas fa-times"></i>
+                    Fermer
+                </button>
+                <button class="btn btn-primary" onclick="downloadImage()">
+                    <i class="fas fa-download"></i>
+                    Télécharger
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            API_URL: 'https://send20.netlify.app/.netlify/functions/admin_fonction',
+            ITEMS_PER_PAGE: 20,
+            REFRESH_INTERVAL: 60000,
+            MAX_RETRIES: 3
+        };
+
+        // État global
+        let currentView = 'dashboard';
+        let currentCollection = null;
+        let currentData = [];
+        let selectedItems = [];
+        let currentDemande = null;
+        let currentDemandeType = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentDeleteItem = null;
+        let sidebarOpen = false;
+        let autoRefreshInterval = null;
+
+        // Collections configuration
+        const COLLECTIONS_CONFIG = {
+            'Colis': {
+                title: 'Colis créés',
+                description: 'Gestion des colis envoyés par les expéditeurs',
+                icon: 'fas fa-box',
+                fields: ['colisID', 'sender', 'recipient', 'status', 'createdAt'],
+                searchFields: ['colisID', 'sender', 'recipient', 'address', 'description'],
+                statusField: 'status',
+                dateField: 'createdAt'
+            },
+            'Livraison': {
+                title: 'Livraisons en cours',
+                description: 'Colis acceptés par les destinataires',
+                icon: 'fas fa-truck',
+                fields: ['livraisonID', 'expediteur', 'destinataire', 'statut', 'dateCreation'],
+                searchFields: ['livraisonID', 'expediteur.nom', 'destinataire.nom', 'destinataire.adresse'],
+                statusField: 'statut',
+                dateField: 'dateCreation'
+            },
+            'cour_expedition': {
+                title: 'Expéditions en cours',
+                description: 'Colis pris en charge par les livreurs',
+                icon: 'fas fa-shipping-fast',
+                fields: ['colisID', 'driverName', 'status', 'assignedAt'],
+                searchFields: ['colisID', 'driverName', 'driverId'],
+                statusField: 'status',
+                dateField: 'assignedAt'
+            },
+            'LivraisonsEffectuees': {
+                title: 'Livraisons effectuées',
+                description: 'Historique des livraisons terminées',
+                icon: 'fas fa-check-circle',
+                fields: ['colisID', 'driverName', 'deliveredAt', 'status'],
+                searchFields: ['colisID', 'driverName', 'deliveryNotes'],
+                statusField: 'status',
+                dateField: 'deliveredAt'
+            },
+            'Refus': {
+                title: 'Livraisons refusées',
+                description: 'Colis refusés par les clients',
+                icon: 'fas fa-times-circle',
+                fields: ['colisID', 'dateRefus', 'raison'],
+                searchFields: ['colisID', 'raison'],
+                dateField: 'dateRefus'
+            },
+            'Commandes': {
+                title: 'Commandes nourriture',
+                description: 'Commandes de restauration',
+                icon: 'fas fa-utensils',
+                fields: ['codeCommande', 'restaurant', 'client', 'status', 'orderDate'],
+                searchFields: ['codeCommande', 'restaurant.name', 'client.name', 'client.phone'],
+                statusField: 'status',
+                dateField: 'orderDate'
+            },
+            'pharmacyOrders': {
+                title: 'Commandes pharmacie',
+                description: 'Commandes de médicaments',
+                icon: 'fas fa-pills',
+                fields: ['_id', 'phoneNumber', 'status', 'orderDate'],
+                searchFields: ['phoneNumber', 'secondaryPhone', 'medicaments.name'],
+                statusField: 'status',
+                dateField: 'orderDate'
+            },
+            'shopping_orders': {
+                title: 'Commandes courses',
+                description: 'Commandes de courses',
+                icon: 'fas fa-shopping-cart',
+                fields: ['_id', 'phone1', 'status', 'orderDate'],
+                searchFields: ['phone1', 'phone2', 'shoppingList.nom'],
+                statusField: 'status',
+                dateField: 'orderDate'
+            },
+            'Res_livreur': {
+                title: 'Livreurs actifs',
+                description: 'Livreurs approuvés et opérationnels',
+                icon: 'fas fa-users',
+                fields: ['id_livreur', 'nom', 'prenom', 'whatsapp', 'quartier', 'statut'],
+                searchFields: ['id_livreur', 'nom', 'prenom', 'whatsapp', 'quartier'],
+                statusField: 'statut',
+                dateField: 'createdAt'
+            },
+            'Restau': {
+                title: 'Restaurants partenaires',
+                description: 'Restaurants actifs sur la plateforme',
+                icon: 'fas fa-building',
+                fields: ['restaurantId', 'nom', 'nomCommercial', 'telephone', 'cuisine', 'statut'],
+                searchFields: ['restaurantId', 'nom', 'nomCommercial', 'telephone', 'cuisine'],
+                statusField: 'statut',
+                dateField: 'dateCreation'
+            },
+            'compte_livreur': {
+                title: 'Comptes livreurs',
+                description: 'Comptes utilisateurs des livreurs',
+                icon: 'fas fa-id-card',
+                fields: ['id_livreur', 'username', 'nom', 'prenom', 'statut'],
+                searchFields: ['id_livreur', 'username', 'nom', 'prenom', 'email'],
+                statusField: 'statut',
+                dateField: 'created_at'
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            console.log('🚀 Initialisation de l\'application admin SEND2.0');
+            
+            setupEventListeners();
+            loadDashboard();
+            startAutoRefresh();
+            
+            console.log('✅ Application admin initialisée');
+        }
+
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    const collection = this.getAttribute('data-collection');
+                    
+                    if (view) {
+                        switchView(view);
+                    } else if (collection) {
+                        switchToCollection(collection);
+                    }
+                });
+            });
+
+            // Fermer modales en cliquant à l'extérieur
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+
+            // Raccourcis clavier
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAllModals();
+                }
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    refreshAll();
+                }
+            });
+
+            // Gestion responsive
+            window.addEventListener('resize', handleResize);
+
+            // Gestion erreurs globales
+            window.addEventListener('error', function(e) {
+                console.error('Erreur JavaScript:', e.error);
+                showToast('Erreur', 'error', 'Une erreur s\'est produite dans l\'application');
+            });
+        }
+
+        // Navigation
+        function switchView(viewName) {
+            console.log(`🔄 Changement de vue vers: ${viewName}`);
+            
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            const targetView = document.getElementById(viewName + 'View');
+            if (targetView) {
+                targetView.classList.add('active');
+                currentView = viewName;
+                
+                updateActiveNavigation(viewName);
+                loadViewData(viewName);
+                
+                if (window.innerWidth < 768) {
+                    closeSidebar();
+                }
+            }
+        }
+
+        function switchToCollection(collectionName) {
+            console.log(`🔄 Changement de collection vers: ${collectionName}`);
+            
+            currentCollection = collectionName;
+            currentView = 'collection';
+            currentPage = 1;
+            
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            document.getElementById('collectionView').classList.add('active');
+            
+            updateActiveNavigation(null, collectionName);
+            loadCollectionData(collectionName);
+            
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
+        }
+
+        function updateActiveNavigation(viewName, collectionName = null) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            if (viewName) {
+                document.querySelectorAll(`[data-view="${viewName}"]`).forEach(item => {
+                    item.classList.add('active');
+                });
+            } else if (collectionName) {
+                document.querySelectorAll(`[data-collection="${collectionName}"]`).forEach(item => {
+                    item.classList.add('active');
+                });
+            }
+        }
+
+        function loadViewData(viewName) {
+            switch(viewName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+                case 'demandes-livreurs':
+                    loadDemandesLivreurs();
+                    break;
+                case 'demandes-restaurants':
+                    loadDemandesRestaurants();
+                    break;
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                showLoading('Chargement du tableau de bord...');
+                
+                const response = await apiCall('getStats');
+                
+                if (response.success) {
+                    displayDashboardStats(response);
+                    updateNotificationCount();
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur dashboard:', error);
+                showToast('Erreur', 'error', 'Impossible de charger le tableau de bord');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayDashboardStats(data) {
+            const statsContainer = document.getElementById('statsGrid');
+            const collections = data.collections || {};
+            const demandes = data.demandes || {};
+
+            // Mettre à jour les badges
+            updateBadges(data);
+
+            const totalColis = (collections.colis || 0) + (collections.livraison || 0) + (collections.expedition || 0);
+            const totalCommandes = (collections.commandes || 0) + (collections.pharmacy || 0) + (collections.shopping || 0);
+            const totalEquipe = (collections.livreurs || 0) + (collections.restaurants || 0);
+            const tauxReussite = totalColis > 0 ? ((collections.livrees || 0) / totalColis * 100).toFixed(1) : 0;
+
+            statsContainer.innerHTML = `
+                <div class="stat-card" onclick="switchToCollection('Colis')">
+                    <div class="stat-header">
+                        <div class="stat-title">Colis créés</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.colis || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-plus"></i>
+                        Total des envois
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('Livraison')">
+                    <div class="stat-header">
+                        <div class="stat-title">En livraison</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.livraison || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-right"></i>
+                        En cours de traitement
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('LivraisonsEffectuees')">
+                    <div class="stat-header">
+                        <div class="stat-title">Livrées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.livrees || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        Taux: ${tauxReussite}%
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchView('demandes-livreurs')">
+                    <div class="stat-header">
+                        <div class="stat-title">Demandes livreurs</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${demandes.livreurs?.parStatut?.en_attente || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-clock"></i>
+                        En attente de validation
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchView('demandes-restaurants')">
+                    <div class="stat-header">
+                        <div class="stat-title">Demandes restaurants</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${demandes.restaurants?.parStatut?.en_attente || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-clock"></i>
+                        En attente de validation
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('Res_livreur')">
+                    <div class="stat-header">
+                        <div class="stat-title">Livreurs actifs</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.livreurs || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        Équipe disponible
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('Restau')">
+                    <div class="stat-header">
+                        <div class="stat-title">Restaurants</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.restaurants || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-handshake"></i>
+                        Partenaires actifs
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('Commandes')">
+                    <div class="stat-header">
+                        <div class="stat-title">Commandes nourriture</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.commandes || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-chart-line"></i>
+                        Service alimentaire
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('pharmacyOrders')">
+                    <div class="stat-header">
+                        <div class="stat-title">Commandes pharmacie</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.pharmacy || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-heartbeat"></i>
+                        Service santé
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('shopping_orders')">
+                    <div class="stat-header">
+                        <div class="stat-title">Commandes courses</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.shopping || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-shopping-bag"></i>
+                        Service courses
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="switchToCollection('Refus')">
+                    <div class="stat-header">
+                        <div class="stat-title">Refusées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${collections.refus || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-ban"></i>
+                        Livraisons refusées
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="runCleanup()">
+                    <div class="stat-header">
+                        <div class="stat-title">Nettoyage auto</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stat-change">
+                        <i class="fas fa-magic"></i>
+                        Lancer le nettoyage
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="refreshAll()">
+                    <div class="stat-header">
+                        <div class="stat-title">Actualisation</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">
+                        <i class="fas fa-refresh"></i>
+                    </div>
+                    <div class="stat-change">
+                        <i class="fas fa-clock"></i>
+                        Tout actualiser
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateBadges(data) {
+            const collections = data.collections || {};
+            const demandes = data.demandes || {};
+
+            // Badges collections
+            updateBadge('Colis', collections.colis);
+            updateBadge('Livraison', collections.livraison);
+            updateBadge('Expedition', collections.expedition);
+            updateBadge('Livrees', collections.livrees);
+            updateBadge('Refus', collections.refus);
+            updateBadge('Commandes', collections.commandes);
+            updateBadge('Pharmacy', collections.pharmacy);
+            updateBadge('Shopping', collections.shopping);
+            updateBadge('ResLivreur', collections.livreurs);
+            updateBadge('Restaurants', collections.restaurants);
+            updateBadge('CompteLivreur', collections.compteLivreur);
+
+            // Badges demandes
+            updateBadge('DemandesLivreurs', demandes.livreurs?.parStatut?.en_attente);
+            updateBadge('DemandesRestaurants', demandes.restaurants?.parStatut?.en_attente);
+        }
+
+        function updateBadge(id, count) {
+            const badge = document.getElementById(`badge${id}`);
+            if (badge) {
+                badge.textContent = count || 0;
+                badge.style.display = count > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        function updateNotificationCount() {
+            // Calculer le nombre total de notifications
+            let totalNotifications = 0;
+            
+            document.querySelectorAll('.nav-badge').forEach(badge => {
+                const count = parseInt(badge.textContent) || 0;
+                if (badge.style.display !== 'none') {
+                    totalNotifications += count;
+                }
+            });
+            
+            const notificationBadge = document.getElementById('notificationCount');
+            if (notificationBadge) {
+                notificationBadge.textContent = totalNotifications;
+                notificationBadge.style.display = totalNotifications > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        // Collection Management
+        async function loadCollectionData(collectionName) {
+            const config = COLLECTIONS_CONFIG[collectionName];
+            if (!config) {
+                showToast('Erreur', 'error', 'Collection non configurée');
+                return;
+            }
+
+            // Mettre à jour l'interface
+            document.getElementById('collectionTitle').textContent = config.title;
+            document.getElementById('collectionSubtitle').textContent = config.description;
+
+            // Créer les filtres dynamiques
+            createFilters(collectionName, config);
+
+            try {
+                showLoading('Chargement des données...');
+                
+                const filters = getActiveFilters();
+                const response = await apiCall('getCollectionData', {
+                    collection: collectionName,
+                    page: currentPage,
+                    limit: CONFIG.ITEMS_PER_PAGE,
+                    ...filters
+                });
+                
+                if (response.success) {
+                    currentData = response.data || [];
+                    totalPages = Math.ceil((response.totalCount || 0) / CONFIG.ITEMS_PER_PAGE);
+                    
+                    displayCollectionCards(collectionName, currentData, config);
+                    updatePagination(response.totalCount || 0);
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur collection:', error);
+                showToast('Erreur', 'error', 'Impossible de charger les données');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function createFilters(collectionName, config) {
+            const filtersGrid = document.getElementById('filtersGrid');
+            
+            let filtersHTML = `
+                <div class="form-group">
+                    <label class="form-label">Recherche</label>
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="collectionSearch" 
+                               placeholder="Rechercher..." onkeyup="handleCollectionSearch(event)">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+            `;
+
+            // Filtre par statut si disponible
+            if (config.statusField) {
+                filtersHTML += `
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select class="form-select" id="statusFilter" onchange="handleFilterChange()">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending">En attente</option>
+                            <option value="en_attente">En attente</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="en_cours_de_livraison">En cours de livraison</option>
+                            <option value="livré">Livré</option>
+                            <option value="delivered">Livré</option>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                            <option value="refused">Refusé</option>
+                        </select>
+                    </div>
+                `;
+            }
+            
+            filtersHTML += `
+                <div class="form-group">
+                    <label class="form-label">Période</label>
+                    <select class="form-select" id="periodFilter" onchange="handleFilterChange()">
+                        <option value="">Toutes les périodes</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                        <option value="year">Cette année</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="clearAllFilters()">
+                        <i class="fas fa-times"></i>
+                        Effacer filtres
+                    </button>
+                </div>
+            `;
+
+            filtersGrid.innerHTML = filtersHTML;
+        }
+
+        function displayCollectionCards(collectionName, data, config) {
+            const container = document.getElementById('dataCardsContainer');
+
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--gray-500);">
+                        <i class="${config.icon} fa-4x" style="margin-bottom: 2rem; display: block; opacity: 0.3;"></i>
+                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Aucune donnée trouvée</div>
+                        <div style="font-size: 1rem;">Essayez de modifier vos filtres de recherche</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const cardsHTML = data.map(item => createDataCard(item, collectionName, config)).join('');
+            container.innerHTML = cardsHTML;
+        }
+
+        function createDataCard(item, collectionName, config) {
+            const id = item._id || item.id;
+            const title = getCardTitle(item, collectionName);
+            const subtitle = getCardSubtitle(item, collectionName);
+            const status = getItemStatus(item, collectionName);
+            const cardItems = getCardItems(item, collectionName, config);
+            const images = getItemImages(item, collectionName);
+
+            return `
+                <div class="data-card" onclick="showItemDetails('${id}', '${collectionName}')">
+                    <div class="data-card-header">
+                        <div>
+                            <div class="data-card-title">${title}</div>
+                            <div class="data-card-subtitle">${subtitle}</div>
+                        </div>
+                        <div>
+                            ${status ? getStatutBadge(status) : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="data-card-content">
+                        ${cardItems}
+                    </div>
+                    
+                    ${images.length > 0 ? `
+                        <div class="image-grid">
+                            ${images.slice(0, 3).map(img => `
+                                <img src="${img.url}" alt="${img.alt}" class="image-preview" 
+                                     onclick="event.stopPropagation(); showImageModal('${img.url}', '${img.alt}')">
+                            `).join('')}
+                            ${images.length > 3 ? `
+                                <div style="display: flex; align-items: center; justify-content: center; background: var(--gray-100); border-radius: var(--border-radius); color: var(--gray-600); font-weight: 600;">
+                                    +${images.length - 3}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="data-card-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); showItemDetails('${id}', '${collectionName}')">
+                            <i class="fas fa-eye"></i>
+                            Détails
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteItem('${id}', '${collectionName}')">
+                            <i class="fas fa-trash"></i>
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getCardTitle(item, collectionName) {
+            switch(collectionName) {
+                case 'Colis':
+                    return item.colisID || `Colis ${item._id?.slice(-6)}`;
+                case 'Livraison':
+                    return item.livraisonID || `Livraison ${item._id?.slice(-6)}`;
+                case 'Commandes':
+                    return item.codeCommande || `Commande ${item._id?.slice(-6)}`;
+                case 'Res_livreur':
+                    return `${item.nom || ''} ${item.prenom || ''}`.trim() || item.id_livreur;
+                case 'Restau':
+                    return item.nom || item.nomCommercial || `Restaurant ${item._id?.slice(-6)}`;
+                case 'pharmacyOrders':
+                    return `Pharmacie ${item._id?.slice(-6)}`;
+                case 'shopping_orders':
+                    return `Courses ${item._id?.slice(-6)}`;
+                case 'cour_expedition':
+                    return `Expédition ${item.colisID || item._id?.slice(-6)}`;
+                case 'LivraisonsEffectuees':
+                    return `Livraison ${item.colisID || item._id?.slice(-6)}`;
+                case 'Refus':
+                    return `Refus ${item.colisID || item._id?.slice(-6)}`;
+                case 'compte_livreur':
+                    return item.username || item.id_livreur;
+                default:
+                    return item.nom || item.name || item.title || `Item ${item._id?.slice(-6)}`;
+            }
+        }
+
+        function getCardSubtitle(item, collectionName) {
+            switch(collectionName) {
+                case 'Colis':
+                    return `De: ${item.sender || 'N/A'} → À: ${item.recipient || 'N/A'}`;
+                case 'Livraison':
+                    return `${item.expediteur?.nom || 'N/A'} → ${item.destinataire?.nom || 'N/A'}`;
+                case 'Commandes':
+                    return `${item.restaurant?.name || 'Restaurant'} • ${item.client?.name || 'Client'}`;
+                case 'Res_livreur':
+                    return `${item.quartier || 'N/A'} • ${item.whatsapp || item.telephone || 'N/A'}`;
+                case 'Restau':
+                    return `${item.cuisine || 'N/A'} • ${item.quartier || item.adresse || 'N/A'}`;
+                case 'pharmacyOrders':
+                    return `${item.phoneNumber || 'N/A'} • ${item.medicaments?.length || 0} médicaments`;
+                case 'shopping_orders':
+                    return `${item.phone1 || 'N/A'} • ${item.shoppingList?.length || 0} articles`;
+                case 'cour_expedition':
+                    return `Livreur: ${item.driverName || 'N/A'}`;
+                case 'LivraisonsEffectuees':
+                    return `Livré par: ${item.driverName || 'N/A'}`;
+                case 'Refus':
+                    return `Raison: ${item.raison || 'N/A'}`;
+                case 'compte_livreur':
+                    return `${item.nom || ''} ${item.prenom || ''}`.trim() || 'N/A';
+                default:
+                    const date = item.createdAt || item.dateCreation || item.orderDate || item.dateRefus || item.deliveredAt || item.assignedAt;
+                    return date ? new Date(date).toLocaleDateString('fr-FR') : 'Date non disponible';
+            }
+        }
+
+        function getItemStatus(item, collectionName) {
+            return item.status || item.statut || null;
+        }
+
+        function getCardItems(item, collectionName, config) {
+            const items = [];
+            
+            switch(collectionName) {
+                case 'Colis':
+                    if(item.address) items.push({ label: 'Adresse', value: item.address });
+                    if(item.packageType) items.push({ label: 'Type', value: item.packageType });
+                    if(item.senderPhone) items.push({ label: 'Tél expéditeur', value: item.senderPhone });
+                    if(item.recipientPhone) items.push({ label: 'Tél destinataire', value: item.recipientPhone });
+                    if(item.createdAt) items.push({ label: 'Créé le', value: new Date(item.createdAt).toLocaleDateString('fr-FR') });
+                    break;
+                case 'Livraison':
+                    if(item.destinataire?.adresse) items.push({ label: 'Adresse', value: item.destinataire.adresse });
+                    if(item.destinataire?.telephone) items.push({ label: 'Téléphone', value: item.destinataire.telephone });
+                    if(item.colis?.type) items.push({ label: 'Type colis', value: item.colis.type });
+                    if(item.dateCreation) items.push({ label: 'Date création', value: new Date(item.dateCreation).toLocaleDateString('fr-FR') });
+                    if(item.dateAcceptation) items.push({ label: 'Date acceptation', value: new Date(item.dateAcceptation).toLocaleDateString('fr-FR') });
+                    break;
+                case 'Commandes':
+                    if(item.client?.name) items.push({ label: 'Client', value: item.client.name });
+                    if(item.client?.phone) items.push({ label: 'Téléphone', value: item.client.phone });
+                    if(item.items?.length) items.push({ label: 'Articles', value: `${item.items.length} articles` });
+                    if(item.deliveryFee) items.push({ label: 'Frais livraison', value: `${item.deliveryFee} FCFA` });
+                    if(item.orderDate) items.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleDateString('fr-FR') });
+                    break;
+                case 'Res_livreur':
+                    if(item.telephone) items.push({ label: 'Téléphone', value: item.telephone });
+                    if(item.vehicule) items.push({ label: 'Véhicule', value: item.vehicule });
+                    if(item.immatriculation) items.push({ label: 'Immatriculation', value: item.immatriculation });
+                    if(item.experience) items.push({ label: 'Expérience', value: item.experience });
+                    if(item.createdAt) items.push({ label: 'Créé le', value: new Date(item.createdAt).toLocaleDateString('fr-FR') });
+                    break;
+                case 'Restau':
+                    if(item.telephone) items.push({ label: 'Téléphone', value: item.telephone });
+                    if(item.email) items.push({ label: 'Email', value: item.email });
+                    if(item.responsableNom) items.push({ label: 'Responsable', value: item.responsableNom });
+                    if(item.menu?.length) items.push({ label: 'Menu', value: `${item.menu.length} plats` });
+                    if(item.dateCreation) items.push({ label: 'Créé le', value: new Date(item.dateCreation).toLocaleDateString('fr-FR') });
+                    break;
+                case 'pharmacyOrders':
+                    if(item.phoneNumber) items.push({ label: 'Téléphone', value: item.phoneNumber });
+                    if(item.secondaryPhone) items.push({ label: 'Tél secondaire', value: item.secondaryPhone });
+                    if(item.medicaments?.length) items.push({ label: 'Médicaments', value: `${item.medicaments.length} articles` });
+                    if(item.deliveryFee) items.push({ label: 'Frais livraison', value: `${item.deliveryFee} FCFA` });
+                    if(item.orderDate) items.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleDateString('fr-FR') });
+                    break;
+                case 'shopping_orders':
+                    if(item.phone1) items.push({ label: 'Téléphone 1', value: item.phone1 });
+                    if(item.phone2) items.push({ label: 'Téléphone 2', value: item.phone2 });
+                    if(item.shoppingList?.length) items.push({ label: 'Articles', value: `${item.shoppingList.length} articles` });
+                    if(item.budgetMin && item.budgetMax) items.push({ label: 'Budget', value: `${item.budgetMin} - ${item.budgetMax} FCFA` });
+                    if(item.orderDate) items.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleDateString('fr-FR') });
+                    break;
+                case 'cour_expedition':
+                    if(item.driverName) items.push({ label: 'Livreur', value: item.driverName });
+                    if(item.driverPhone1) items.push({ label: 'Téléphone', value: item.driverPhone1 });
+                    if(item.assignedAt) items.push({ label: 'Assigné le', value: new Date(item.assignedAt).toLocaleDateString('fr-FR') });
+                    if(item.lastPositionUpdate) items.push({ label: 'Dernière position', value: new Date(item.lastPositionUpdate).toLocaleDateString('fr-FR') });
+                    break;
+                case 'LivraisonsEffectuees':
+                    if(item.driverName) items.push({ label: 'Livreur', value: item.driverName });
+                    if(item.driverPhone) items.push({ label: 'Téléphone', value: item.driverPhone });
+                    if(item.deliveredAt) items.push({ label: 'Livré le', value: new Date(item.deliveredAt).toLocaleDateString('fr-FR') });
+                    if(item.deliveryNotes) items.push({ label: 'Notes', value: item.deliveryNotes });
+                    break;
+                case 'Refus':
+                    if(item.raison) items.push({ label: 'Raison', value: item.raison });
+                    if(item.dateRefus) items.push({ label: 'Date refus', value: new Date(item.dateRefus).toLocaleDateString('fr-FR') });
+                    break;
+                case 'compte_livreur':
+                    if(item.email) items.push({ label: 'Email', value: item.email });
+                    if(item.telephone) items.push({ label: 'Téléphone', value: item.telephone });
+                    if(item.derniere_connexion) items.push({ label: 'Dernière connexion', value: new Date(item.derniere_connexion).toLocaleDateString('fr-FR') });
+                    if(item.created_at) items.push({ label: 'Créé le', value: new Date(item.created_at).toLocaleDateString('fr-FR') });
+                    break;
+                default:
+                    // Fallback générique
+                    const keys = Object.keys(item).slice(0, 3);
+                    keys.forEach(key => {
+                        if(!['_id', 'id', 'createdAt', 'updatedAt', '__v'].includes(key) && item[key]) {
+                            let value = item[key];
+                            if (typeof value === 'object') {
+                                value = JSON.stringify(value).slice(0, 50) + '...';
+                            }
+                            items.push({ label: key, value: String(value).slice(0, 50) });
+                        }
+                    });
+            }
+
+            return items.slice(0, 4).map(item => `
+                <div class="data-card-item">
+                    <span class="data-card-label">${item.label}:</span>
+                    <span class="data-card-value">${item.value}</span>
+                </div>
+            `).join('');
+        }
+
+        function getItemImages(item, collectionName) {
+            const images = [];
+            
+            // Rechercher des images dans différents formats
+            if (item.image) {
+                images.push({ url: item.image, alt: 'Image principale' });
+            }
+            
+            if (item.logo) {
+                if (typeof item.logo === 'object' && item.logo.base64) {
+                    images.push({ url: `data:${item.logo.type};base64,${item.logo.base64}`, alt: 'Logo' });
+                } else if (typeof item.logo === 'string') {
+                    images.push({ url: item.logo, alt: 'Logo' });
+                }
+            }
+            
+            if (item.photo) {
+                images.push({ url: item.photo, alt: 'Photo' });
+            }
+            
+            // Images dans les documents
+            if (item.documents) {
+                if (item.documents.photoIdentite) {
+                    if (typeof item.documents.photoIdentite === 'object' && item.documents.photoIdentite.data) {
+                        images.push({ url: `data:${item.documents.photoIdentite.type};base64,${item.documents.photoIdentite.data}`, alt: 'Photo d\'identité' });
+                    } else if (typeof item.documents.photoIdentite === 'string') {
+                        images.push({ url: item.documents.photoIdentite, alt: 'Photo d\'identité' });
+                    }
+                }
+                
+                if (item.documents.documentVehicule) {
+                    if (typeof item.documents.documentVehicule === 'object' && item.documents.documentVehicule.data) {
+                        images.push({ url: `data:${item.documents.documentVehicule.type};base64,${item.documents.documentVehicule.data}`, alt: 'Document véhicule' });
+                    } else if (typeof item.documents.documentVehicule === 'string') {
+                        images.push({ url: item.documents.documentVehicule, alt: 'Document véhicule' });
+                    }
+                }
+            }
+            
+            // Array d'images ou photos
+            if (item.photos && Array.isArray(item.photos)) {
+                item.photos.forEach((photo, index) => {
+                    if (typeof photo === 'object' && photo.thumbnail) {
+                        images.push({ url: photo.thumbnail, alt: `Photo ${index + 1}` });
+                    } else if (typeof photo === 'object' && photo.base64) {
+                        images.push({ url: `data:${photo.type};base64,${photo.base64}`, alt: `Photo ${index + 1}` });
+                    } else if (typeof photo === 'string') {
+                        images.push({ url: photo, alt: `Photo ${index + 1}` });
+                    }
+                });
+            }
+            
+            // Ordonnance pour les commandes pharmacie
+            if (item.ordonnance && item.ordonnance.data) {
+                images.push({ url: `data:${item.ordonnance.type};base64,${item.ordonnance.data}`, alt: 'Ordonnance' });
+            }
+            
+            return images;
+        }
+
+        // Demandes Management
+        async function loadDemandesLivreurs() {
+            try {
+                showLoading('Chargement des demandes de livreurs...');
+                
+                const filters = {
+                    statut: document.getElementById('filterStatutLivreurs')?.value || 'en_attente',
+                    search: document.getElementById('searchDemandesLivreurs')?.value || '',
+                    periode: document.getElementById('filterPeriodeLivreurs')?.value || ''
+                };
+
+                const response = await apiCall('getDemandesLivreurs', {
+                    ...filters,
+                    limit: CONFIG.ITEMS_PER_PAGE
+                });
+                
+                if (response.success) {
+                    displayDemandesLivreurs(response.data || []);
+                    displayStatsDemandesLivreurs(response.stats || {});
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur demandes livreurs:', error);
+                showToast('Erreur', 'error', 'Impossible de charger les demandes');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayDemandesLivreurs(demandes) {
+            const container = document.getElementById('demandesLivreursContainer');
+            
+            if (!demandes || demandes.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--gray-500);">
+                        <i class="fas fa-user-plus fa-4x" style="margin-bottom: 2rem; display: block; opacity: 0.3;"></i>
+                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Aucune demande trouvée</div>
+                        <div>Aucune demande de livreur ne correspond à vos critères</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = demandes.map(demande => createDemandeCard(demande, 'livreur')).join('');
+        }
+
+        async function loadDemandesRestaurants() {
+            try {
+                showLoading('Chargement des demandes de restaurants...');
+                
+                const filters = {
+                    statut: document.getElementById('filterStatutRestaurants')?.value || 'en_attente',
+                    search: document.getElementById('searchDemandesRestaurants')?.value || '',
+                    cuisine: document.getElementById('filterCuisine')?.value || ''
+                };
+
+                const response = await apiCall('getDemandesRestaurants', {
+                    ...filters,
+                    limit: CONFIG.ITEMS_PER_PAGE
+                });
+                
+                if (response.success) {
+                    displayDemandesRestaurants(response.data || []);
+                    displayStatsDemandesRestaurants(response.stats || {});
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur demandes restaurants:', error);
+                showToast('Erreur', 'error', 'Impossible de charger les demandes');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayDemandesRestaurants(demandes) {
+            const container = document.getElementById('demandesRestaurantsContainer');
+            
+            if (!demandes || demandes.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--gray-500);">
+                        <i class="fas fa-store fa-4x" style="margin-bottom: 2rem; display: block; opacity: 0.3;"></i>
+                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Aucune demande trouvée</div>
+                        <div>Aucune demande de restaurant ne correspond à vos critères</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = demandes.map(demande => createDemandeCard(demande, 'restaurant')).join('');
+        }
+
+        function displayStatsDemandesLivreurs(stats) {
+            const container = document.getElementById('statsDemandesLivreurs');
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">En attente</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.en_attente || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-hourglass-half"></i>
+                        À traiter
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Approuvées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.approuvee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-key"></i>
+                        Codes générés
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Finalisées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.finalisee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-users"></i>
+                        Livreurs actifs
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Rejetées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.rejetee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-ban"></i>
+                        Refusées
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayStatsDemandesRestaurants(stats) {
+            const container = document.getElementById('statsDemandesRestaurants');
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">En attente</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.en_attente || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-hourglass-half"></i>
+                        À traiter
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Approuvées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.approuvee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-key"></i>
+                        Codes générés
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Finalisées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.finalisee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-handshake"></i>
+                        Restaurants actifs
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Rejetées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.rejetee || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-ban"></i>
+                        Refusées
+                    </div>
+                </div>
+            `;
+        }
+
+        function createDemandeCard(demande, type) {
+            const isLivreur = type === 'livreur';
+            const nom = isLivreur ? `${demande.nom || ''} ${demande.prenom || ''}` : demande.nom || '';
+            const images = getItemImages(demande, 'demande');
+            
+            return `
+                <div class="data-card" onclick="showDemandeDetails('${demande._id}', '${type}')">
+                    <div class="data-card-header">
+                        <div>
+                            <div class="data-card-title">${nom}</div>
+                            <div class="data-card-subtitle">
+                                ${isLivreur ? (demande.quartier || 'N/A') : (demande.cuisine || 'N/A')}
+                            </div>
+                        </div>
+                        <div>
+                            ${getStatutBadge(demande.statut)}
+                        </div>
+                    </div>
+                    
+                    <div class="data-card-content">
+                        ${isLivreur ? `
+                            <div class="data-card-item">
+                                <span class="data-card-label">WhatsApp:</span>
+                                <span class="data-card-value">${demande.whatsapp || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Téléphone:</span>
+                                <span class="data-card-value">${demande.telephone || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Véhicule:</span>
+                                <span class="data-card-value">${demande.vehicule || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Expérience:</span>
+                                <span class="data-card-value">${demande.experience || 'N/A'}</span>
+                            </div>
+                        ` : `
+                            <div class="data-card-item">
+                                <span class="data-card-label">Téléphone:</span>
+                                <span class="data-card-value">${demande.telephone || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Email:</span>
+                                <span class="data-card-value">${demande.email || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Adresse:</span>
+                                <span class="data-card-value">${demande.adresse || 'N/A'}</span>
+                            </div>
+                            <div class="data-card-item">
+                                <span class="data-card-label">Commercial:</span>
+                                <span class="data-card-value">${demande.nomCommercial || 'N/A'}</span>
+                            </div>
+                        `}
+                        <div class="data-card-item">
+                            <span class="data-card-label">Date:</span>
+                            <span class="data-card-value">${new Date(demande.dateCreation).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                        ${demande.codeAutorisation ? `
+                            <div class="data-card-item">
+                                <span class="data-card-label">Code:</span>
+                                <span class="data-card-value" style="font-family: monospace; font-weight: 700; color: var(--success);">${demande.codeAutorisation}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${images.length > 0 ? `
+                        <div class="image-grid">
+                            ${images.slice(0, 3).map(img => `
+                                <img src="${img.url}" alt="${img.alt}" class="image-preview" 
+                                     onclick="event.stopPropagation(); showImageModal('${img.url}', '${img.alt}')">
+                            `).join('')}
+                            ${images.length > 3 ? `
+                                <div style="display: flex; align-items: center; justify-content: center; background: var(--gray-100); border-radius: var(--border-radius); color: var(--gray-600); font-weight: 600;">
+                                    +${images.length - 3}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="data-card-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); showDemandeDetails('${demande._id}', '${type}')">
+                            <i class="fas fa-eye"></i>
+                            Détails
+                        </button>
+                        ${demande.statut === 'en_attente' ? `
+                            <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); approuveDemande('${demande._id}', '${type}')">
+                                <i class="fas fa-check"></i>
+                                Approuver
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); rejectDemande('${demande._id}', '${type}')">
+                                <i class="fas fa-times"></i>
+                                Rejeter
+                            </button>
+                        ` : ''}
+                        ${demande.statut === 'approuvee' && demande.codeAutorisation ? `
+                            <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copyCode('${demande.codeAutorisation}')">
+                                <i class="fas fa-copy"></i>
+                                Copier code
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Detail Modal Functions
+        async function showItemDetails(itemId, collectionName) {
+            try {
+                showLoading('Chargement des détails...');
+                
+                const response = await apiCall('getItemDetails', {
+                    collection: collectionName,
+                    itemId: itemId
+                });
+                
+                if (response.success && response.data) {
+                    displayDetailModal(response.data, collectionName);
+                    currentDeleteItem = { id: itemId, collection: collectionName };
+                } else {
+                    showToast('Erreur', 'error', 'Impossible de charger les détails');
+                }
+
+            } catch (error) {
+                console.error('Erreur détails:', error);
+                showToast('Erreur', 'error', 'Erreur lors du chargement des détails');
+            } finally {
+                hideLoading();
+            }
+        }
+
+function displayDetailModal(item, collectionName) {
+    const modal = document.getElementById('detailModal');
+    const title = document.getElementById('detailModalTitle');
+    const body = document.getElementById('detailModalBody');
+
+    title.textContent = `Détails - ${COLLECTIONS_CONFIG[collectionName]?.title || collectionName}`;
+
+    let content = '<div class="details-grid">';
+
+    const escapeHtml = (str) => {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+
+    // ===== Informations principales =====
+    const mainFields = getMainFields(item, collectionName);
+    if (mainFields.length > 0) {
+        content += '<div class="detail-section">';
+        content += '<h4><i class="fas fa-info-circle"></i> Informations principales</h4>';
+
+        mainFields.forEach(field => {
+            if (field.label.toLowerCase().includes("signature")) return;
+
+            let value = field.value;
+
+            if (typeof value === 'string' && value.startsWith('<')) {
+                // HTML autorisé
+            } else {
+                value = escapeHtml(value);
+            }
+
+            content += `
+                <div class="detail-item">
+                    <span class="detail-label">${field.label}</span>
+                    <span class="detail-value">${value}</span>
+                </div>
+            `;
+        });
+
+        content += '</div>';
+    }
+
+    // ===== Coordonnées =====
+    const contactFields = getContactFields(item, collectionName);
+    if (contactFields.length > 0) {
+        content += '<div class="detail-section">';
+        content += '<h4><i class="fas fa-address-book"></i> Contact & Coordonnées</h4>';
+
+        contactFields.forEach(field => {
+            const value = escapeHtml(field.value);
+            content += `
+                <div class="detail-item">
+                    <span class="detail-label">${field.label}</span>
+                    <span class="detail-value">${value}</span>
+                </div>
+            `;
+        });
+
+        content += '</div>';
+    }
+
+    // ===== Informations techniques =====
+    const techFields = getTechnicalFields(item, collectionName);
+    if (techFields.length > 0) {
+        content += '<div class="detail-section">';
+        content += '<h4><i class="fas fa-cogs"></i> Informations techniques</h4>';
+
+        techFields.forEach(field => {
+            const value = escapeHtml(field.value);
+            content += `
+                <div class="detail-item">
+                    <span class="detail-label">${field.label}</span>
+                    <span class="detail-value">${value}</span>
+                </div>
+            `;
+        });
+
+        content += '</div>';
+    }
+
+    // ===== Informations spéciales =====
+    const specialFields = getSpecialFields(item, collectionName);
+    if (specialFields.length > 0) {
+        content += '<div class="detail-section">';
+        content += '<h4><i class="fas fa-star"></i> Informations spéciales</h4>';
+
+        specialFields.forEach(field => {
+            let value = field.value;
+
+            if (field.label.toLowerCase().includes("signature") && typeof value === 'string' && value.includes('data:image')) {
+                // Signature affichée en image cliquable
+            } else if (typeof value === 'string' && value.startsWith('<')) {
+                // HTML autorisé
+            } else {
+                value = escapeHtml(value);
+            }
+
+            content += `
+                <div class="detail-item">
+                    <span class="detail-label">${field.label}</span>
+                    <span class="detail-value">${value}</span>
+                </div>
+            `;
+        });
+
+        content += '</div>';
+    }
+
+    // ===== Menu du restaurant =====
+    if (Array.isArray(item.menu) && item.menu.length > 0) {
+        content += '<div class="detail-section">';
+        content += '<h4><i class="fas fa-utensils"></i> Menu du restaurant</h4>';
+        item.menu.forEach(plat => {
+            const nom = escapeHtml(plat.nom || '');
+            const description = escapeHtml(plat.description || '');
+            const prix = escapeHtml(plat.prix || '');
+const base64Image = (plat.photo?.base64 && plat.photo?.type)
+    ? `data:${plat.photo.type};base64,${plat.photo.base64}`
+    : '';
+
+const photo = base64Image
+    ? `<img src="${base64Image}" alt="${nom}" class="menu-img" style="max-width: 100px; cursor: pointer;" onclick="showImageModal('${base64Image}', '${nom}')">`
+    : '';
+
+            content += `
+                <div class="menu-item" style="margin-bottom: 15px;">
+                    ${photo}
+                    <div style="margin-left: 10px;">
+                        <div><strong>Nom :</strong> ${nom}</div>
+                        <div><strong>Description :</strong> ${description}</div>
+                        <div><strong>Prix :</strong> ${prix} F CFA</div>
+                    </div>
+                </div>
+            `;
+        });
+        content += '</div>';
+    }
+
+    // ===== Images et documents =====
+    const images = getItemImages(item, collectionName);
+    if (images.length > 0) {
+        content += '<div class="detail-section" style="margin-top: 20px;">';
+        content += '<h4><i class="fas fa-images"></i> Images et Documents</h4>';
+        content += '<div class="image-grid">';
+
+        images.forEach(img => {
+            content += `
+                <img src="${img.url}" alt="${escapeHtml(img.alt)}" class="image-preview" onclick="showImageModal('${img.url}', '${escapeHtml(img.alt)}')">
+            `;
+        });
+
+        content += '</div></div>';
+    }
+
+    content += '</div>'; // Fin du grid
+
+    // Injecter dans le modal
+    body.innerHTML = content;
+    openModal('detailModal');
+}
+
+
+        function getMainFields(item, collectionName) {
+            const fields = [];
+            
+            switch(collectionName) {
+                case 'Colis':
+                    if(item.colisID) fields.push({ label: 'ID Colis', value: item.colisID });
+                    if(item.trackingCode) fields.push({ label: 'Code suivi', value: item.trackingCode });
+                    if(item.sender) fields.push({ label: 'Expéditeur', value: item.sender });
+                    if(item.recipient) fields.push({ label: 'Destinataire', value: item.recipient });
+                    if(item.address) fields.push({ label: 'Adresse', value: item.address });
+                    if(item.packageType) fields.push({ label: 'Type colis', value: item.packageType });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.description) fields.push({ label: 'Description', value: item.description });
+                    break;
+                    
+                case 'Livraison':
+                    if(item.livraisonID) fields.push({ label: 'ID Livraison', value: item.livraisonID });
+                    if(item.colisID) fields.push({ label: 'ID Colis', value: item.colisID });
+                    if(item.expediteur?.nom) fields.push({ label: 'Expéditeur', value: item.expediteur.nom });
+                    if(item.destinataire?.nom) fields.push({ label: 'Destinataire', value: item.destinataire.nom });
+                    if(item.statut) fields.push({ label: 'Statut', value: getStatutBadge(item.statut) });
+                    if(item.colis?.type) fields.push({ label: 'Type colis', value: item.colis.type });
+                    if(item.colis?.description) fields.push({ label: 'Description', value: item.colis.description });
+                    break;
+                    
+                case 'Commandes':
+                    if(item.codeCommande) fields.push({ label: 'Code commande', value: item.codeCommande });
+                    if(item.type) fields.push({ label: 'Type', value: item.type });
+                    if(item.restaurant?.name) fields.push({ label: 'Restaurant', value: item.restaurant.name });
+                    if(item.client?.name) fields.push({ label: 'Client', value: item.client.name });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.deliveryFee) fields.push({ label: 'Frais de livraison', value: `${item.deliveryFee} FCFA` });
+                    break;
+                    
+                case 'Res_livreur':
+                    if(item.id_livreur) fields.push({ label: 'ID Livreur', value: item.id_livreur });
+                    if(item.nom) fields.push({ label: 'Nom complet', value: `${item.nom} ${item.prenom || ''}` });
+                    if(item.codeAutorisation) fields.push({ label: 'Code autorisation', value: item.codeAutorisation });
+                    if(item.statut) fields.push({ label: 'Statut', value: getStatutBadge(item.statut) });
+                    if(item.quartier) fields.push({ label: 'Quartier', value: item.quartier });
+                    if(item.vehicule) fields.push({ label: 'Véhicule', value: item.vehicule });
+                    if(item.immatriculation) fields.push({ label: 'Immatriculation', value: item.immatriculation });
+                    if(item.experience) fields.push({ label: 'Expérience', value: item.experience });
+                    break;
+                    
+                case 'Restau':
+                    if(item.restaurantId) fields.push({ label: 'ID Restaurant', value: item.restaurantId });
+                    if(item.nom) fields.push({ label: 'Nom', value: item.nom });
+                    if(item.nomCommercial) fields.push({ label: 'Nom commercial', value: item.nomCommercial });
+                    if(item.codeAutorisation) fields.push({ label: 'Code autorisation', value: item.codeAutorisation });
+                    if(item.cuisine) fields.push({ label: 'Type de cuisine', value: item.cuisine });
+                    if(item.statut) fields.push({ label: 'Statut', value: getStatutBadge(item.statut) });
+                    if(item.description) fields.push({ label: 'Description', value: item.description });
+                    if(item.specialites) fields.push({ label: 'Spécialités', value: item.specialites });
+                    break;
+                    
+                case 'pharmacyOrders':
+                    if(item.serviceType) fields.push({ label: 'Type service', value: item.serviceType });
+                    if(item.medicaments?.length) fields.push({ label: 'Nombre médicaments', value: item.medicaments.length });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.deliveryFee) fields.push({ label: 'Frais livraison', value: `${item.deliveryFee} FCFA` });
+                    if(item.notes) fields.push({ label: 'Notes', value: item.notes });
+                    break;
+                    
+                case 'shopping_orders':
+                    if(item.serviceType) fields.push({ label: 'Type service', value: item.serviceType });
+                    if(item.shoppingList?.length) fields.push({ label: 'Nombre articles', value: item.shoppingList.length });
+                    if(item.budgetMin && item.budgetMax) fields.push({ label: 'Budget', value: `${item.budgetMin} - ${item.budgetMax} FCFA` });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.deliveryTime) fields.push({ label: 'Heure livraison', value: item.deliveryTime });
+                    if(item.specialInstructions) fields.push({ label: 'Instructions spéciales', value: item.specialInstructions });
+                    break;
+                    
+                case 'cour_expedition':
+                    if(item.colisID) fields.push({ label: 'ID Colis', value: item.colisID });
+                    if(item.livraisonID) fields.push({ label: 'ID Livraison', value: item.livraisonID });
+                    if(item.driverId) fields.push({ label: 'ID Livreur', value: item.driverId });
+                    if(item.driverName) fields.push({ label: 'Nom livreur', value: item.driverName });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.serviceType) fields.push({ label: 'Type service', value: item.serviceType });
+                    break;
+                    
+                case 'LivraisonsEffectuees':
+                    if(item.colisID) fields.push({ label: 'ID Colis', value: item.colisID });
+                    if(item.livraisonID) fields.push({ label: 'ID Livraison', value: item.livraisonID });
+                    if(item.driverName) fields.push({ label: 'Livreur', value: item.driverName });
+                    if(item.status) fields.push({ label: 'Statut', value: getStatutBadge(item.status) });
+                    if(item.deliveryNotes) fields.push({ label: 'Notes de livraison', value: item.deliveryNotes });
+                    break;
+                    
+                case 'Refus':
+                    if(item.colisID) fields.push({ label: 'ID Colis', value: item.colisID });
+                    if(item.raison) fields.push({ label: 'Raison du refus', value: item.raison });
+                    break;
+                    
+                case 'compte_livreur':
+                    if(item.id_livreur) fields.push({ label: 'ID Livreur', value: item.id_livreur });
+                    if(item.username) fields.push({ label: 'Nom d\'utilisateur', value: item.username });
+                    if(item.nom) fields.push({ label: 'Nom complet', value: `${item.nom} ${item.prenom || ''}` });
+                    if(item.statut) fields.push({ label: 'Statut', value: getStatutBadge(item.statut) });
+                    if(item.type_compte) fields.push({ label: 'Type compte', value: item.type_compte });
+                    break;
+                    
+                default:
+                    // Affichage générique pour les collections non configurées
+                    Object.keys(item).forEach(key => {
+                        if(!['_id', 'createdAt', 'updatedAt', '__v', 'password'].includes(key) && item[key] && typeof item[key] !== 'object') {
+                            fields.push({ label: key, value: String(item[key]) });
+                        }
+                    });
+            }
+            
+            return fields;
+        }
+
+        function getContactFields(item, collectionName) {
+            const fields = [];
+            
+            // Champs de contact communs
+            if(item.telephone) fields.push({ label: 'Téléphone', value: item.telephone });
+            if(item.whatsapp) fields.push({ label: 'WhatsApp', value: item.whatsapp });
+            if(item.email) fields.push({ label: 'Email', value: item.email });
+            if(item.adresse) fields.push({ label: 'Adresse', value: item.adresse });
+            
+            // Champs spécifiques par collection
+            switch(collectionName) {
+                case 'Colis':
+                    if(item.senderPhone) fields.push({ label: 'Téléphone expéditeur', value: item.senderPhone });
+                    if(item.recipientPhone) fields.push({ label: 'Téléphone destinataire', value: item.recipientPhone });
+                    break;
+                    
+                case 'Livraison':
+                    if(item.destinataire?.telephone) fields.push({ label: 'Téléphone destinataire', value: item.destinataire.telephone });
+                    if(item.destinataire?.adresse) fields.push({ label: 'Adresse livraison', value: item.destinataire.adresse });
+                    if(item.expediteur?.telephone) fields.push({ label: 'Téléphone expéditeur', value: item.expediteur.telephone });
+                    break;
+                    
+                case 'Commandes':
+                    if(item.client?.phone) fields.push({ label: 'Téléphone client', value: item.client.phone });
+                    break;
+                    
+                case 'Res_livreur':
+                    if(item.contactUrgence?.nom) fields.push({ label: 'Contact urgence', value: item.contactUrgence.nom });
+                    if(item.contactUrgence?.telephone) fields.push({ label: 'Tél contact urgence', value: item.contactUrgence.telephone });
+                    break;
+                    
+                case 'Restau':
+                    if(item.responsableNom) fields.push({ label: 'Nom responsable', value: item.responsableNom });
+                    if(item.responsableTel) fields.push({ label: 'Tél responsable', value: item.responsableTel });
+                    break;
+                    
+                case 'pharmacyOrders':
+                    if(item.phoneNumber) fields.push({ label: 'Téléphone principal', value: item.phoneNumber });
+                    if(item.secondaryPhone) fields.push({ label: 'Téléphone secondaire', value: item.secondaryPhone });
+                    break;
+                    
+                case 'shopping_orders':
+                    if(item.phone1) fields.push({ label: 'Téléphone 1', value: item.phone1 });
+                    if(item.phone2) fields.push({ label: 'Téléphone 2', value: item.phone2 });
+                    break;
+                    
+                case 'cour_expedition':
+                    if(item.driverPhone1) fields.push({ label: 'Téléphone livreur 1', value: item.driverPhone1 });
+                    if(item.driverPhone2) fields.push({ label: 'Téléphone livreur 2', value: item.driverPhone2 });
+                    break;
+                    
+                case 'LivraisonsEffectuees':
+                    if(item.driverPhone) fields.push({ label: 'Téléphone livreur', value: item.driverPhone });
+                    break;
+            }
+            
+            return fields;
+        }
+
+        function getTechnicalFields(item, collectionName) {
+            const fields = [];
+            
+            // Champs techniques communs
+            if(item._id) fields.push({ label: 'ID MongoDB', value: item._id });
+            if(item.createdAt) fields.push({ label: 'Créé le', value: new Date(item.createdAt).toLocaleString('fr-FR') });
+            if(item.updatedAt) fields.push({ label: 'Modifié le', value: new Date(item.updatedAt).toLocaleString('fr-FR') });
+            if(item.dateCreation) fields.push({ label: 'Date création', value: new Date(item.dateCreation).toLocaleString('fr-FR') });
+            
+            // Champs spécifiques par collection
+            switch(collectionName) {
+                case 'Livraison':
+                    if(item.dateAcceptation) fields.push({ label: 'Date acceptation', value: new Date(item.dateAcceptation).toLocaleString('fr-FR') });
+                    if(item.timestamp) fields.push({ label: 'Timestamp', value: new Date(item.timestamp).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'LivraisonsEffectuees':
+                    if(item.deliveredAt) fields.push({ label: 'Livré le', value: new Date(item.deliveredAt).toLocaleString('fr-FR') });
+                    if(item.assignedAt) fields.push({ label: 'Assigné le', value: new Date(item.assignedAt).toLocaleString('fr-FR') });
+                    if(item.archivedAt) fields.push({ label: 'Archivé le', value: new Date(item.archivedAt).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'Refus':
+                    if(item.dateRefus) fields.push({ label: 'Date refus', value: new Date(item.dateRefus).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'Commandes':
+                    if(item.orderDate) fields.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleString('fr-FR') });
+                    if(item.lastUpdate) fields.push({ label: 'Dernière MAJ', value: new Date(item.lastUpdate).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'pharmacyOrders':
+                    if(item.orderDate) fields.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'shopping_orders':
+                    if(item.orderDate) fields.push({ label: 'Date commande', value: new Date(item.orderDate).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'cour_expedition':
+                    if(item.assignedAt) fields.push({ label: 'Assigné le', value: new Date(item.assignedAt).toLocaleString('fr-FR') });
+                    if(item.lastPositionUpdate) fields.push({ label: 'Dernière position', value: new Date(item.lastPositionUpdate).toLocaleString('fr-FR') });
+                    break;
+                    
+                case 'Res_livreur':
+                    if(item.dateNaissance) fields.push({ label: 'Date naissance', value: new Date(item.dateNaissance).toLocaleDateString('fr-FR') });
+                    break;
+                    
+                case 'compte_livreur':
+                    if(item.derniere_connexion) fields.push({ label: 'Dernière connexion', value: new Date(item.derniere_connexion).toLocaleString('fr-FR') });
+                    if(item.created_at) fields.push({ label: 'Compte créé le', value: new Date(item.created_at).toLocaleString('fr-FR') });
+                    break;
+            }
+            
+            return fields;
+        }
+
+
+
+function getSpecialFields(item, collectionName) {
+    const fields = [];
+
+    if (collectionName === 'demande_restau') {
+        if (item.specialites) fields.push({ label: 'Spécialités', value: item.specialites });
+        if (item.horairesDetails) fields.push({ label: 'Horaires', value: item.horairesDetails });
+
+        // Ajouter l’image de la signature si elle existe
+        if (item.signature && typeof item.signature === 'string' && item.signature.length > 100) {
+            fields.push({
+                label: 'Signature',
+                value: `<img src="data:image/png;base64,${item.signature}" alt="Signature" class="image-preview" style="max-width:200px; max-height:100px;" />`
+            });
+        }
+    }
+
+            
+            switch(collectionName) {
+                case 'Colis':
+                    if(item.metadata) {
+                        if(item.metadata.photosCount) fields.push({ label: 'Nombre de photos', value: item.metadata.photosCount });
+                        if(item.metadata.totalPhotoSize) fields.push({ label: 'Taille totale photos', value: `${(item.metadata.totalPhotoSize / 1024).toFixed(1)} KB` });
+                        if(item.metadata.locationAccuracy) fields.push({ label: 'Précision localisation', value: `${item.metadata.locationAccuracy.toFixed(1)} m` });
+                    }
+                    if(item.locationStats) {
+                        if(item.locationStats.attempts) fields.push({ label: 'Tentatives localisation', value: item.locationStats.attempts });
+                        if(item.locationStats.bestAccuracy) fields.push({ label: 'Meilleure précision', value: `${item.locationStats.bestAccuracy.toFixed(1)} m` });
+                    }
+                    break;
+                    
+                case 'Commandes':
+                    if(item.items && item.items.length > 0) {
+                        fields.push({ label: 'Articles commandés', value: item.items.map(i => `${i.name} (${i.quantity}x)`).join(', ') });
+                    }
+                    if(item.metadata) {
+                        if(item.metadata.appVersion) fields.push({ label: 'Version app', value: item.metadata.appVersion });
+                        if(item.metadata.source) fields.push({ label: 'Source', value: item.metadata.source });
+                    }
+                    break;
+                    
+                case 'pharmacyOrders':
+                    if(item.medicaments && item.medicaments.length > 0) {
+                        fields.push({ label: 'Médicaments', value: item.medicaments.map(m => `${m.name} (${m.quantity}x)`).join(', ') });
+                    }
+                    break;
+                    
+                case 'shopping_orders':
+                    if(item.shoppingList && item.shoppingList.length > 0) {
+                        fields.push({ label: 'Liste courses', value: item.shoppingList.map(s => `${s.nom} (${s.quantite}x)`).join(', ') });
+                    }
+                    break;
+                    
+                case 'Restau':
+                    if(item.menu && item.menu.length > 0) {
+                        fields.push({ label: 'Nombre plats menu', value: item.menu.length });
+                        fields.push({ label: 'Exemples plats', value: item.menu.slice(0, 3).map(m => m.nom).join(', ') });
+                    }
+                    if(item.horairesDetails) fields.push({ label: 'Horaires', value: item.horairesDetails });
+                    break;
+                    
+                case 'LivraisonsEffectuees':
+                    if(item.completedBy) {
+                        fields.push({ label: 'Terminé par', value: item.completedBy.driverName });
+                        if(item.completedBy.completedAt) fields.push({ label: 'Terminé le', value: new Date(item.completedBy.completedAt).toLocaleString('fr-FR') });
+                    }
+                    if(item.deliveryProcess) {
+                        const duration = item.deliveryProcess.deliveredAt && item.deliveryProcess.assignedAt ? 
+                            ((new Date(item.deliveryProcess.deliveredAt) - new Date(item.deliveryProcess.assignedAt)) / 1000 / 60).toFixed(0) : null;
+                        if(duration) fields.push({ label: 'Durée livraison', value: `${duration} minutes` });
+                    }
+                    break;
+            }
+            
+            return fields;
+        }
+
+        async function showDemandeDetails(demandeId, type) {
+            try {
+                showLoading('Chargement des détails...');
+                
+                const collectionName = type === 'livreur' ? 'demande_livreur' : 'demande_restau';
+                const response = await apiCall('getItemDetails', {
+                    collection: collectionName,
+                    itemId: demandeId
+                });
+                
+                if (response.success && response.data) {
+                    displayDetailModal(response.data, collectionName);
+                    currentDeleteItem = { id: demandeId, collection: collectionName };
+                } else {
+                    showToast('Erreur', 'error', 'Impossible de charger les détails');
+                }
+
+            } catch (error) {
+                console.error('Erreur détails demande:', error);
+                showToast('Erreur', 'error', 'Erreur lors du chargement des détails');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Deletion Functions
+        function deleteItem(itemId, collectionName) {
+            currentDeleteItem = { id: itemId, collection: collectionName };
+            
+            const config = COLLECTIONS_CONFIG[collectionName];
+            const itemName = config ? config.title : collectionName;
+            
+            document.getElementById('deleteMessage').textContent = 
+                `Êtes-vous sûr de vouloir supprimer cet élément de ${itemName} ?`;
+            
+            openModal('deleteModal');
+        }
+
+        function deleteCurrentItem() {
+            if (currentDeleteItem) {
+                deleteItem(currentDeleteItem.id, currentDeleteItem.collection);
+            }
+        }
+
+        async function confirmDelete() {
+            if (!currentDeleteItem) {
+                closeModal('deleteModal');
+                return;
+            }
+
+            try {
+                showLoading('Suppression en cours...');
+                
+                const response = await apiCall('deleteCollectionItem', {
+                    collection: currentDeleteItem.collection,
+                    itemId: currentDeleteItem.id
+                });
+                
+                if (response.success) {
+                    showToast('Supprimé', 'success', 'Élément supprimé avec succès');
+                    closeModal('deleteModal');
+                    closeModal('detailModal');
+                    
+                    // Rafraîchir la vue actuelle
+                    refreshCurrentView();
+                } else {
+                    showToast('Erreur', 'error', response.message || 'Impossible de supprimer l\'élément');
+                }
+            } catch (error) {
+                console.error('Erreur suppression:', error);
+                showToast('Erreur', 'error', 'Erreur lors de la suppression');
+            } finally {
+                hideLoading();
+                currentDeleteItem = null;
+            }
+        }
+
+        function refreshCurrentView() {
+            if (currentView === 'collection' && currentCollection) {
+                loadCollectionData(currentCollection);
+            } else if (currentView === 'demandes-livreurs') {
+                loadDemandesLivreurs();
+            } else if (currentView === 'demandes-restaurants') {
+                loadDemandesRestaurants();
+            } else if (currentView === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        // Approval Functions
+        function approuveDemande(demandeId, type) {
+            currentDemande = demandeId;
+            currentDemandeType = type;
+            
+            document.getElementById('approvalComment').value = '';
+            document.getElementById('generatedCodeContainer').style.display = 'none';
+            document.getElementById('confirmApprovalBtn').innerHTML = `
+                <i class="fas fa-check"></i>
+                Approuver et générer code
+            `;
+            
+            openModal('approvalModal');
+        }
+
+        async function confirmApproval() {
+            if (!currentDemande || !currentDemandeType) return;
+
+            try {
+                showLoading('Génération du code d\'autorisation...');
+                
+                const response = await apiCall('approuverDemande', {
+                    demandeId: currentDemande,
+                    type: currentDemandeType,
+                    comment: document.getElementById('approvalComment').value
+                });
+                
+                if (response.success) {
+                    document.getElementById('generatedCode').textContent = response.codeAutorisation;
+                    document.getElementById('generatedCodeContainer').style.display = 'block';
+                    
+                    document.getElementById('confirmApprovalBtn').innerHTML = `
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer le code
+                    `;
+                    document.getElementById('confirmApprovalBtn').onclick = () => sendCodeToUser();
+                    
+                    showToast('Code généré !', 'success', `Code d'autorisation: ${response.codeAutorisation}`);
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur approbation:', error);
+                showToast('Erreur', 'error', 'Impossible d\'approuver la demande');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function rejectDemande(demandeId, type) {
+            currentDemande = demandeId;
+            currentDemandeType = type;
+            
+            document.getElementById('rejectionReason').value = '';
+            document.getElementById('rejectionRecommendations').value = '';
+            openModal('rejectionModal');
+        }
+
+        async function confirmRejection() {
+            if (!currentDemande || !currentDemandeType) return;
+
+            const reason = document.getElementById('rejectionReason').value.trim();
+            const recommendations = document.getElementById('rejectionRecommendations').value.trim();
+            
+            if (!reason) {
+                showToast('Motif requis', 'warning', 'Veuillez expliquer le motif du rejet');
+                return;
+            }
+
+            try {
+                showLoading('Rejet en cours...');
+                
+                const response = await apiCall('rejeterDemande', {
+                    demandeId: currentDemande,
+                    type: currentDemandeType,
+                    motif: reason,
+                    recommandations: recommendations
+                });
+                
+                if (response.success) {
+                    closeModal('rejectionModal');
+                    showToast('Demande rejetée', 'success', 'Le candidat sera informé du rejet');
+                    
+                    refreshCurrentView();
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur rejet:', error);
+                showToast('Erreur', 'error', 'Impossible de rejeter la demande');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Utility Functions
+        function getStatutBadge(statut) {
+            const badges = {
+                'pending': '<span class="badge badge-warning">En attente</span>',
+                'en_attente': '<span class="badge badge-warning">En attente</span>',
+                'en_cours': '<span class="badge badge-info">En cours</span>',
+                'en_cours_de_livraison': '<span class="badge badge-info">En cours</span>',
+                'livré': '<span class="badge badge-success">Livré</span>',
+                'delivered': '<span class="badge badge-success">Livré</span>',
+                'approuvee': '<span class="badge badge-success">Approuvée</span>',
+                'rejetee': '<span class="badge badge-danger">Rejetée</span>',
+                'finalisee': '<span class="badge badge-primary">Finalisée</span>',
+                'actif': '<span class="badge badge-success">Actif</span>',
+                'inactif': '<span class="badge badge-secondary">Inactif</span>',
+                'refused': '<span class="badge badge-danger">Refusé</span>',
+                'à préparer': '<span class="badge badge-warning">À préparer</span>',
+                'completed': '<span class="badge badge-success">Terminé</span>'
+            };
+            return badges[statut] || `<span class="badge badge-secondary">${statut}</span>`;
+        }
+
+        // API Functions
+        async function apiCall(action, data = {}) {
+            try {
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, ...data })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Erreur API:', error);
+                throw error;
+            }
+        }
+
+        // Event Handlers
+        function handleCollectionSearch(event) {
+            if (event.key === 'Enter') {
+                handleFilterChange();
+            }
+        }
+
+        function handleFilterChange() {
+            currentPage = 1;
+            if (currentCollection) {
+                loadCollectionData(currentCollection);
+            }
+        }
+
+        function getActiveFilters() {
+            const filters = {};
+            
+            const search = document.getElementById('collectionSearch')?.value?.trim();
+            if (search) filters.search = search;
+            
+            const status = document.getElementById('statusFilter')?.value;
+            if (status) filters.status = status;
+            
+            const period = document.getElementById('periodFilter')?.value;
+            if (period) filters.period = period;
+            
+            return filters;
+        }
+
+        function filterDemandesLivreurs() {
+            loadDemandesLivreurs();
+        }
+
+        function filterDemandesRestaurants() {
+            loadDemandesRestaurants();
+        }
+
+        function clearAllFilters() {
+            document.querySelectorAll('#filtersGrid input, #filtersGrid select').forEach(input => {
+                input.value = '';
+            });
+            handleFilterChange();
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('open');
+            });
+            document.body.style.overflow = '';
+        }
+
+        // Image Modal Functions
+        function showImageModal(imageUrl, imageAlt) {
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('modalImage').alt = imageAlt;
+            document.getElementById('imageModalTitle').textContent = imageAlt;
+            openModal('imageModal');
+        }
+
+        function downloadImage() {
+            const img = document.getElementById('modalImage');
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = img.alt || 'image';
+            link.click();
+        }
+
+        // Code Functions
+        function copyCode(code = null) {
+            const codeText = code || document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                showToast('Code copié !', 'success', 'Le code a été copié dans le presse-papiers');
+            });
+        }
+
+        function sendWhatsApp() {
+            const code = document.getElementById('generatedCode').textContent;
+            const message = `🎉 Félicitations ! Votre demande SEND2.0 a été approuvée.\n\n✅ Code d'autorisation : ${code}\n\n📱 Finalisez votre inscription sur notre plateforme avec ce code.\n\n🚀 Bienvenue dans l'équipe SEND2.0 !`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function sendSMS() {
+            const code = document.getElementById('generatedCode').textContent;
+            const message = `SEND2.0: Félicitations ! Votre demande est approuvée. Code d'autorisation : ${code}. Finalisez votre inscription sur notre site.`;
+            const smsUrl = `sms:?body=${encodeURIComponent(message)}`;
+            window.location.href = smsUrl;
+        }
+
+        async function sendCodeToUser() {
+            if (!currentDemande) return;
+
+            try {
+                const response = await apiCall('envoyerNotification', {
+                    demandeId: currentDemande,
+                    type: currentDemandeType
+                });
+
+                if (response.success) {
+                    closeModal('approvalModal');
+                    showToast('Notification envoyée !', 'success', 'Le code d\'autorisation a été transmis');
+                    
+                    refreshCurrentView();
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur notification:', error);
+                showToast('Erreur', 'error', 'Impossible d\'envoyer la notification');
+            }
+        }
+
+        // Pagination Functions
+        function updatePagination(totalCount) {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer || totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // Bouton Précédent
+            paginationHTML += `
+                <button class="pagination-btn ${currentPage <= 1 ? 'disabled' : ''}" 
+                        onclick="changePage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            // Pages
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                            onclick="changePage(${i})">${i}</button>
+                `;
+            }
+            
+            // Bouton Suivant
+            paginationHTML += `
+                <button class="pagination-btn ${currentPage >= totalPages ? 'disabled' : ''}" 
+                        onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            // Infos pagination
+            paginationHTML += `
+                <div style="margin-left: 16px; color: var(--gray-600); font-size: 14px;">
+                    Page ${currentPage} sur ${totalPages} (${totalCount} éléments)
+                </div>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        function changePage(newPage) {
+            if (newPage < 1 || newPage > totalPages) return;
+            currentPage = newPage;
+            if (currentCollection) {
+                loadCollectionData(currentCollection);
+            }
+        }
+
+        // Analytics Functions
+        async function loadAnalytics() {
+            try {
+                showLoading('Génération des analyses...');
+                
+                const response = await apiCall('getAnalytics', {
+                    type: 'general',
+                    timeRange: '7d'
+                });
+                
+                if (response.success) {
+                    displayAnalytics(response.analytics);
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur analyses:', error);
+                showToast('Erreur', 'error', 'Impossible de charger les analyses');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayAnalytics(analytics) {
+            const container = document.getElementById('analyticsStatsGrid');
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Efficacité globale</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${analytics.efficaciteGlobale?.efficiency || 0}%</div>
+                    <div class="stat-change">
+                        <i class="fas fa-chart-line"></i>
+                        Performance générale
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Taux de réussite</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${analytics.tauxReussite?.successRate || 0}%</div>
+                    <div class="stat-change">
+                        <i class="fas fa-check-circle"></i>
+                        Livraisons réussies
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Colis traités</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${analytics.totalColis || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-calendar-week"></i>
+                        Cette semaine
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Livraisons terminées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${analytics.totalLivrees || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-calendar-week"></i>
+                        Cette semaine
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Commandes refusées</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${analytics.tauxReussite?.refusedOrders || 0}</div>
+                    <div class="stat-change">
+                        <i class="fas fa-percentage"></i>
+                        ${analytics.tauxReussite?.refusalRate || 0}% de refus
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Croissance</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">+15%</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        Vs semaine précédente
+                    </div>
+                </div>
+            `;
+        }
+
+        // Cleanup Functions
+        async function runCleanup() {
+            if (!confirm('Êtes-vous sûr de vouloir lancer le nettoyage automatique ? Cette action supprimera les données selon les règles définies.')) {
+                return;
+            }
+
+            try {
+                showLoading('Nettoyage en cours...');
+                
+                const response = await apiCall('runCleanup', {
+                    forceAll: false
+                });
+                
+                if (response.success) {
+                    showToast('Nettoyage terminé', 'success', 
+                        `${response.totalDeleted} éléments supprimés avec succès`);
+                    
+                    // Rafraîchir le dashboard
+                    if (currentView === 'dashboard') {
+                        loadDashboard();
+                    }
+                } else {
+                    showToast('Erreur', 'error', response.message);
+                }
+
+            } catch (error) {
+                console.error('Erreur nettoyage:', error);
+                showToast('Erreur', 'error', 'Impossible de lancer le nettoyage');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // UI Functions
+        function showLoading(message = 'Chargement...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            
+            if (overlay && text) {
+                text.textContent = message;
+                overlay.classList.add('show');
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function showToast(title, type = 'info', message = '') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toastId = 'toast-' + Date.now();
+            const iconMap = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon ${type}">
+                    <i class="fas ${iconMap[type] || iconMap.info}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    ${message ? `<div class="toast-message">${message}</div>` : ''}
+                </div>
+                <button class="toast-close" onclick="closeToast('${toastId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                closeToast(toastId);
+            }, 5000);
+        }
+
+        function closeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.add('hide-animation');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebarOpen = !sidebarOpen;
+            
+            if (sidebarOpen) {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            } else {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebarOpen = false;
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        function handleResize() {
+            if (window.innerWidth >= 768) {
+                closeSidebar();
+            }
+        }
+
+        // Other Functions
+        function refreshAll() {
+            showLoading('Actualisation complète...');
+            
+            setTimeout(() => {
+                loadDashboard();
+                
+                if (currentView === 'collection' && currentCollection) {
+                    loadCollectionData(currentCollection);
+                } else if (currentView === 'demandes-livreurs') {
+                    loadDemandesLivreurs();
+                } else if (currentView === 'demandes-restaurants') {
+                    loadDemandesRestaurants();
+                } else if (currentView === 'analytics') {
+                    loadAnalytics();
+                }
+                
+                hideLoading();
+                showToast('Actualisé', 'success', 'Toutes les données ont été mises à jour');
+            }, 1000);
+        }
+
+        function refreshDashboard() {
+            loadDashboard();
+        }
+
+        function refreshCollection() {
+            if (currentCollection) {
+                loadCollectionData(currentCollection);
+            }
+        }
+
+        function refreshDemandesLivreurs() {
+            loadDemandesLivreurs();
+        }
+
+        function refreshDemandesRestaurants() {
+            loadDemandesRestaurants();
+        }
+
+        function refreshAnalytics() {
+            loadAnalytics();
+        }
+
+        function exportAllData() {
+            showToast('Export', 'info', 'Fonctionnalité d\'export global en développement');
+        }
+
+        function exportCollection() {
+            showToast('Export', 'info', `Export de ${currentCollection} en développement`);
+        }
+
+        function exportDemandesLivreurs() {
+            showToast('Export', 'info', 'Export des demandes livreurs en développement');
+        }
+
+        function exportDemandesRestaurants() {
+            showToast('Export', 'info', 'Export des demandes restaurants en développement');
+        }
+
+        function generateReport() {
+            showToast('Rapport', 'info', 'Génération de rapport PDF en développement');
+        }
+
+        function showNotifications() {
+            showToast('Notifications', 'info', 'Aucune nouvelle notification');
+        }
+
+        function showProfile() {
+            showToast('Profil', 'info', 'Menu profil administrateur en développement');
+        }
+
+        function bulkDelete() {
+            showToast('Suppression', 'info', 'Fonction de suppression en lot en développement');
+        }
+
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(() => {
+                if (currentView === 'dashboard') {
+                    loadDashboard();
+                }
+                updateNotificationCount();
+            }, CONFIG.REFRESH_INTERVAL);
+        }
+
+        // Initialisation au chargement
+        window.addEventListener('load', function() {
+            showToast('Bienvenue', 'success', 'Interface d\'administration SEND2.0 chargée');
+        });
+    </script>
+</body>
+</html>

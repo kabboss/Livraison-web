@@ -1,0 +1,3314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Inscription Restaurant - SEND2.0 Pro avec Chef Send</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --secondary: linear-gradient(135deg, #399fff 0%, #4faaff 100%);
+            --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --success-solid: #43e97b;
+            --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --warning-solid: #fa709a;
+            --danger: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            --danger-solid: #ff6b6b;
+            --info: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            --info-solid: #74b9ff;
+            
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0c0c0c;
+            
+            --glass: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 6px 20px rgba(0, 0, 0, 0.2);
+            
+            --radius: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --radius-full: 9999px;
+            
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 14px;
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--secondary);
+            min-height: 100vh;
+            padding: 8px;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .send-container {
+            position: fixed;
+            z-index: 2000;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .send-mascot {
+            width: 80px;
+            height: 110px;
+            position: relative;
+            cursor: grab;
+            transition: var(--transition);
+            pointer-events: all;
+            transform-origin: center;
+            user-select: none;
+        }
+
+        .send-mascot:active {
+            cursor: grabbing;
+        }
+
+        .send-mascot.bouncing {
+            animation: sendBounce 0.6s ease-in-out;
+        }
+
+        .send-mascot.excited {
+            animation: sendExcited 1s ease-in-out infinite;
+        }
+
+        .send-mascot.celebrating {
+            animation: sendCelebrate 2s ease-in-out;
+        }
+
+        .send-mascot.thinking {
+            animation: sendThinking 2s ease-in-out infinite;
+        }
+
+        .send-mascot.walking {
+            animation: sendWalk 1s ease-in-out infinite;
+        }
+
+        @keyframes sendBounce {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-8px); }
+        }
+
+        @keyframes sendExcited {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(3deg); }
+            75% { transform: scale(1.05) rotate(-3deg); }
+        }
+
+        @keyframes sendCelebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(10deg); }
+            50% { transform: scale(1.15) rotate(-10deg); }
+            75% { transform: scale(1.2) rotate(5deg); }
+        }
+
+        @keyframes sendThinking {
+            0%, 100% { transform: scale(1) rotateX(0deg); }
+            50% { transform: scale(1.02) rotateX(5deg); }
+        }
+
+        @keyframes sendWalk {
+            0%, 100% { transform: scale(1) rotateZ(0deg); }
+            25% { transform: scale(1.02) rotateZ(2deg); }
+            75% { transform: scale(1.02) rotateZ(-2deg); }
+        }
+
+        .send-body {
+            width: 60px;
+            height: 75px;
+            background: linear-gradient(135deg, var(--primary-solid) 0%, #4c63d2 100%);
+            border-radius: 35px 35px 20px 20px;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            animation: sendFloat 3s ease-in-out infinite;
+            overflow: hidden;
+            top: 12px;
+        }
+
+        @keyframes sendFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .send-face {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 52px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 26px;
+        }
+
+        .send-eyes {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .send-eye {
+            width: 12px;
+            height: 12px;
+            background: var(--gray-800);
+            border-radius: 50%;
+            animation: sendBlink 4s infinite;
+            position: relative;
+        }
+
+        .send-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        @keyframes sendBlink {
+            0%, 94% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        .send-mouth {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 10px;
+            border: 2px solid var(--gray-700);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            transition: var(--transition);
+        }
+
+        .send-mascot.talking .send-mouth {
+            animation: sendTalk 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sendTalk {
+            0% { transform: translateX(-50%) scaleY(1); }
+            100% { transform: translateX(-50%) scaleY(1.3); }
+        }
+
+        .send-chef-hat {
+            position: absolute;
+            top: -8px;
+            left: 38%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 25px;
+            background: #f59e0b;
+            border-radius: 50% 50% 0 0;
+            border: 1px solid var(--gray-300);
+            box-shadow: var(--shadow);
+        }
+
+        .send-chef-hat::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 46px;
+            height: 8px;
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 23px;
+        }
+
+        .send-name-badge {
+            position: absolute;
+            bottom: -12px;
+            left: 38%;
+            transform: translateX(-50%);
+            background: #f59e0b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: var(--shadow);
+        }
+
+        .send-dialogue {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2001;
+            max-width: 320px;
+            min-width: 280px;
+        }
+
+        .send-dialogue.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0) scale(1);
+        }
+
+        .send-dialogue-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            color: #f59e0b;
+            font-size: 1rem;
+        }
+
+        .send-dialogue-content {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--gray-700);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .send-dialogue-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .send-dialogue-btn {
+            padding: 10px 16px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 40px;
+            touch-action: manipulation;
+            flex: 1;
+        }
+
+        .send-dialogue-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-dialogue-btn.secondary {
+            background: var(--gray-400);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .step-tabs {
+            display: flex;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .step-tab {
+            flex: 1;
+            padding: 12px 6px;
+            text-align: center;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.7rem;
+            min-height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            touch-action: manipulation;
+        }
+
+        .step-tab.active {
+            background: var(--secondary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .step-tab:not(.active):hover {
+            background: rgba(240, 147, 251, 0.1);
+        }
+
+        .step-tab i {
+            font-size: 1rem;
+        }
+
+        .step-content {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            display: none;
+            margin-bottom: 120px;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .step-header h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            background: var(--secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .step-header p {
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger-solid);
+            font-weight: 800;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1rem;
+            z-index: 2;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 12px 14px 40px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            color: var(--gray-900);
+            background: var(--white);
+            transition: var(--transition);
+            outline: none;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+            min-height: 48px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            padding-top: 14px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px 16px;
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            background: var(--gray-50);
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            min-height: 100px;
+            touch-action: manipulation;
+        }
+
+        .file-upload-label:hover, .file-upload-label:active {
+            border-color: var(--primary-solid);
+            background: rgba(102, 126, 234, 0.05);
+            color: var(--primary-solid);
+        }
+
+        .file-upload-label i {
+            font-size: 1.5rem;
+        }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: var(--danger-solid);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            opacity: 0.9;
+            transition: var(--transition);
+            touch-action: manipulation;
+        }
+
+        .preview-item .remove-btn:active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .gps-control {
+            background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1));
+            border: 2px solid var(--success-solid);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .gps-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .gps-status.checking {
+            color: var(--warning-solid);
+        }
+
+        .gps-status.success {
+            color: var(--success-solid);
+        }
+
+        .gps-status.error {
+            color: var(--danger-solid);
+        }
+
+        .gps-coords {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            background: var(--white);
+            padding: 8px;
+            border-radius: var(--radius);
+            margin: 8px 0;
+        }
+
+        .signature-container {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            margin: 12px 0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .signature-header {
+            background: var(--gray-50);
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .signature-header h4 {
+            color: var(--gray-700);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .signature-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 36px;
+            touch-action: manipulation;
+        }
+
+        .signature-btn:hover, .signature-btn:active {
+            background: var(--gray-100);
+            border-color: var(--primary-solid);
+            color: var(--primary-solid);
+        }
+
+        .signature-canvas {
+            width: 100%;
+            height: 120px;
+            cursor: crosshair;
+            background: var(--white);
+            display: block;
+            touch-action: none;
+        }
+
+        .signature-info {
+            padding: 12px;
+            background: var(--gray-50);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            text-align: center;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            min-height: 48px;
+            white-space: nowrap;
+            box-shadow: var(--shadow);
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.15), rgba(9, 132, 227, 0.15));
+            color: var(--info-solid);
+            border-left: 3px solid var(--info-solid);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(67, 233, 123, 0.15), rgba(56, 249, 215, 0.15));
+            color: var(--success-solid);
+            border-left: 3px solid var(--success-solid);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.15), rgba(254, 225, 64, 0.15));
+            color: var(--warning-solid);
+            border-left: 3px solid var(--warning-solid);
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-solid);
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .phone-input .form-input {
+            padding-left: 85px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--glass-border);
+            margin: 16px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-solid);
+            border-radius: var(--radius-full);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            border: 1px solid var(--glass-border);
+            z-index: 10000;
+            transform: translateY(-100%);
+            transition: var(--transition);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            border-left: 3px solid var(--success-solid);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--danger-solid);
+        }
+
+        .toast.warning {
+            border-left: 3px solid var(--warning-solid);
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .toast-icon.success { background: var(--success-solid); }
+        .toast-icon.error { background: var(--danger-solid); }
+        .toast-icon.warning { background: var(--warning-solid); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .section-header {
+            margin: 20px 0 16px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(116, 185, 255, 0.1));
+            border-radius: var(--radius-lg);
+            border-left: 3px solid var(--primary-solid);
+        }
+
+        .section-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary-solid);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-container {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            margin: 12px 0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-header {
+            background: var(--gray-50);
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .menu-header h4 {
+            color: var(--gray-700);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .menu-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 36px;
+            touch-action: manipulation;
+        }
+
+        .menu-btn:hover, .menu-btn:active {
+            background: var(--gray-100);
+            border-color: var(--primary-solid);
+            color: var(--primary-solid);
+        }
+
+        .menu-items {
+            padding: 12px;
+        }
+
+        .menu-item {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .menu-item-header h4 {
+            color: var(--primary-solid);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .menu-item-remove {
+            background: none;
+            border: none;
+            color: var(--danger-solid);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            touch-action: manipulation;
+        }
+
+        .menu-item-remove:active {
+            background: rgba(255, 107, 107, 0.1);
+            transform: scale(1.1);
+        }
+
+        .menu-item-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            min-height: 44px;
+        }
+
+        .menu-item-input:focus {
+            border-color: var(--primary-solid);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        .menu-footer {
+            padding: 12px;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .code-input-group {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.1), rgba(9, 132, 227, 0.1));
+            border: 2px solid var(--info-solid);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .code-input {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 12px 16px;
+            border: 2px solid var(--info-solid);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            color: var(--info-solid);
+            margin: 12px 0;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .code-input:focus {
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .celebration-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-solid);
+            border-radius: 50%;
+            animation: particleFall 3s linear infinite;
+        }
+
+        @keyframes particleFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-10px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+            
+            .step-tab {
+                font-size: 0.65rem;
+                padding: 10px 4px;
+            }
+            
+            .step-content {
+                padding: 12px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .menu-item {
+                padding: 12px 8px;
+            }
+
+            .send-mascot {
+                width: 70px;
+                height: 100px;
+            }
+
+            .send-body {
+                width: 55px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            html {
+                font-size: 12px;
+            }
+            
+            .container {
+                padding: 0 4px;
+            }
+            
+            .step-content {
+                padding: 10px;
+            }
+            
+            .step-tab {
+                font-size: 0.6rem;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .form-input.error {
+            border-color: var(--danger-solid) !important;
+            background-color: rgba(255, 107, 107, 0.05) !important;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<!-- Menu Hamburger -->
+<div class="menu-btn11" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+        <img src="img/ChatGPT Image 30 avr. 2025, 20_34_02.png" alt="SEND Logo" class="menu-logo">
+        <span class="menu-title">SEND 2.0</span>
+        <i class="fas fa-times menu-close" id="menuClose"></i>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item"><a href="index.html" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="menu-item"><a href="client.html" class="menu-link"><i class="fas fa-shopping-bag"></i> Recevoir</a></li>
+        <li class="menu-item"><a href="expediteur.html" class="menu-link"><i class="fas fa-paper-plane"></i> Expédier</a></li>
+        <li class="menu-item"><a href="suivi.html" class="menu-link"><i class="fas fa-search-location"></i> Suivi de colis</a></li>
+        <li class="menu-item"><a href="inscription_restau.html" class="menu-link"><i class="fas fa-utensils"></i> Partenariat Restaurant</a></li>
+        <li class="menu-item"><a href="services.html" class="menu-link"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li class="menu-item"><a href="inscription.html" class="menu-link"><i class="fas fa-motorcycle"></i> Devenir Livreur</a></li>
+        <li class="menu-item"><a href="Connection.html" class="menu-link"><i class="fas fa-sign-in-alt"></i> Connexion Livreur</a></li>
+        <li class="menu-item"><a href="assistance.html" class="menu-link"><i class="fas fa-headset"></i> Assistance</a></li>
+    </ul>
+
+    <div class="menu-footer">
+        SEND 2.0 &copy; 2025<br>
+        Tous droits réservés
+    </div>
+</div>
+
+<style>
+    /* ====== Menu Hamburger ====== */
+.menu-btn11 {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background:#f59e0b;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.menu-btn11:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 1rem;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-drawer.active {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.menu-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #0066FF;
+}
+
+.menu-close {
+    margin-left: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #1f2937;
+    background: none;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.menu-close:hover {
+    transform: rotate(90deg);
+}
+
+.menu-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    z-index: -1;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.menu-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu-link:hover::before {
+    width: 100%;
+}
+
+.menu-link i {
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2);
+}
+
+.menu-link.active {
+    color: white;
+    background: linear-gradient(135deg, #0066FF, #2563eb);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: center;
+}
+</style>
+
+
+<script>
+    // ====== Gestion du Menu Hamburger ======
+const menuBtn = document.getElementById('menuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuDrawer = document.getElementById('menuDrawer');
+const menuClose = document.getElementById('menuClose');
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+    menuOverlay.classList.add('active');
+    menuDrawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+    menuOverlay.classList.remove('active');
+    menuDrawer.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Événements
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuOverlay.addEventListener('click', closeMenu);
+
+// Mettre en surbrillance l'élément du menu actif
+document.querySelectorAll('.menu-link').forEach(link => {
+    if(link.href === window.location.href) {
+        link.classList.add('active');
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="send-container" id="sendContainer">
+        <div class="send-mascot" id="sendMascot">
+            <div class="send-chef-hat"></div>
+            <div class="send-body">
+                <div class="send-face">
+                    <div class="send-eyes">
+                        <div class="send-eye"></div>
+                        <div class="send-eye"></div>
+                    </div>
+                    <div class="send-mouth"></div>
+                </div>
+            </div>
+            <div class="send-name-badge">Chef Send</div>
+        </div>
+
+        <div class="send-dialogue" id="sendDialogue">
+            <div class="send-dialogue-header">
+                <i class="fas fa-chef-hat"></i>
+                Chef Send
+            </div>
+            <div class="send-dialogue-content" id="sendDialogueContent">
+                Salut futur partenaire ! 👨‍🍳 Je vais t'accompagner pour créer ton profil restaurant parfait ! Prêt à rejoindre SEND2.0 ?
+            </div>
+            <div class="send-dialogue-actions" id="sendDialogueActions">
+                <button class="send-dialogue-btn" onclick="startRestaurantGuide()">
+                    C'est parti !
+                </button>
+                <button class="send-dialogue-btn secondary" onclick="hideSendDialogue()">
+                    Plus tard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div style="font-weight: 600; color: var(--gray-800);">Traitement en cours...</div>
+            <div style="font-size: 0.9rem; color: var(--gray-600); margin-top: 8px;" id="loadingMessage">Veuillez patienter</div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+    <div id="celebrationParticles" class="celebration-particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+            </div>
+            <h1 class="title">Devenir Partenaire</h1>
+            <p class="subtitle">Rejoignez le réseau SEND2.0 Pro</p>
+        </div>
+
+        <div class="step-tabs">
+            <div class="step-tab active" data-step="demande">
+                <i class="fas fa-file-alt"></i>
+                <div>Demande</div>
+            </div>
+            <div class="step-tab" data-step="finalisation">
+                <i class="fas fa-handshake"></i>
+                <div>Code</div>
+            </div>
+        </div>
+
+        <div class="step-content active" id="step-demande">
+            <div class="step-header">
+                <h2>
+                    <i class="fas fa-file-alt"></i>
+                    Demande de Partenariat
+                </h2>
+                <p>Remplissez vos informations pour rejoindre SEND2.0 Pro</p>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Processus :</strong><br>
+                    Après validation, vous recevrez un code d'autorisation par WhatsApp ou SMS sous 24-48h.
+                </div>
+            </div>
+
+            <form id="demandeForm">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-store"></i>
+                        Informations Restaurant
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="nom">Nom du restaurant</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-store input-icon"></i>
+                        <input type="text" class="form-input" id="nom" required placeholder="Nom officiel">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="nomCommercial">Nom commercial</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-tag input-icon"></i>
+                        <input type="text" class="form-input" id="nomCommercial" placeholder="Si différent">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="telephone">Téléphone principal</label>
+                    <div class="input-wrapper phone-input">
+                        <i class="fas fa-phone input-icon"></i>
+                        <span class="phone-prefix">+226</span>
+                        <input type="tel" class="form-input" id="telephone" required placeholder="XX XX XX XX">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-input" id="email" placeholder="contact@restaurant.com">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Localisation (Obligatoire)
+                    </h3>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>GPS requis :</strong><br>
+                        Autorisez la géolocalisation pour une localisation précise.
+                    </div>
+                </div>
+
+                <div class="gps-control" id="gpsControl">
+                    <div class="gps-status" id="gpsStatus">
+                        <i class="fas fa-location-arrow"></i>
+                        <span>Cliquez pour obtenir votre position</span>
+                    </div>
+                    <button type="button" class="btn btn-success" id="getLocationBtn" onclick="getLocation()">
+                        <i class="fas fa-satellite-dish"></i>
+                        Obtenir ma Position
+                    </button>
+                    <div class="gps-coords" id="gpsCoords" style="display: none;">
+                        <div>Latitude: <span id="latitude">--</span></div>
+                        <div>Longitude: <span id="longitude">--</span></div>
+                        <div>Précision: <span id="accuracy">--</span>m</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="adresse">Description emplacement</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map input-icon"></i>
+                        <input type="text" class="form-input" id="adresse" required placeholder="À côté du marché central">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="quartier">Quartier</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker input-icon"></i>
+                        <input type="text" class="form-input" id="quartier" placeholder="Nom du quartier">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-utensils"></i>
+                        Cuisine et Spécialités
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="cuisine">Type de cuisine</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-utensils input-icon"></i>
+                        <select class="form-select" id="cuisine">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Africaine">Africaine</option>
+                            <option value="Burkinabè">Burkinabè</option>
+                            <option value="Ivoirienne">Ivoirienne</option>
+                            <option value="Italienne">Italienne</option>
+                            <option value="Chinoise">Chinoise</option>
+                            <option value="Libanaise">Libanaise</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Grillades">Grillades</option>
+                            <option value="Végétarienne">Végétarienne</option>
+                            <option value="Mixte">Mixte</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="specialites">Spécialités</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-star input-icon"></i>
+                        <input type="text" class="form-input" id="specialites" placeholder="Tô, Riz gras, Grillades...">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-clock"></i>
+                        Horaires
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="horairesDetails">Horaires d'ouverture</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-clock input-icon"></i>
+                        <input type="text" class="form-input" id="horairesDetails" placeholder="Lun-Dim: 7h-22h">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-utensils"></i>
+                        Menu avec Photos
+                    </h3>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Photos obligatoires :</strong><br>
+                        Chaque plat doit avoir une photo.
+                    </div>
+                </div>
+
+                <div class="menu-container" id="menuContainer">
+                    <div class="menu-header">
+                        <h4>Plats du menu</h4>
+
+                    </div>
+                    <div class="menu-items" id="menuItems">
+                        <!-- Items ajoutés dynamiquement -->
+                    </div>
+                    <div class="menu-footer">
+                        <small>Minimum 3 plats requis</small>
+                        <small id="menuCount">0 plat(s)</small>
+                    </div>
+                        <div class="menu-controls">
+                            <button type="button" class="menu-btn" onclick="addMenuItem()">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </button>
+                        </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-user-tie"></i>
+                        Contact Responsable
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="responsableNom">Nom du responsable</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-input" id="responsableNom" placeholder="Gérant/propriétaire">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="responsableTel">Téléphone responsable</label>
+                    <div class="input-wrapper phone-input">
+                        <i class="fas fa-phone input-icon"></i>
+                        <span class="phone-prefix">+226</span>
+                        <input type="tel" class="form-input" id="responsableTel" placeholder="XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description">Description du restaurant</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-pen input-icon"></i>
+                        <textarea class="form-textarea" id="description" placeholder="Décrivez votre restaurant, ambiance, points forts..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-camera"></i>
+                        Photos Restaurant
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Logo du restaurant</label>
+                    <div class="file-upload">
+                        <input type="file" id="logo" accept="image/*" onchange="handleLogoUpload(event)">
+                        <label for="logo" class="file-upload-label">
+                            <i class="fas fa-image"></i>
+                            <div>
+                                <div style="font-weight: 700;">Ajouter logo</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">JPG, PNG (max 2MB)</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="preview-container" id="logoPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Photos du restaurant</label>
+                    <div class="file-upload">
+                        <input type="file" id="photos" accept="image/*" multiple onchange="handlePhotosUpload(event)">
+                        <label for="photos" class="file-upload-label">
+                            <i class="fas fa-camera-retro"></i>
+                            <div>
+                                <div style="font-weight: 700;">Photos restaurant</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">Plusieurs photos (max 3MB)</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="preview-container" id="photosPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Signature du Responsable</label>
+                    <div class="signature-container">
+                        <div class="signature-header">
+                            <h4>Signature responsable</h4>
+                            <button type="button" class="signature-btn" onclick="clearSignature()">
+                                <i class="fas fa-eraser"></i> Effacer
+                            </button>
+                        </div>
+                        <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                        <div class="signature-info">
+                            <i class="fas fa-info-circle"></i>
+                            Signature confirmant l'authenticité des informations
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitDemandeBtn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer Demande
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="step-content" id="step-finalisation">
+            <div class="step-header">
+                <h2>
+                    <i class="fas fa-handshake"></i>
+                    Finaliser Partenariat
+                </h2>
+                <p>Entrez le code d'autorisation reçu</p>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Code d'autorisation :</strong><br>
+                    Vérifiez vos messages WhatsApp ou SMS<br>
+                    Le code commence par "REST"
+                </div>
+            </div>
+
+            <form id="finalisationForm">
+                <div class="form-group">
+                    <label class="form-label required" for="codeAutorisation">Code d'autorisation reçu</label>
+                    <div class="code-input-group">
+                        <div style="font-weight: 600; margin-bottom: 8px;">
+                            <i class="fas fa-key"></i>
+                            Entrez votre code
+                        </div>
+                        <input type="text" class="code-input" id="codeAutorisation" required maxlength="13">
+                        <div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 8px;">
+                            Code sensible à la casse
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-handshake"></i>
+                        Finaliser Partenariat
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        class ChefSendMascot {
+            constructor() {
+                this.currentEmotion = 'neutral';
+                this.currentSection = 'general';
+                this.guideStep = 0;
+                this.isDragging = false;
+                this.dragOffset = { x: 0, y: 0 };
+                this.currentVoice = null;
+                this.isMoving = false;
+                this.autoMoveInterval = null;
+                this.init();
+            }
+
+            init() {
+                this.setupMascot();
+                this.setupDrag();
+                this.startAutoMovement();
+                this.showWelcomeMessage();
+                this.startIdleAnimations();
+            }
+
+            setupMascot() {
+                const container = document.getElementById('sendContainer');
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                
+                container.style.left = (screenWidth - 100) + 'px';
+                container.style.bottom = '20px';
+                
+                document.getElementById('sendMascot').addEventListener('click', (e) => {
+                    if (!this.isDragging) {
+                        this.handleSendClick();
+                    }
+                });
+            }
+
+            setupDrag() {
+                const mascot = document.getElementById('sendMascot');
+                const container = document.getElementById('sendContainer');
+                
+                mascot.addEventListener('mousedown', (e) => this.startDrag(e));
+                mascot.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
+                document.addEventListener('mousemove', (e) => this.drag(e));
+                document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });                
+
+                document.addEventListener('mouseup', () => this.stopDrag());
+                document.addEventListener('touchend', () => this.stopDrag());
+            }
+
+            startDrag(e) {
+                e.preventDefault();
+                this.isDragging = true;
+                this.setEmotion('excited');
+                
+                const container = document.getElementById('sendContainer');
+                const rect = container.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                this.dragOffset = {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+                
+                this.stopAutoMovement();
+            }
+
+            drag(e) {
+                if (!this.isDragging) return;
+                
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                const newX = clientX - this.dragOffset.x;
+                const newY = clientY - this.dragOffset.y;
+                
+                this.moveToPosition(newX, newY, true);
+            }
+
+            stopDrag() {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    this.setEmotion('neutral');
+                    this.ensureWithinBounds();
+                    this.startAutoMovement();
+                    setTimeout(() => {
+                        if (!this.isDragging) {
+                            this.showMessage('Tu peux me déplacer partout !', { duration: 3000 });
+                        }
+                    }, 1000);
+                }
+            }
+
+            moveToPosition(x, y, isDrag = false) {
+                const container = document.getElementById('sendContainer');
+                const dialogue = document.getElementById('sendDialogue');
+                
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const mascotWidth = 80;
+                const mascotHeight = 110;
+                
+                const minX = 10;
+                const maxX = screenWidth - mascotWidth - 10;
+                const minY = 10;
+                const maxY = screenHeight - mascotHeight - 10;
+                
+                const constrainedX = Math.max(minX, Math.min(maxX, x));
+                const constrainedY = Math.max(minY, Math.min(maxY, y));
+                
+                container.style.left = constrainedX + 'px';
+                container.style.top = constrainedY + 'px';
+                container.style.bottom = 'auto';
+                
+                if (!isDrag && !this.isDragging) {
+                    this.setEmotion('walking');
+                    setTimeout(() => {
+                        if (this.currentEmotion === 'walking') {
+                            this.setEmotion('neutral');
+                        }
+                    }, 1000);
+                }
+                
+                this.updateDialoguePosition();
+            }
+
+            ensureWithinBounds() {
+                const container = document.getElementById('sendContainer');
+                const rect = container.getBoundingClientRect();
+                this.moveToPosition(rect.left, rect.top, true);
+            }
+
+            updateDialoguePosition() {
+                const dialogue = document.getElementById('sendDialogue');
+                const container = document.getElementById('sendContainer');
+                const containerRect = container.getBoundingClientRect();
+                
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const dialogueWidth = 320;
+                const dialogueHeight = 200;
+                
+                let dialogueX, dialogueY;
+                
+                if (containerRect.left > screenWidth / 2) {
+                    dialogueX = Math.max(16, containerRect.left - dialogueWidth - 20);
+                } else {
+                    dialogueX = Math.min(screenWidth - dialogueWidth - 16, containerRect.right + 20);
+                }
+                
+                if (containerRect.top > screenHeight / 2) {
+                    dialogueY = Math.max(16, containerRect.top - dialogueHeight + 50);
+                } else {
+                    dialogueY = Math.min(screenHeight - dialogueHeight - 16, containerRect.top + 50);
+                }
+                
+                dialogue.style.left = dialogueX + 'px';
+                dialogue.style.top = dialogueY + 'px';
+                dialogue.style.right = 'auto';
+                dialogue.style.bottom = 'auto';
+            }
+
+            startAutoMovement() {
+                this.autoMoveInterval = setInterval(() => {
+                    if (!this.isDragging && !this.isMoving && Math.random() < 0.3) {
+                        this.moveToRandomPosition();
+                    }
+                }, 10000);
+            }
+
+            stopAutoMovement() {
+                if (this.autoMoveInterval) {
+                    clearInterval(this.autoMoveInterval);
+                    this.autoMoveInterval = null;
+                }
+            }
+
+            moveToRandomPosition() {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const mascotWidth = 80;
+                const mascotHeight = 110;
+                
+                const positions = [
+                    { x: 20, y: 20 },
+                    { x: screenWidth - mascotWidth - 20, y: 20 },
+                    { x: 20, y: screenHeight - mascotHeight - 20 },
+                    { x: screenWidth - mascotWidth - 20, y: screenHeight - mascotHeight - 20 },
+                    { x: screenWidth / 2 - mascotWidth / 2, y: 20 },
+                    { x: screenWidth / 2 - mascotWidth / 2, y: screenHeight - mascotHeight - 20 }
+                ];
+                
+                const targetPosition = positions[Math.floor(Math.random() * positions.length)];
+                this.isMoving = true;
+                
+                this.moveToPosition(targetPosition.x, targetPosition.y);
+                
+                setTimeout(() => {
+                    this.isMoving = false;
+                }, 1500);
+            }
+
+            setEmotion(emotion) {
+                const mascot = document.getElementById('sendMascot');
+                mascot.className = `send-mascot ${emotion}`;
+                this.currentEmotion = emotion;
+
+                if (emotion === 'talking') {
+                    return;
+                }
+
+                setTimeout(() => {
+                    if (this.currentEmotion === emotion && emotion !== 'neutral') {
+                        mascot.className = 'send-mascot';
+                        this.currentEmotion = 'neutral';
+                    }
+                }, 3000);
+            }
+
+
+            showMessage(message, options = {}) {
+                const content = document.getElementById('sendDialogueContent');
+                const actions = document.getElementById('sendDialogueActions');
+                const dialogue = document.getElementById('sendDialogue');
+
+                content.textContent = message;
+                this.setEmotion('excited');
+
+                if (options.actions) {
+                    actions.innerHTML = '';
+                    options.actions.forEach(action => {
+                        const button = document.createElement('button');
+                        button.className = `send-dialogue-btn ${action.secondary ? 'secondary' : ''}`;
+                        button.innerHTML = action.text;
+                        button.onclick = () => this.handleAction(action.action, action.data);
+                        actions.appendChild(button);
+                    });
+                } else {
+                    actions.innerHTML = '';
+                }
+
+                this.updateDialoguePosition();
+                dialogue.classList.add('visible');
+
+                if (options.autoHide !== false) {
+                    setTimeout(() => {
+                        dialogue.classList.remove('visible');
+                    }, options.duration || 6000);
+                }
+            }
+
+            handleAction(action, data) {
+                switch(action) {
+                    case 'startGuide':
+                        this.guideStep = 0;
+                        this.startRestaurantGuide();
+                        break;
+                    case 'hideDialogue':
+                        this.hideDialogue();
+                        break;
+                    case 'focusField':
+                        const field = document.getElementById(data);
+                        if (field) {
+                            field.focus();
+                            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            this.setEmotion('thinking');
+                            setTimeout(() => this.handleAction('continueGuide'), 5000);
+                        }
+                        break;
+                    case 'activateLocation':
+                        if (window.restaurantManager) {
+                            window.restaurantManager.getLocation();
+                        }
+                        break;
+                    case 'addMenuItem':
+                        if (window.restaurantManager) {
+                            window.restaurantManager.addMenuItem();
+                        }
+                        break;
+                    case 'continueGuide':
+                        this.continueGuide();
+                        break;
+                }
+            }
+
+            startRestaurantGuide() {
+                this.hideDialogue();
+                this.setEmotion('excited');
+                setTimeout(() => this.continueGuide(), 1000);
+            }
+
+            continueGuide() {
+                const steps = [
+                    { message: "Commençons par le nom de ton restaurant ! ", fieldId: 'nom' },
+                    { message: "Parfait ! Maintenant ton numéro de téléphone principal ", fieldId: 'telephone' },
+                    { message: "Super ! Active ta géolocalisation GPS pour les livraisons ", fieldId: 'getLocationBtn' },
+                    { message: "Excellent ! Décris où se trouve ton restaurant ", fieldId: 'adresse' },
+                    { message: "Génial ! Ajoute au moins 3 plats avec photos à ton menu ", fieldId: 'menuItems' },
+                    { message: "Parfait ! N'oublie pas de signer à la fin ", fieldId: 'signatureCanvas' }
+                ];
+
+                if (this.guideStep < steps.length) {
+                    const step = steps[this.guideStep];
+                    this.showMessage(step.message, {
+                        actions: [
+                            { text: 'J\'y vais !', action: 'focusField', data: step.fieldId }
+                        ]
+                    });
+                    this.guideStep++;
+                } else {
+                    this.showMessage('Bravo ! Tu as presque terminé ! Vérifie tout et clique sur "Envoyer" !', {
+                        duration: 8000
+                    });
+                    this.setEmotion('celebrating');
+                }
+            }
+
+            showWelcomeMessage() {
+                setTimeout(() => {
+                    this.showMessage('Salut ! Je suis Chef Send !  Je vais t\'aider à créer un profil restaurant parfait ! Tu es prêt ?', {
+                        actions: [
+                            { text: 'Allons-y !', action: 'startGuide' },
+                            { text: 'Plus tard', action: 'hideDialogue', secondary: true }
+                        ]
+                    });
+                }, 2000);
+            }
+
+            onLocationSuccess() {
+                this.setEmotion('celebrating');
+                this.showMessage('Position GPS parfaite !  Tes clients vont pouvoir te trouver facilement !', { duration: 4000 });
+            }
+
+            onLocationError() {
+                this.showMessage('Pas de problème ! Réessaie la géolocalisation quand tu seras prêt ! ', {
+                    actions: [
+                        { text: 'Réessayer', action: 'activateLocation' },
+                        { text: 'Continuer', action: 'hideDialogue', secondary: true }
+                    ]
+                });
+            }
+
+            onMenuItemAdded() {
+                this.setEmotion('excited');
+                this.showMessage('Super plat ajouté ! N\'oublie pas la photo pour allécher tes clients !', { duration: 5000 });
+            }
+
+            onFormSubmit() {
+                this.setEmotion('thinking');
+                this.showMessage('J\'envoie ta demande ! SEND2.0 va l\'examiner ! ', { duration: 4000 });
+            }
+
+            celebrate() {
+                this.setEmotion('celebrating');
+                this.createCelebrationParticles();
+                this.showMessage(' BRAVO ! Demande envoyée ! Bienvenue dans la famille SEND2.0 ! Tu vas recevoir ton code apres verification  en moins de 24 heure et en 48 heure maximun!', { duration: 10000 });
+            }
+
+            createCelebrationParticles() {
+                const container = document.getElementById('celebrationParticles');
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.background = ['#667eea', '#43e97b', '#f59e0b', '#ff6b6b'][Math.floor(Math.random() * 4)];
+                    container.appendChild(particle);
+                    setTimeout(() => particle.remove(), 3000);
+                }
+            }
+
+            hideDialogue() {
+                document.getElementById('sendDialogue').classList.remove('visible');
+            }
+
+            handleSendClick() {
+                const dialogue = document.getElementById('sendDialogue');
+                if (dialogue.classList.contains('visible')) {
+                    this.hideDialogue();
+                } else {
+                    this.showMessage('Salut ! Besoin d\'aide pour ton inscription ? Je peux te guider ! ', {
+                        actions: [
+                            { text: 'Guide-moi !', action: 'startGuide' },
+                            { text: 'Non merci', action: 'hideDialogue', secondary: true }
+                        ]
+                    });
+                }
+            }
+
+            startIdleAnimations() {
+                setInterval(() => {
+                    if (this.currentEmotion === 'neutral' && !this.isDragging) {
+                        const actions = ['bouncing', 'thinking'];
+                        const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                        this.setEmotion(randomAction);
+                    }
+                }, 15000);
+            }
+
+            onValidationError(field) {
+                this.setEmotion('thinking');
+                const fieldNames = {
+                    'nom': 'le nom du restaurant',
+                    'telephone': 'le numéro de téléphone',
+                    'adresse': 'l\'adresse',
+                    'signature': 'la signature'
+                };
+                const fieldName = fieldNames[field] || 'ce champ';
+                this.showMessage(`Oups ! Il manque ${fieldName}. Peux-tu le compléter ? `, { duration: 4000 });
+            }
+        }
+
+        class RestaurantInscriptionManager {
+            constructor() {
+                this.currentStep = 'demande';
+                this.API_URL = 'https://send20.netlify.app/.netlify/functions/Authentification';
+                this.hasGPSLocation = false;
+                this.coordinates = null;
+                this.signatureCanvas = null;
+                this.signatureCtx = null;
+                this.isSignatureDrawing = false;
+                this.hasSignature = false;
+                this.menuItems = [];
+                this.logoImage = null;
+                this.restaurantPhotos = [];
+                this.MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+                this.IMAGE_QUALITY = 0.7;
+                this.mascot = null;
+                this.init();
+            }
+
+            init() {
+                this.mascot = new ChefSendMascot();
+                window.chefSend = this.mascot;
+                
+                this.setupEventListeners();
+                this.setupPhoneFormatting();
+                this.setupSignatureCanvas();
+                this.checkGeolocationSupport();
+                this.addDefaultMenuItems();
+                this.updateMenuCount();
+                
+                window.addEventListener('resize', () => {
+                    this.mascot.ensureWithinBounds();
+                });
+            }
+            
+            setupEventListeners() {
+                document.querySelectorAll('.step-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const step = tab.dataset.step;
+                        this.switchStep(step);
+                    });
+                });
+
+                document.getElementById('demandeForm').addEventListener('submit', this.handleDemandeSubmit.bind(this));
+                document.getElementById('finalisationForm').addEventListener('submit', this.handleFinalizationSubmit.bind(this));
+            }
+
+            setupPhoneFormatting() {
+                const phoneInputs = document.querySelectorAll('#telephone, #responsableTel');
+                phoneInputs.forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        let value = e.target.value.replace(/\D/g, '');
+                        
+                        if (value.length > 8) {
+                            value = value.substring(0, 8);
+                        }
+                        
+                        if (value.length >= 2) {
+                            value = value.replace(/(\d{2})(\d{2})?(\d{2})?(\d{2})?/, (match, p1, p2, p3, p4) => {
+                                let formatted = p1;
+                                if (p2) formatted += ' ' + p2;
+                                if (p3) formatted += ' ' + p3;
+                                if (p4) formatted += ' ' + p4;
+                                return formatted;
+                            });
+                        }
+                        
+                        e.target.value = value;
+                    });
+                });
+            }
+
+            setupSignatureCanvas() {
+                this.signatureCanvas = document.getElementById('signatureCanvas');
+                this.signatureCtx = this.signatureCanvas.getContext('2d');
+                
+                const rect = this.signatureCanvas.getBoundingClientRect();
+                this.signatureCanvas.width = rect.width * 2;
+                this.signatureCanvas.height = rect.height * 2;
+                this.signatureCtx.scale(2, 2);
+                
+                this.signatureCtx.strokeStyle = '#1e293b';
+                this.signatureCtx.lineWidth = 2;
+                this.signatureCtx.lineCap = 'round';
+                this.signatureCtx.lineJoin = 'round';
+
+                this.signatureCanvas.addEventListener('mousedown', this.startDrawing.bind(this));
+                this.signatureCanvas.addEventListener('mousemove', this.draw.bind(this));
+                this.signatureCanvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.signatureCanvas.addEventListener('mouseleave', this.stopDrawing.bind(this));
+
+                this.signatureCanvas.addEventListener('touchstart', this.handleTouch.bind(this), { passive: false });
+                this.signatureCanvas.addEventListener('touchmove', this.handleTouch.bind(this), { passive: false });      
+                this.signatureCanvas.addEventListener('touchend', this.stopDrawing.bind(this));
+            }
+
+            startDrawing(e) {
+                this.isSignatureDrawing = true;
+                const pos = this.getEventPosition(e);
+                this.signatureCtx.beginPath();
+                this.signatureCtx.moveTo(pos.x, pos.y);
+            }
+
+            draw(e) {
+                if (!this.isSignatureDrawing) return;
+                
+                const pos = this.getEventPosition(e);
+                this.signatureCtx.lineTo(pos.x, pos.y);
+                this.signatureCtx.stroke();
+                this.hasSignature = true;
+                this.updateSubmitButton();
+            }
+
+            stopDrawing() {
+                if (this.isSignatureDrawing) {
+                    this.isSignatureDrawing = false;
+                    this.signatureCtx.beginPath();
+                }
+            }
+
+            handleTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                this.signatureCanvas.dispatchEvent(mouseEvent);
+            }
+
+            getEventPosition(e) {
+                const rect = this.signatureCanvas.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            clearSignature() {
+                this.signatureCtx.clearRect(0, 0, this.signatureCanvas.width, this.signatureCanvas.height);
+                this.hasSignature = false;
+                this.updateSubmitButton();
+            }
+
+            getSignatureData() {
+                if (!this.hasSignature) return null;
+                return this.signatureCanvas.toDataURL('image/png');
+            }
+
+            checkGeolocationSupport() {
+                if (!navigator.geolocation) {
+                    this.showToast('Géolocalisation non supportée', 'error', 'Utilisez un navigateur plus récent');
+                    document.getElementById('getLocationBtn').disabled = true;
+                }
+            }
+
+            switchStep(step) {
+                document.querySelectorAll('.step-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-step="${step}"]`).classList.add('active');
+
+                document.querySelectorAll('.step-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`step-${step}`).classList.add('active');
+
+                this.currentStep = step;
+            }
+
+            async getLocation() {
+                const statusElement = document.getElementById('gpsStatus');
+                const coordsElement = document.getElementById('gpsCoords');
+                const getLocationBtn = document.getElementById('getLocationBtn');
+
+                statusElement.className = 'gps-status checking';
+                statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Obtention position...</span>';
+                getLocationBtn.disabled = true;
+
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 30000,
+                    maximumAge: 0
+                };
+
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+                    });
+
+                    const coords = position.coords;
+                    
+                    if (coords.accuracy > 100) {
+                        statusElement.className = 'gps-status error';
+                        statusElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Précision insuffisante</span>';
+                        getLocationBtn.disabled = false;
+                        this.showToast('Précision GPS faible', 'warning', 'Rapprochez-vous d\'une fenêtre');
+                        this.mascot.onLocationError();
+                        return;
+                    }
+
+                    this.coordinates = {
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                        accuracy: coords.accuracy
+                    };
+
+                    this.hasGPSLocation = true;
+
+                    document.getElementById('latitude').textContent = coords.latitude.toFixed(6);
+                    document.getElementById('longitude').textContent = coords.longitude.toFixed(6);
+                    document.getElementById('accuracy').textContent = Math.round(coords.accuracy);
+                    coordsElement.style.display = 'block';
+
+                    statusElement.className = 'gps-status success';
+                    statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>Position obtenue !</span>';
+
+                    this.updateSubmitButton();
+                    this.showToast('Localisation réussie !', 'success', `Précision: ${Math.round(coords.accuracy)}m`);
+                    this.mascot.onLocationSuccess();
+
+                } catch (error) {
+                    let errorMessage = 'Erreur géolocalisation';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Permission refusée';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Position indisponible';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Délai dépassé';
+                            break;
+                    }
+
+                    statusElement.className = 'gps-status error';
+                    statusElement.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Erreur GPS</span>';
+                    getLocationBtn.disabled = false;
+
+                    this.showToast('Erreur', 'error', errorMessage);
+                    this.mascot.onLocationError();
+                }
+            }
+
+            addDefaultMenuItems() {
+                for (let i = 0; i < 3; i++) {
+                    this.addMenuItem({ id: `default_plat_${i + 1}` });
+                }
+            }
+
+            addMenuItem(itemData = { id: null, nom: '', description: '', prix: '', categorie: '' }) {
+                const menuItemsContainer = document.getElementById('menuItems');
+                const itemId = itemData.id || `plat_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+                const itemElement = document.createElement('div');
+                itemElement.className = 'menu-item';
+                itemElement.dataset.id = itemId;
+                itemElement.innerHTML = `
+                    <div class="menu-item-header">
+                        <h4><i class="fas fa-utensils"></i> Plat #${this.menuItems.length + 1}</h4>
+                        <button type="button" class="menu-item-remove" ${this.menuItems.length < 3 ? 'disabled' : ''}>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="menu-item-input" placeholder="Nom du plat" value="${itemData.nom || ''}" data-field="nom" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" class="menu-item-input" placeholder="Prix (FCFA)" value="${itemData.prix || ''}" data-field="prix" min="0" step="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea class="menu-item-input" placeholder="Description..." data-field="description" style="min-height: 60px;">${itemData.description || ''}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="file-upload">
+                            <input type="file" id="menuPhoto_${itemId}" accept="image/*" required>
+                            <label for="menuPhoto_${itemId}" class="file-upload-label">
+                                <i class="fas fa-camera"></i>
+                                <div>
+                                    <div style="font-weight: 700;">Photo du plat</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">JPG, PNG (max 3MB)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="preview-container" id="menuPhotoPreview_${itemId}">
+                            ${itemData.photo ? this.createPreviewItem(itemData.photo, `menuPhoto_${itemId}`) : ''}
+                        </div>
+                    </div>
+                `;
+
+                menuItemsContainer.appendChild(itemElement);
+
+                const removeBtn = itemElement.querySelector('.menu-item-remove');
+                removeBtn.addEventListener('click', () => this.removeMenuItem(itemId));
+
+                const fileInput = itemElement.querySelector('input[type="file"]');
+                fileInput.addEventListener('change', (event) => this.handleMenuPhotoUpload(event, itemId));
+
+                if (!itemData.id || !this.menuItems.find(item => item.id === itemId)) {
+                    this.menuItems.push({
+                        id: itemId,
+                        nom: itemData.nom || '',
+                        description: itemData.description || '',
+                        prix: itemData.prix || '',
+                        categorie: itemData.categorie || '',
+                        photo: itemData.photo || null,
+                        rating: 0,
+                        reviews_count: 0
+                    });
+                }
+
+                this.updateMenuCount();
+                this.updateSubmitButton();
+
+                if (this.menuItems.length > 3) {
+                    this.mascot.onMenuItemAdded();
+                }
+            }
+
+            removeMenuItem(itemId) {
+                if (this.menuItems.length <= 3) {
+                    this.showToast('Minimum requis', 'warning', '3 plats minimum');
+                    return;
+                }
+
+                const index = this.menuItems.findIndex(item => item.id == itemId);
+                if (index !== -1) {
+                    this.menuItems.splice(index, 1);
+                }
+
+                const itemElement = document.querySelector(`.menu-item[data-id="${itemId}"]`);
+                if (itemElement) {
+                    itemElement.remove();
+                }
+                
+                this.updateMenuCount();
+                this.updateSubmitButton();
+            }
+
+            updateMenuItems() {
+                const menuItems = document.querySelectorAll('.menu-item');
+                
+                menuItems.forEach(itemElement => {
+                    const itemId = itemElement.dataset.id;
+                    const existingIndex = this.menuItems.findIndex(item => item.id === itemId);
+                    
+                    if (existingIndex !== -1) {
+                        const inputs = itemElement.querySelectorAll('.menu-item-input');
+                        
+                        inputs.forEach(input => {
+                            const field = input.dataset.field;
+                            if (field) {
+                                this.menuItems[existingIndex][field] = input.value.trim();
+                            }
+                        });
+                    }
+                });
+            }
+
+            updateMenuCount() {
+                const count = this.menuItems.length;
+                document.getElementById('menuCount').textContent = `${count} plat(s)`;
+            }
+
+            updateSubmitButton() {
+                const submitBtn = document.getElementById('submitDemandeBtn');
+                const validation = this.validateMenuItems();
+                const canSubmit = this.hasGPSLocation && this.hasSignature && validation.valid;
+                
+                submitBtn.disabled = !canSubmit;
+            }
+
+            validateMenuItems() {
+                this.updateMenuItems();
+                
+                if (this.menuItems.length < 3) {
+                    return {
+                        valid: false,
+                        message: 'Au moins 3 plats requis'
+                    };
+                }
+
+                for (const item of this.menuItems) {
+                    if (!item.nom || !item.prix) {
+                        return {
+                            valid: false,
+                            message: 'Nom et prix obligatoires'
+                        };
+                    }
+
+                    if (isNaN(parseFloat(item.prix))) {
+                        return {
+                            valid: false,
+                            message: `Prix invalide pour "${item.nom}"`
+                        };
+                    }
+
+                    if (!item.photo || !item.photo.base64) {
+                        return {
+                            valid: false,
+                            message: `Photo manquante pour "${item.nom}"`
+                        };
+                    }
+                }
+
+                return { valid: true };
+            }
+
+            async handleMenuPhotoUpload(event, itemId) {
+                try {
+                    const file = event.target.files[0];
+                    if (!file) {
+                        console.warn('Aucun fichier sélectionné');
+                        return;
+                    }
+
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        this.showToast('Format invalide', 'error', 'Seuls JPG, PNG et WEBP sont acceptés');
+                        event.target.value = '';
+                        return;
+                    }
+
+                    if (file.size > this.MAX_IMAGE_SIZE) {
+                        this.showToast('Fichier trop volumineux', 'error', `Maximum ${this.MAX_IMAGE_SIZE/1024/1024}MB`);
+                        event.target.value = '';
+                        return;
+                    }
+
+                    this.showLoading('Traitement de la photo...');
+
+                    const compressedImage = await this.compressImage(file);
+                    if (!compressedImage?.base64) {
+                        throw new Error('Erreur lors de la compression');
+                    }
+
+                    const itemIndex = this.menuItems.findIndex(item => item.id === itemId);
+                    if (itemIndex === -1) {
+                        throw new Error(`Plat avec ID ${itemId} non trouvé`);
+                    }
+
+                    this.menuItems[itemIndex].photo = {
+                        name: file.name.replace(/\.[^/.]+$/, '.jpg'),
+                        type: 'image/jpeg',
+                        size: compressedImage.size,
+                        base64: compressedImage.base64,
+                        dataUrl: compressedImage.dataUrl,
+                        lastUpdated: new Date().toISOString()
+                    };
+
+                    const previewContainer = document.getElementById(`menuPhotoPreview_${itemId}`);
+                    if (!previewContainer) {
+                        console.warn(`Conteneur de preview non trouvé pour ${itemId}`);
+                        throw new Error('Élément d\'affichage non trouvé');
+                    }
+
+                    previewContainer.innerHTML = this.createPreviewItem(compressedImage, `menuPhoto_${itemId}`);
+
+                    this.updateSubmitButton();
+                    this.showToast('Photo ajoutée', 'success', 'La photo a bien été enregistrée');
+
+                } catch (error) {
+                    console.error('Échec du traitement photo:', {
+                        error: error.message,
+                        itemId,
+                        file: file?.name
+                    });
+
+                    if (event.target) event.target.value = '';
+
+                    const errorMessages = {
+                        'Plat non trouvé': 'Problème d\'identification du plat',
+                        'Élément d\'affichage non trouvé': 'Erreur d\'interface',
+                        'Erreur lors de la compression': 'Problème de traitement'
+                    };
+
+                    this.showToast(
+                        'Erreur photo', 
+                        'error', 
+                        errorMessages[error.message] || 'Impossible d\'ajouter la photo'
+                    );
+
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async handleLogoUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (file.size > this.MAX_IMAGE_SIZE) {
+                    this.showToast('Fichier trop volumineux', 'error', 'Max 2MB');
+                    event.target.value = '';
+                    return;
+                }
+
+                this.showLoading('Compression logo...');
+
+                try {
+                    const compressedImage = await this.compressImage(file);
+                    this.logoImage = compressedImage;
+
+                    const previewContainer = document.getElementById('logoPreview');
+                    previewContainer.innerHTML = this.createPreviewItem(compressedImage, 'logo');
+
+                    this.hideLoading();
+                    this.showToast('Logo ajouté', 'success', 'Logo chargé avec succès');
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Impossible de traiter le logo');
+                    event.target.value = '';
+                }
+            }
+
+            async handlePhotosUpload(event) {
+                const files = Array.from(event.target.files);
+                if (files.length === 0) return;
+
+                if (files.length > 10) {
+                    this.showToast('Trop de photos', 'warning', 'Maximum 10 photos');
+                    event.target.value = '';
+                    return;
+                }
+
+                for (const file of files) {
+                    if (file.size > this.MAX_IMAGE_SIZE) {
+                        this.showToast('Fichier trop volumineux', 'error', `${file.name} dépasse 2MB`);
+                        event.target.value = '';
+                        return;
+                    }
+                }
+
+                this.showLoading('Traitement photos...');
+
+                try {
+                    const processedPhotos = [];
+                    for (const file of files) {
+                        const compressedPhoto = await this.compressImage(file);
+                        processedPhotos.push(compressedPhoto);
+                    }
+
+                    this.restaurantPhotos = processedPhotos;
+
+                    const previewContainer = document.getElementById('photosPreview');
+                    previewContainer.innerHTML = processedPhotos.map((photo, index) => 
+                        this.createPreviewItem(photo, `photo_${index}`)
+                    ).join('');
+
+                    this.hideLoading();
+                    this.showToast('Photos ajoutées', 'success', `${files.length} photos chargées`);
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Impossible de traiter les photos');
+                    event.target.value = '';
+                }
+            }
+
+            async compressImage(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            const MAX_WIDTH = 800;
+                            const scale = Math.min(MAX_WIDTH / img.width, MAX_WIDTH / img.height);
+                            const width = img.width * scale;
+                            const height = img.height * scale;
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            canvas.toBlob((blob) => {
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                    resolve({
+                                        name: file.name,
+                                        type: file.type,
+                                        size: blob.size,
+                                        base64: reader.result.split(',')[1],
+                                        dataUrl: reader.result
+                                    });
+                                };
+                                reader.onerror = reject;
+                                reader.readAsDataURL(blob);
+                            }, file.type, this.IMAGE_QUALITY);
+                        };
+                        img.onerror = reject;
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            createPreviewItem(imageData, type) {
+                return `
+                    <div class="preview-item">
+                        <img src="${imageData.dataUrl}" alt="Préview">
+                        <div class="remove-btn" onclick="removePreviewItem('${type}')">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                `;
+            }
+
+            removeLogo() {
+                this.logoImage = null;
+                document.getElementById('logo').value = '';
+                document.getElementById('logoPreview').innerHTML = '';
+            }
+
+            removePhoto(index) {
+                this.restaurantPhotos.splice(index, 1);
+                const previewContainer = document.getElementById('photosPreview');
+                previewContainer.innerHTML = this.restaurantPhotos.map((photo, i) => 
+                    this.createPreviewItem(photo, `photo_${i}`)
+                ).join('');
+                
+                if (this.restaurantPhotos.length === 0) {
+                    document.getElementById('photos').value = '';
+                }
+            }
+
+            async handleDemandeSubmit(e) {
+                e.preventDefault();
+                
+                if (!this.hasGPSLocation) {
+                    this.showToast('GPS requis', 'warning', 'Position GPS obligatoire');
+                    this.mascot.onValidationError('location');
+                    return;
+                }
+
+                if (!this.hasSignature) {
+                    this.showToast('Signature requise', 'warning', 'Signature obligatoire');
+                    this.mascot.onValidationError('signature');
+                    return;
+                }
+
+                const menuValidation = this.validateMenuItems();
+                if (!menuValidation.valid) {
+                    this.showToast('Menu incomplet', 'warning', menuValidation.message);
+                    return;
+                }
+
+                if (!this.validateDemandeForm()) {
+                    return;
+                }
+
+                this.showLoading('Envoi demande...');
+                this.mascot.onFormSubmit();
+
+                try {
+                    const formData = this.collectDemandeData();
+                    const response = await this.submitDemande(formData);
+
+                    this.hideLoading();
+
+                    if (response.success) {
+                        this.showToast('Demande envoyée !', 'success', 'Code d\'autorisation sous 24-48h');
+                        this.mascot.celebrate();
+                        this.resetForm();
+                        
+                        setTimeout(() => {
+                            this.switchStep('finalisation');
+                        }, 3000);
+                    } else {
+                        this.showToast('Erreur', 'error', response.message || 'Erreur serveur');
+                    }
+
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur connexion', 'error', 'Vérifiez votre connexion');
+                }
+            }
+
+            validateDemandeForm() {
+                const required = ['nom', 'telephone', 'adresse'];
+                let isValid = true;
+
+                required.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        this.highlightError(field);
+                        this.mascot.onValidationError(fieldId);
+                        isValid = false;
+                    } else {
+                        this.clearError(field);
+                    }
+                });
+
+                const telephone = document.getElementById('telephone').value.replace(/\s/g, '');
+                if (telephone && telephone.length !== 8) {
+                    this.highlightError(document.getElementById('telephone'));
+                    this.mascot.onValidationError('telephone');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    this.showToast('Formulaire incomplet', 'warning', 'Champs obligatoires manquants');
+                }
+
+                return isValid;
+            }
+
+            collectDemandeData() {
+                const signatureData = this.getSignatureData();
+                this.updateMenuItems();
+                
+                const formattedMenu = this.menuItems.map(item => ({
+                    id: item.id,
+                    nom: item.nom,
+                    description: item.description || '',
+                    prix: parseInt(item.prix) || 0,
+                    photo: item.photo ? {
+                        name: item.photo.name || `plat_${item.id}.jpg`,
+                        type: item.photo.type || 'image/jpeg',
+                        size: item.photo.size || 0,
+                        base64: item.photo.base64
+                    } : null
+                }));
+
+                const data = {
+                    action: 'demandePartenariat',
+                    type: 'restaurant',
+                    nom: document.getElementById('nom').value.trim(),
+                    nomCommercial: document.getElementById('nomCommercial').value.trim(),
+                    telephone: '+226' + document.getElementById('telephone').value.replace(/\s/g, ''),
+                    email: document.getElementById('email').value.trim(),
+                    adresse: document.getElementById('adresse').value.trim(),
+                    quartier: document.getElementById('quartier').value.trim(),
+                    cuisine: document.getElementById('cuisine').value,
+                    specialites: document.getElementById('specialites').value.trim(),
+                    horairesDetails: document.getElementById('horairesDetails').value.trim(),
+                    responsableNom: document.getElementById('responsableNom').value.trim(),
+                    responsableTel: document.getElementById('responsableTel').value.trim() ? 
+                        '+226' + document.getElementById('responsableTel').value.replace(/\s/g, '') : '',
+                    description: document.getElementById('description').value.trim(),
+                    location: this.coordinates,
+                    signature: signatureData ? signatureData.split(',')[1] : null,
+                    menu: formattedMenu,
+                    dateCreation: new Date().toISOString(),
+                    statut: 'en_attente'
+                };
+
+                if (this.logoImage) {
+                    data.logo = {
+                        name: this.logoImage.name,
+                        type: this.logoImage.type,
+                        size: this.logoImage.size,
+                        base64: this.logoImage.base64
+                    };
+                }
+
+                if (this.restaurantPhotos.length > 0) {
+                    data.photos = this.restaurantPhotos.map(photo => ({
+                        name: photo.name,
+                        type: photo.type,
+                        size: photo.size,
+                        base64: photo.base64
+                    }));
+                }
+
+                return data;
+            }
+
+            async submitDemande(data) {
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                return await response.json();
+            }
+
+            async handleFinalizationSubmit(e) {
+                e.preventDefault();
+
+                const code = document.getElementById('codeAutorisation').value.trim().toUpperCase();
+                
+                if (!code) {
+                    this.showToast('Code requis', 'warning', 'Entrez votre code');
+                    return;
+                }
+
+                if (code.length !== 11 || !code.startsWith('REST')) {
+                    this.showToast('Format invalide', 'error', 'Code format "REST1234567"');
+                    return;
+                }
+
+                this.showLoading('Finalisation...');
+
+                try {
+                    const response = await fetch(this.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'finalizePartenariat',
+                            code: code,
+                            type: 'restaurant'
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    if (result.success) {
+                        this.showToast('Partenariat finalisé !', 'success', 'Restaurant ajouté avec succès');
+                        this.mascot.celebrate();
+                        
+                        setTimeout(() => {
+                            alert(`🎉 Partenariat finalisé !
+
+Restaurant: ${result.restaurant.nom}
+ID: ${result.restaurant.restaurantId}
+Menu: ${result.restaurant.menuItemsCount} plats
+
+Votre restaurant est maintenant sur SEND2.0 !`);
+                            
+                            window.location.href = 'index.html';
+                        }, 5000);
+                    } else {
+                        this.showToast('Code invalide', 'error', result.message || 'Code non reconnu');
+                    }
+
+                } catch (error) {
+                    this.hideLoading();
+                    this.showToast('Erreur', 'error', 'Impossible de finaliser');
+                }
+            }
+
+            resetForm() {
+                document.getElementById('demandeForm').reset();
+                this.hasGPSLocation = false;
+                this.clearSignature();
+                this.logoImage = null;
+                this.restaurantPhotos = [];
+                this.menuItems = [];
+                document.getElementById('logoPreview').innerHTML = '';
+                document.getElementById('photosPreview').innerHTML = '';
+                document.getElementById('menuItems').innerHTML = '';
+                document.getElementById('submitDemandeBtn').disabled = true;
+                document.getElementById('gpsCoords').style.display = 'none';
+                
+                this.addDefaultMenuItems();
+            }
+
+            highlightError(field) {
+                field.classList.add('error');
+                setTimeout(() => field.classList.remove('error'), 3000);
+            }
+
+            clearError(field) {
+                field.classList.remove('error');
+            }
+
+            showLoading(message = 'Chargement...') {
+                document.getElementById('loadingMessage').textContent = message;
+                document.getElementById('loadingOverlay').classList.add('show');
+            }
+
+            hideLoading() {
+                document.getElementById('loadingOverlay').classList.remove('show');
+            }
+
+            showToast(title, type, message) {
+                const existingToast = document.querySelector('.toast');
+                if (existingToast) {
+                    existingToast.remove();
+                }
+
+                const iconMap = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    warning: 'fa-exclamation-triangle',
+                    info: 'fa-info-circle'
+                };
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div class="toast-icon ${type}">
+                        <i class="fas ${iconMap[type]}"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                `;
+
+                document.getElementById('toastContainer').appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }, 4000);
+            }
+        }
+
+        // Global functions
+        function getLocation() {
+            if (window.restaurantManager) {
+                window.restaurantManager.getLocation();
+            }
+        }
+
+        function clearSignature() {
+            if (window.restaurantManager) {
+                window.restaurantManager.clearSignature();
+            }
+        }
+
+        function addMenuItem() {
+            if (window.restaurantManager) {
+                window.restaurantManager.addMenuItem();
+            }
+        }
+
+        function handleMenuPhotoUpload(event, itemId) {
+            if (window.restaurantManager) {
+                window.restaurantManager.handleMenuPhotoUpload(event, itemId);
+            }
+        }
+
+        function handleLogoUpload(event) {
+            if (window.restaurantManager) {
+                window.restaurantManager.handleLogoUpload(event);
+            }
+        }
+
+        function handlePhotosUpload(event) {
+            if (window.restaurantManager) {
+                window.restaurantManager.handlePhotosUpload(event);
+            }
+        }
+
+        function removePreviewItem(type) {
+            if (window.restaurantManager) {
+                if (type === 'logo') {
+                    window.restaurantManager.removeLogo();
+                } else if (type.startsWith('photo_')) {
+                    const index = parseInt(type.split('_')[1]);
+                    window.restaurantManager.removePhoto(index);
+                } else if (type.startsWith('menuPhoto_')) {
+                    const itemId = type.split('_')[1];
+                    const itemIndex = window.restaurantManager.menuItems.findIndex(item => item.id == itemId);
+                    if (itemIndex !== -1) {
+                        const fileInput = document.getElementById(`menuPhoto_${itemId}`);
+                        if (fileInput) {
+                            fileInput.value = '';
+                        }
+                        
+                        window.restaurantManager.menuItems[itemIndex].photo = null;
+                        document.getElementById(`menuPhotoPreview_${itemId}`).innerHTML = '';
+                        window.restaurantManager.updateSubmitButton();
+                    }
+                }
+            }
+        }
+
+        function startRestaurantGuide() {
+            if (window.chefSend) {
+                window.chefSend.startRestaurantGuide();
+            }
+        }
+
+        function hideSendDialogue() {
+            if (window.chefSend) {
+                window.chefSend.hideDialogue();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.restaurantManager = new RestaurantInscriptionManager();
+        });
+    </script>
+</body>
+</html>
