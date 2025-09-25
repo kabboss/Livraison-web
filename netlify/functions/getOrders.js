@@ -1,4 +1,4 @@
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb'); // Assurez-vous que ObjectId est bien importé
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
@@ -10,6 +10,11 @@ const COMMON_HEADERS = {
     'Content-Type': 'application/json'
 };
 
+// On sort le client pour la performance
+const client = new MongoClient(MONGODB_URI, {
+    serverSelectionTimeoutMS: 10000
+});
+
 exports.handler = async (event) => {
     if (event.httpMethod === 'OPTIONS' ) {
         return { statusCode: 200, headers: COMMON_HEADERS, body: '' };
@@ -19,25 +24,25 @@ exports.handler = async (event) => {
         return { statusCode: 405, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
     }
 
-    let client;
     try {
         const { serviceType, driverId, restaurantId } = event.queryStringParameters || {};
         
-        client = new MongoClient(MONGODB_URI, {
-            serverSelectionTimeoutMS: 10000 // Timeout de connexion plus robuste
-        });
         await client.connect();
         const db = client.db(DB_NAME);
 
         // --- CAS 1 : Un restaurant demande ses commandes à confirmer ---
         if (restaurantId) {
-            const collection = db.collection('Commandes'); // Les commandes de nourriture sont dans "Commandes"
+            const collection = db.collection('Commandes');
             const query = {
-                'restaurant.id': restaurantId,
-                'status': 'pending_restaurant_confirmation' // On ne cherche QUE ce statut
+                // --- LA CORRECTION EST ICI ---
+                'restaurant.id': new ObjectId(restaurantId), // On convertit la chaîne en ObjectId
+                'status': 'pending_restaurant_confirmation'
             };
             const orders = await collection.find(query).sort({ orderDate: -1 }).toArray();
             
+            // On ne ferme pas le client ici pour qu'il puisse être utilisé par les autres cas
+            // await client.close(); // Supprimez cette ligne si elle existe
+
             return {
                 statusCode: 200,
                 headers: COMMON_HEADERS,
@@ -69,15 +74,11 @@ exports.handler = async (event) => {
 
         const collection = db.collection(collectionMap[serviceType]);
         
-        // La requête de base pour un livreur :
-        // - Statut 'pending' (disponible pour tous)
-        // - OU la commande lui est assignée (driverId)
         const query = {
             $or: [
                 { status: 'pending' },
                 { driverId: driverId }
             ],
-            // Exclure les commandes terminées de manière fiable
             isCompleted: { $ne: true } 
         };
 
@@ -102,7 +103,11 @@ exports.handler = async (event) => {
             body: JSON.stringify({ error: 'Erreur serveur lors de la récupération des commandes.' })
         };
     } finally {
-        if (client) await client.close();
+        // On déplace la fermeture du client ici pour qu'elle s'exécute à la toute fin,
+        // quel que soit le cas de figure.
+        // Note : Pour Netlify, il est souvent mieux de ne pas fermer le client du tout
+        // pour réutiliser la connexion. Vous pouvez commenter la ligne suivante.
+        // await client.close();
     }
 };
 
@@ -115,12 +120,11 @@ async function getDriverAssignedOrders(db, driverId) {
         const collection = db.collection(collectionName);
         const orders = await collection.find({
             driverId: driverId,
-            isCompleted: { $ne: true } // Condition simple et efficace
+            isCompleted: { $ne: true }
         }).toArray();
         allAssignedOrders.push(...orders);
     }
 
-    // Trier par la date la plus récente
     allAssignedOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
     
     return allAssignedOrders;
