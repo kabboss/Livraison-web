@@ -1,74 +1,67 @@
-// Nom du fichier : create-order.js
-
+// Version ultra-permissive create-order.js
 const { MongoClient } = require('mongodb');
 
-// --- CONFIGURATION CORS ---
-// Remplacez '*' par l'URL de votre site en production pour plus de sécurité
-const ALLOWED_ORIGIN = process.env.NODE_ENV === 'development' ? '*' : 'https://send20.netlify.app';
-
+// CORS ultra-permissif
 const CORS_HEADERS = {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials': 'true'
 };
 
-// --- CONNEXION À MONGODB ---
-// La chaîne de connexion est maintenant récupérée depuis les variables d'environnement de Netlify
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
 const COLLECTION_NAME = 'Commandes';
 
-// --- FONCTION PRINCIPALE (HANDLER ) ---
 exports.handler = async (event) => {
-    // 1. Gérer la requête "pre-flight" OPTIONS pour CORS
-    if (event.httpMethod === 'OPTIONS' ) {
+    // Gérer OPTIONS très tôt
+    if (event.httpMethod === 'OPTIONS') {
         return {
-            statusCode: 204, // No Content
+            statusCode: 200,
             headers: CORS_HEADERS,
             body: ''
         };
     }
 
-    // 2. Vérifier si la variable d'environnement est bien chargée
+    // Logger pour debug
+    console.log('Method:', event.httpMethod);
+    console.log('Origin:', event.headers.origin);
+    console.log('Headers:', event.headers);
+
     if (!MONGODB_URI) {
-        console.error("Erreur critique: La variable d'environnement MONGODB_URI n'est pas définie.");
         return {
             statusCode: 500,
             headers: CORS_HEADERS,
-            body: JSON.stringify({ success: false, message: "Erreur de configuration du serveur." })
+            body: JSON.stringify({ success: false, message: "Configuration serveur manquante" })
         };
     }
 
-    // 3. Vérifier que la méthode est bien POST
-    if (event.httpMethod !== 'POST' ) {
+    if (event.httpMethod !== 'POST') {
         return {
-            statusCode: 405, // Method Not Allowed
+            statusCode: 405,
             headers: CORS_HEADERS,
-            body: JSON.stringify({ success: false, message: 'Méthode non autorisée. Seul POST est accepté.' })
+            body: JSON.stringify({ success: false, message: 'Méthode non autorisée' })
         };
     }
 
     const client = new MongoClient(MONGODB_URI);
 
     try {
-        // 4. Parser et valider les données de la commande
-        const orderData = JSON.parse(event.body || '{}');
-
+        let orderData = JSON.parse(event.body || '{}');
+        
+        // Validation minimale
         if (!orderData.currentRestaurant?._id || !orderData.items?.length || !orderData.client?.phone) {
             return {
-                statusCode: 400, // Bad Request
+                statusCode: 400,
                 headers: CORS_HEADERS,
-                body: JSON.stringify({ success: false, message: 'Données de commande invalides ou incomplètes.' })
+                body: JSON.stringify({ success: false, message: 'Données incomplètes' })
             };
         }
 
-        // 5. Connexion à la base de données
         await client.connect();
         const db = client.db(DB_NAME);
         const collection = db.collection(COLLECTION_NAME);
 
-        // 6. Préparation du document à insérer
-        const now = new Date();
         const orderDocument = {
             type: "food",
             restaurant: {
@@ -76,30 +69,28 @@ exports.handler = async (event) => {
                 name: orderData.currentRestaurant.nom || 'Restaurant Inconnu',
             },
             client: {
-                name: orderData.client.name,
+                name: orderData.client.name || '',
                 phone: orderData.client.phone,
-                address: orderData.client.address,
+                address: orderData.client.address || '',
                 position: orderData.client.position || null
             },
             items: orderData.items,
-            subtotal: orderData.subtotal,
-            deliveryFee: orderData.deliveryFee,
-            total: orderData.total,
+            subtotal: orderData.subtotal || 0,
+            deliveryFee: orderData.deliveryFee || 0,
+            total: orderData.total || 0,
             notes: orderData.notes || '',
             payment_method: orderData.payment_method || 'on_delivery',
             payment_status: orderData.payment_status || 'pending',
             status: 'pending_restaurant_confirmation',
-            orderDate: new Date(orderData.orderDate || now),
+            orderDate: new Date(orderData.orderDate || new Date()),
             codeCommande: generateOrderCode(),
-            // ... autres champs
+            createdAt: new Date()
         };
 
-        // 7. Insertion de la commande
         const result = await collection.insertOne(orderDocument);
 
-        // 8. Réponse de succès
         return {
-            statusCode: 201, // Created
+            statusCode: 201,
             headers: CORS_HEADERS,
             body: JSON.stringify({
                 success: true,
@@ -110,19 +101,21 @@ exports.handler = async (event) => {
         };
 
     } catch (error) {
-        console.error('Erreur dans la fonction create-order:', error);
+        console.error('Erreur:', error);
         return {
             statusCode: 500,
             headers: CORS_HEADERS,
-            body: JSON.stringify({ success: false, message: "Une erreur interne est survenue.", error: error.message })
+            body: JSON.stringify({ 
+                success: false, 
+                message: "Erreur serveur",
+                error: error.message 
+            })
         };
     } finally {
-        // 9. Fermer la connexion dans tous les cas
         await client.close();
     }
 };
 
-// --- FONCTION UTILITAIRE ---
 function generateOrderCode() {
     const prefix = 'CMD';
     const date = new Date();
