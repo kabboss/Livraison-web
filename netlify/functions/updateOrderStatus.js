@@ -1,5 +1,7 @@
 const { MongoClient, ObjectId } = require('mongodb');
 
+const { notifyAllDrivers } = require('./utils/notify-all-drivers');
+
 const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
 const COLLECTION_NAME = 'Commandes';
@@ -114,6 +116,22 @@ exports.handler = async (event) => {
                 })
             };
         }
+
+
+        // Si la mise à jour a réussi ET que le nouveau statut est 'pending'
+        if (result.modifiedCount > 0 && newStatus === 'pending') {
+            console.log(`Statut passé à 'pending' pour la commande ${orderId}. Déclenchement des notifications.`);
+            
+            // On récupère les détails complets de la commande pour les passer au notificateur
+            const updatedOrder = await collection.findOne({ _id: new ObjectId(orderId) });
+            
+            if (updatedOrder) {
+                // On appelle notre "cerveau" !
+                await notifyAllDrivers(db, updatedOrder, 'food');
+            }
+        }
+
+
 
         // Réponse de succès
         return {

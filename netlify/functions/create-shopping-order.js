@@ -1,5 +1,7 @@
 const { MongoClient } = require('mongodb');
 
+const { notifyAllDrivers } = require('./utils/notify-all-drivers');
+
 const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
 
@@ -52,6 +54,19 @@ exports.handler = async function(event, context) {
 
     // Insertion dans la collection
     const result = await collection.insertOne(data);
+
+
+
+ // --- AJOUT 2 : La logique de notification ---
+        // Si l'insertion a réussi, on notifie les livreurs.
+        if (result.insertedId) {
+            console.log(`Nouvelle commande de courses ${result.insertedId}. Déclenchement des notifications.`);
+            // On passe l'objet 'order' complet, qui inclut maintenant l'_id
+            order._id = result.insertedId; 
+            await notifyAllDrivers(db, order, 'shopping');
+        }
+
+
 
     return {
       statusCode: 200,

@@ -1,4 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
+const { notifyAllDrivers } = require('./utils/notify-all-drivers');
 
 // Configuration MongoDB
 const mongoConfig = {
@@ -526,6 +527,9 @@ async function handleAcceptPackage(db, client, data, sessionId) {
       // Insertion de la livraison
       await db.collection(mongoConfig.collections.livraison)
         .insertOne(livraisonDoc, { session });
+         await notifyAllDrivers(db, livraisonDoc, 'packages'); 
+
+        
 
       // Mise à jour du colis
       await db.collection(mongoConfig.collections.colis).updateOne(

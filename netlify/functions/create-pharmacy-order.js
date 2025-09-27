@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const { notifyAllDrivers } = require('./utils/notify-all-drivers');
 
 const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
@@ -65,6 +66,15 @@ exports.handler = async function(event) {
 
         // Insertion
         const result = await db.collection('pharmacyOrders').insertOne(order);
+        
+
+// --- AJOUT 2 : La logique de notification ---
+        if (result.insertedId) {
+            console.log(`Nouvelle commande de pharmacie ${result.insertedId}. Déclenchement des notifications.`);
+            order._id = result.insertedId;
+            await notifyAllDrivers(db, order, 'pharmacy');
+        }
+
 
         return {
             statusCode: 201,
