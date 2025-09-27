@@ -1,4 +1,4 @@
-const { MongoClient, ObjectId } = require('mongodb'); // Assurez-vous que ObjectId est bien importé
+const { MongoClient, ObjectId } = require('mongodb');
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
@@ -10,12 +10,11 @@ const COMMON_HEADERS = {
     'Content-Type': 'application/json'
 };
 
-// On sort le client pour la performance
-const client = new MongoClient(MONGODB_URI, {
-    serverSelectionTimeoutMS: 10000
-});
+// On sort le client pour la performance, c'est une bonne pratique
+const client = new MongoClient(MONGODB_URI);
 
 exports.handler = async (event) => {
+    // Gestion de la requête OPTIONS (pre-flight)
     if (event.httpMethod === 'OPTIONS' ) {
         return { statusCode: 200, headers: COMMON_HEADERS, body: '' };
     }
@@ -31,18 +30,14 @@ exports.handler = async (event) => {
         const db = client.db(DB_NAME);
 
         // --- CAS 1 : Un restaurant demande ses commandes à confirmer ---
+        // Cette partie est pour l'application du restaurant. Elle est déjà correcte.
         if (restaurantId) {
             const collection = db.collection('Commandes');
             const query = {
-                // --- LA CORRECTION EST ICI ---
-                'restaurant.id': new ObjectId(restaurantId), // On convertit la chaîne en ObjectId
-                'status': 'pending_restaurant_confirmation'
+                'restaurant.id': new ObjectId(restaurantId),
+                'status': 'pending_restaurant_confirmation' // Ne cherche que les commandes en attente de confirmation
             };
             const orders = await collection.find(query).sort({ orderDate: -1 }).toArray();
-            
-            // On ne ferme pas le client ici pour qu'il puisse être utilisé par les autres cas
-            // await client.close(); // Supprimez cette ligne si elle existe
-
             return {
                 statusCode: 200,
                 headers: COMMON_HEADERS,
@@ -50,17 +45,12 @@ exports.handler = async (event) => {
             };
         }
 
-        // --- CAS 2 : Un livreur demande TOUTES ses commandes assignées (tous services confondus) ---
-        if (driverId && !serviceType) {
-            const allAssignedOrders = await getDriverAssignedOrders(db, driverId);
-            return {
-                statusCode: 200,
-                headers: COMMON_HEADERS,
-                body: JSON.stringify({ orders: allAssignedOrders })
-            };
+        // --- CAS 2 : Un livreur demande les commandes ---
+        // Validation : serviceType est obligatoire pour un livreur
+        if (!serviceType) {
+            return { statusCode: 400, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Le paramètre "serviceType" est requis pour les livreurs.' }) };
         }
 
-        // --- CAS 3 : Un livreur consulte les commandes disponibles pour un service spécifique ---
         const collectionMap = {
             packages: 'Livraison',
             food: 'Commandes',
@@ -68,25 +58,39 @@ exports.handler = async (event) => {
             pharmacy: 'pharmacyOrders'
         };
 
-        if (!serviceType || !collectionMap[serviceType]) {
+        const collectionName = collectionMap[serviceType];
+        if (!collectionName) {
             return { statusCode: 400, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Type de service invalide' }) };
         }
 
-        const collection = db.collection(collectionMap[serviceType]);
+        const collection = db.collection(collectionName);
+        
+        // --- LA NOUVELLE LOGIQUE DE REQUÊTE EST ICI ---
+        // On construit une requête qui récupère :
+        // 1. Les commandes disponibles pour TOUS les livreurs (statut 'pending').
+        // 2. OU les commandes qui sont spécifiquement assignées à CE livreur (driverId).
         
         const query = {
             $or: [
-                { status: 'pending' },
-                { driverId: driverId }
+                // Condition 1: Commande disponible pour tout le monde
+                { status: 'pending' }, 
+                
+                // Condition 2: Commande assignée à ce livreur spécifique
+                { driverId: driverId } 
             ],
+            // On exclut les commandes déjà terminées
             isCompleted: { $ne: true } 
         };
 
         const orders = await collection.find(query).sort({ orderDate: -1 }).limit(200).toArray();
 
+        // On enrichit chaque commande avec une information claire pour le front-end
         const enrichedOrders = orders.map(order => ({
             ...order,
-            isAssigned: !!order.driverId
+            // 'isAssigned' est vrai si un livreur est déjà dessus
+            isAssigned: !!order.driverId,
+            // 'isMyAssignment' est vrai si C'EST CE livreur qui est dessus
+            isMyAssignment: order.driverId === driverId 
         }));
 
         return {
@@ -96,36 +100,12 @@ exports.handler = async (event) => {
         };
 
     } catch (error) {
-        console.error('Erreur GET getOrders:', error);
+        console.error('Erreur dans getOrders:', error);
         return {
             statusCode: 500,
             headers: COMMON_HEADERS,
-            body: JSON.stringify({ error: 'Erreur serveur lors de la récupération des commandes.' })
+            body: JSON.stringify({ error: 'Erreur interne du serveur lors de la récupération des commandes.' })
         };
-    } finally {
-        // On déplace la fermeture du client ici pour qu'elle s'exécute à la toute fin,
-        // quel que soit le cas de figure.
-        // Note : Pour Netlify, il est souvent mieux de ne pas fermer le client du tout
-        // pour réutiliser la connexion. Vous pouvez commenter la ligne suivante.
-        // await client.close();
-    }
+    } 
+    // Note : On ne ferme pas le client ici pour que Netlify puisse réutiliser la connexion.
 };
-
-// Fonction utilitaire pour récupérer toutes les commandes assignées à un livreur
-async function getDriverAssignedOrders(db, driverId) {
-    const collectionsToSearch = ['Livraison', 'Commandes', 'shopping_orders', 'pharmacyOrders'];
-    let allAssignedOrders = [];
-
-    for (const collectionName of collectionsToSearch) {
-        const collection = db.collection(collectionName);
-        const orders = await collection.find({
-            driverId: driverId,
-            isCompleted: { $ne: true }
-        }).toArray();
-        allAssignedOrders.push(...orders);
-    }
-
-    allAssignedOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
-    
-    return allAssignedOrders;
-}
