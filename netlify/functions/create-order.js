@@ -65,7 +65,6 @@ exports.handler = async (event) => {
             total: orderData.total || 0,
             notes: orderData.notes || '',
             payment_method: orderData.payment_method || 'on_delivery',
-            payment_status: orderData.payment_status || 'pending',
             status: 'pending_restaurant_confirmation',
             orderDate: new Date(orderData.orderDate || new Date()),
             codeCommande: generateOrderCode(),
