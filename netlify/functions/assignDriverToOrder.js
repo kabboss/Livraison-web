@@ -255,6 +255,7 @@ async function updateOrderWithAssignment(collection, originalOrder, driverInfo, 
     
     const updateData = {
         // Informations du livreur
+        id_livreur: driverInfo.driverId, // On ajoute le champ principal
         driverId: driverInfo.driverId,
         driverName: driverInfo.driverName,
         nomLivreur: driverInfo.driverName, // Alias pour compatibilité

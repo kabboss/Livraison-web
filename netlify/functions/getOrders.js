@@ -81,7 +81,7 @@ exports.handler = async (event) => {
                         // ET elle a un statut de type "assigné"
                         { $or: [{ status: { $in: assignedStatuses } }, { statut: { $in: assignedStatuses } }] },
                         // ET l'ID du livreur correspond
-                        { $or: [{ driverId: driverId }, { idLivreurEnCharge: driverId }] }
+                        { $or: [{ driverId: driverId }, { idLivreurEnCharge: driverId }, { id_livreur: driverId } ] }
                     ]
                 }
             ],
