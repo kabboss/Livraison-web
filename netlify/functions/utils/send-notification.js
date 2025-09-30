@@ -1,6 +1,8 @@
+// Fichier : functions/utils/send-notification.js
+
 const admin = require('firebase-admin');
 
-// --- Initialisation de Firebase Admin ---
+// --- L'initialisation de Firebase Admin reste identique et correcte ---
 if (!admin.apps.length) {
   try {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -30,30 +32,22 @@ async function sendMulticastNotification(tokens, payload) {
 
   // On construit le message final avec le payload et les jetons.
   const message = {
-    // Le payload contient déjà : notification: { title, body }, data: { ... }
     ...payload, 
-    tokens: tokens,
+    tokens: tokens, // La liste des destinataires
 
-    // --- CONFIGURATION ANDROID CORRIGÉE ET COMPLÈTE ---
+    // --- Les configurations Android et APNS (iOS) sont déjà correctes ---
     android: {
-      priority: 'high', // Priorité maximale pour une livraison immédiate.
+      priority: 'high',
       notification: {
-        // Nom du fichier son dans /res/raw, SANS l'extension .mp3
         sound: 'sound', 
-        
-        // ID du canal que vous avez créé dans MainActivity.java
         channel_id: 'new_driver_orders_channel',
-
-        // Action qui rend la notification cliquable et ouvre l'application.
         click_action: 'FLUTTER_NOTIFICATION_CLICK' 
       }
     },
-
-    // Configuration pour iOS (bonne pratique de l'inclure)
     apns: {
       payload: {
         aps: {
-          sound: 'default', // ou le nom d'un fichier son pour iOS
+          sound: 'default',
           'content-available': 1
         }
       }
@@ -61,20 +55,27 @@ async function sendMulticastNotification(tokens, payload) {
   };
 
   try {
-    const response = await admin.messaging().sendMulticast(message);
-    console.log(`Rapport d'envoi : ${response.successCount} succès, ${response.failureCount} échecs.`);
+    // --- LA CORRECTION EST ICI ---
+    // On remplace "sendMulticast" par le nom correct : "sendEachForMulticast"
+    const response = await admin.messaging().sendEachForMulticast(message);
+    // --- FIN DE LA CORRECTION ---
+    
+    console.log(`[RAPPORT D'ENVOI] Succès: ${response.successCount}, Échecs: ${response.failureCount}`);
     
     if (response.failureCount > 0) {
+      const failedTokens = [];
       response.responses.forEach((resp, idx) => {
         if (!resp.success) {
+          failedTokens.push(tokens[idx]);
           console.error(`Échec pour le jeton ${tokens[idx]}:`, resp.error);
+          // Ici, vous pourriez ajouter du code pour supprimer les jetons invalides de votre base de données
         }
       });
+      console.log("Liste des jetons en échec :", failedTokens);
     }
   } catch (error) {
     console.error('Erreur majeure lors de l\'envoi multicast:', error);
   }
 }
 
-// On exporte la fonction pour que les autres fichiers puissent l'utiliser.
 module.exports = { sendMulticastNotification };
