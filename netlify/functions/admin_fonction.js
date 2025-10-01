@@ -201,8 +201,6 @@ exports.handler = async (event, context) => {
             case 'runCleanup':
                 return await runCleanup(db, body);
             
-            case 'getCleanupStatus':
-                return await getCleanupStatus(db);
             
             // Analyses
             case 'getAnalytics':
@@ -215,6 +213,14 @@ exports.handler = async (event, context) => {
             // Recherche globale
             case 'globalSearch':
                 return await globalSearch(db, body);
+
+
+                case 'getDriverTrackingData':
+    return await getDriverTrackingData(db);
+case 'resetDriverTax':
+    return await resetDriverTax(db, body);
+
+
             
             default:
                 return createResponse(400, { 
@@ -1301,59 +1307,12 @@ async function saveCleanupHistory(db, results) {
             type: 'automatic'
         };
 
-        await db.collection('cleanup_history').insertOne(historyEntry);
     } catch (error) {
         console.warn('⚠️ Erreur sauvegarde historique nettoyage:', error);
     }
 }
 
-async function getCleanupStatus(db) {
-    try {
-        // Récupérer l'historique récent
-        const recentHistory = await db.collection('cleanup_history')
-            .find({})
-            .sort({ timestamp: -1 })
-            .limit(10)
-            .toArray();
 
-        // Calculer les statistiques par collection
-        const stats = {};
-        for (const [collectionName, config] of Object.entries(COLLECTIONS_CONFIG)) {
-            if (config.deleteAfterDays) {
-                const cutoffDate = new Date(Date.now() - config.deleteAfterDays * 24 * 60 * 60 * 1000);
-                let query = {
-                    [config.cleanupField]: { $lt: cutoffDate }
-                };
-
-                if (config.deleteCondition) {
-                    query = { ...query, ...config.deleteCondition };
-                }
-
-                const eligibleForDeletion = await safeCount(db, collectionName, query);
-                
-                stats[collectionName] = {
-                    eligibleForDeletion,
-                    deleteAfterDays: config.deleteAfterDays,
-                    cutoffDate: cutoffDate.toISOString()
-                };
-            }
-        }
-
-        return createResponse(200, {
-            success: true,
-            recentHistory,
-            stats,
-            nextScheduledRun: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        });
-
-    } catch (error) {
-        console.error('❌ Erreur getCleanupStatus:', error);
-        return createResponse(500, {
-            success: false,
-            message: 'Erreur lors de la récupération du statut de nettoyage'
-        });
-    }
-}
 
 // ===== RECHERCHE GLOBALE =====
 
@@ -1918,4 +1877,76 @@ function createResponse(statusCode, body) {
         headers: corsHeaders,
         body: JSON.stringify(body)
     };
+}
+
+
+
+async function getDriverTrackingData(db) {
+    try {
+        // 1. Récupérer tous les livreurs actifs
+        const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
+
+        // 2. Récupérer toutes les courses terminées et les confirmations de paiement
+        const [allCompletedCourses, allPaymentConfirmations] = await Promise.all([
+            db.collection('deliveryHistory').find({}).toArray(),
+            db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray()
+        ]);
+
+        // 3. Traiter les données pour chaque livreur
+        const driverData = drivers.map(driver => {
+            // Filtrer les courses pour ce livreur
+            const driverCourses = allCompletedCourses.filter(course => course.driverInfo?.driverId === driver.id_livreur);
+            
+            // Calculer les gains et la taxe
+            const totalGains = driverCourses.reduce((sum, course) => sum + (course.gain || 0), 0);
+            const taxDue = Math.round(totalGains * 0.10);
+
+            // Vérifier si une confirmation de paiement existe pour ce livreur
+            const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
+
+            return {
+                ...driver,
+                completedCourses: driverCourses.length,
+                totalGains,
+                taxDue,
+                paymentConfirmation: paymentConfirmation || null
+            };
+        });
+
+        return createResponse(200, { success: true, data: driverData });
+
+    } catch (error) {
+        console.error('Erreur dans getDriverTrackingData:', error);
+        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
+    }
+}
+
+async function resetDriverTax(db, data) {
+    try {
+        const { driverId } = data;
+        if (!driverId) {
+            return createResponse(400, { success: false, message: 'ID du livreur manquant.' });
+        }
+
+        // 1. Archiver les courses terminées pour ce livreur
+        const coursesToArchive = await db.collection('deliveryHistory').find({ 'driverInfo.driverId': driverId }).toArray();
+        if (coursesToArchive.length > 0) {
+            await db.collection('archivedDeliveryHistory').insertMany(coursesToArchive);
+        }
+
+        // 2. Supprimer les courses de l'historique actif
+        await db.collection('deliveryHistory').deleteMany({ 'driverInfo.driverId': driverId });
+
+        // 3. Mettre à jour le statut de la confirmation de paiement
+        await db.collection('confirmations_paiement').updateMany(
+            { driverId: driverId, status: 'pending_validation' },
+            { $set: { status: 'validated', validatedAt: new Date(), validatedBy: 'admin' } }
+        );
+
+        return createResponse(200, { success: true, message: 'Dette réinitialisée et historique archivé.' });
+
+    } catch (error) {
+        console.error('Erreur dans resetDriverTax:', error);
+        return createResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation.' });
+    }
 }
