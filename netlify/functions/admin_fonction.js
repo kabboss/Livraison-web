@@ -196,6 +196,8 @@ exports.handler = async (event, context) => {
             
             case 'envoyerNotification':
                 return await envoyerNotification(db, body);
+
+
             
             // Nettoyage automatique
             case 'runCleanup':
@@ -219,6 +221,11 @@ exports.handler = async (event, context) => {
     return await getDriverTrackingData(db);
 case 'resetDriverTax':
     return await resetDriverTax(db, body);
+
+
+    case 'getAssignedCoursesForDriver':
+    return await getAssignedCoursesForDriver(db, body);
+
 
 
             
@@ -1881,38 +1888,54 @@ function createResponse(statusCode, body) {
 
 
 
+// REMPLACEZ VOTRE ANCIENNE FONCTION PAR CELLE-CI
+
 async function getDriverTrackingData(db) {
     try {
-        // 1. Récupérer tous les livreurs actifs
+        console.log("Début de la récupération des données de suivi des livreurs.");
+
+        // 1. Récupérer tous les livreurs actifs pour avoir la liste de base
         const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
+        console.log(`${drivers.length} livreurs actifs trouvés.`);
 
-        // 2. Récupérer toutes les courses terminées et les confirmations de paiement
-        const [allCompletedCourses, allPaymentConfirmations] = await Promise.all([
-            db.collection('deliveryHistory').find({}).toArray(),
-            db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray()
-        ]);
+        // 2. Récupérer TOUTES les courses terminées et archivées en une seule fois
+        const allArchivedCourses = await db.collection('completed_orders_archive').find({}).toArray();
+        console.log(`${allArchivedCourses.length} courses archivées trouvées.`);
 
-        // 3. Traiter les données pour chaque livreur
+        // 3. Récupérer toutes les confirmations de paiement en attente
+        const allPaymentConfirmations = await db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray();
+        console.log(`${allPaymentConfirmations.length} confirmations de paiement en attente trouvées.`);
+
+        // 4. Traiter les données pour chaque livreur
         const driverData = drivers.map(driver => {
-            // Filtrer les courses pour ce livreur
-            const driverCourses = allCompletedCourses.filter(course => course.driverInfo?.driverId === driver.id_livreur);
-            
-            // Calculer les gains et la taxe
-            const totalGains = driverCourses.reduce((sum, course) => sum + (course.gain || 0), 0);
+            // Filtrer les courses archivées pour ce livreur spécifique
+            const driverArchivedCourses = allArchivedCourses.filter(course => 
+                course.completionData?.completedById === driver.id_livreur
+            );
+
+            // Calculer le gain brut total à partir du champ standardisé `deliveryGain`
+            const totalGains = driverArchivedCourses.reduce((sum, course) => {
+                const gain = course.completionData?.deliveryGain || 0;
+                return sum + gain;
+            }, 0);
+
+            // Calculer la taxe due (10%)
             const taxDue = Math.round(totalGains * 0.10);
 
             // Vérifier si une confirmation de paiement existe pour ce livreur
             const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
 
+            // Construire l'objet final pour ce livreur
             return {
-                ...driver,
-                completedCourses: driverCourses.length,
+                ...driver, // Toutes les infos du livreur (nom, prénom, id, etc.)
+                completedCourses: driverArchivedCourses.length,
                 totalGains,
                 taxDue,
                 paymentConfirmation: paymentConfirmation || null
             };
         });
 
+        console.log("Données de suivi traitées avec succès.");
         return createResponse(200, { success: true, data: driverData });
 
     } catch (error) {
@@ -1921,6 +1944,9 @@ async function getDriverTrackingData(db) {
     }
 }
 
+
+// REMPLACEZ VOTRE ANCIENNE FONCTION PAR CELLE-CI
+
 async function resetDriverTax(db, data) {
     try {
         const { driverId } = data;
@@ -1928,25 +1954,68 @@ async function resetDriverTax(db, data) {
             return createResponse(400, { success: false, message: 'ID du livreur manquant.' });
         }
 
-        // 1. Archiver les courses terminées pour ce livreur
-        const coursesToArchive = await db.collection('deliveryHistory').find({ 'driverInfo.driverId': driverId }).toArray();
-        if (coursesToArchive.length > 0) {
-            await db.collection('archivedDeliveryHistory').insertMany(coursesToArchive);
-        }
+        console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
 
-        // 2. Supprimer les courses de l'historique actif
-        await db.collection('deliveryHistory').deleteMany({ 'driverInfo.driverId': driverId });
+        // 1. Supprimer toutes les courses de la collection d'archives pour ce livreur
+        // C'est cette action qui remet le compteur de gains et de taxe à zéro pour les prochains calculs.
+        const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 
+            'completionData.completedById': driverId 
+        });
+        console.log(`${deleteResult.deletedCount} courses archivées ont été supprimées pour le livreur ${driverId}.`);
 
-        // 3. Mettre à jour le statut de la confirmation de paiement
-        await db.collection('confirmations_paiement').updateMany(
+        // 2. Mettre à jour le statut de la confirmation de paiement de "en attente" à "validé"
+        // Cela évite que le badge "Payé" ne réapparaisse après la réinitialisation.
+        const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
             { driverId: driverId, status: 'pending_validation' },
             { $set: { status: 'validated', validatedAt: new Date(), validatedBy: 'admin' } }
         );
+        console.log(`${paymentUpdateResult.modifiedCount} confirmations de paiement ont été validées pour le livreur ${driverId}.`);
 
-        return createResponse(200, { success: true, message: 'Dette réinitialisée et historique archivé.' });
+        return createResponse(200, { 
+            success: true, 
+            message: `Dette réinitialisée. ${deleteResult.deletedCount} courses purgées et ${paymentUpdateResult.modifiedCount} paiements validés.` 
+        });
 
     } catch (error) {
         console.error('Erreur dans resetDriverTax:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation.' });
+        return createResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation de la dette.' });
+    }
+}
+
+
+
+async function getAssignedCoursesForDriver(db, data) {
+    const { driverId } = data;
+    if (!driverId) {
+        return createResponse(400, { success: false, message: 'ID du livreur manquant.' });
+    }
+    try {
+        const collections = {
+            packages: { name: 'Livraison', idField: 'colisID' },
+            food: { name: 'Commandes', idField: 'codeCommande' },
+            shopping: { name: 'shopping_orders', idField: '_id' },
+            pharmacy: { name: 'pharmacyOrders', idField: '_id' }
+        };
+        let allAssignedCourses = [];
+        for (const [type, config] of Object.entries(collections)) {
+            const courses = await db.collection(config.name).find({
+                $or: [
+                    { driverId: driverId },
+                    { idLivreurEnCharge: driverId }
+                ],
+                status: 'assigned' // Assurez-vous que ce statut est correct
+            }).toArray();
+            courses.forEach(course => {
+                allAssignedCourses.push({
+                    serviceType: type,
+                    orderId: course[config.idField] || course._id.toString(),
+                    assignedAt: course.assignedAt
+                });
+            });
+        }
+        return createResponse(200, { success: true, courses: allAssignedCourses });
+    } catch (error) {
+        console.error('Erreur getAssignedCoursesForDriver:', error);
+        return createResponse(500, { success: false, message: 'Erreur serveur.' });
     }
 }
