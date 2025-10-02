@@ -1,3 +1,15 @@
+# Fichier de configuration pour Netlify (Version Corrigée et Complète)
+
 [build]
+  # COMMANDE AJOUTÉE : C'est l'instruction la plus importante.
+  # Elle force Netlify à installer les dépendances de votre package.json.
+  command = "npm install"
+  
+  # Votre configuration existante (correcte)
   functions = "netlify/functions"
-  publish = "."
+  publish = "www"
+
+# SECTION AJOUTÉE : Configuration spécifique pour les fonctions Node.js
+[functions]
+  # Indique à Netlify d'inclure les node_modules avec chaque fonction
+  node_bundler = "esbuild"
