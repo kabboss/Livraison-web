@@ -1826,9 +1826,7 @@ function clearCache() {
 
 
 
-// DANS VOTRE FICHIER admin_fonction.js
-
-// ✅✅✅ VERSION FINALE ET SIMPLIFIÉE DE getDriverTrackingData ✅✅✅
+// ✅✅✅ VERSION FINALE CORRIGÉE ✅✅✅
 async function getDriverTrackingData(db) {
     try {
         console.log("Début de la récupération des données de suivi des livreurs.");
@@ -1875,13 +1873,21 @@ async function getDriverTrackingData(db) {
         });
 
         console.log("Données de suivi traitées avec succès.");
-        return createResponse(200, { success: true, data: driverData });
+        
+        // ✅✅✅ CORRECTION : Utiliser createCorsResponse au lieu de createResponse
+        return createCorsResponse(200, { success: true, data: driverData });
 
     } catch (error) {
         console.error('Erreur dans getDriverTrackingData:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
+        
+        // ✅✅✅ CORRECTION : Utiliser createCorsResponse au lieu de createResponse
+        return createCorsResponse(500, { 
+            success: false, 
+            message: 'Erreur serveur lors de la récupération des données de suivi.' 
+        });
     }
 }
+
 
 
 // NOUVELLE FONCTION COMPLÈTE POUR RÉINITIALISER LA DETTE
@@ -1963,67 +1969,3 @@ async function getAssignedCoursesForDriver(db, data) {
 
 
 
-
-
-
-
-// NOUVELLE FONCTION COMPLÈTE POUR LE SUIVI DES LIVREURS
-async function getDriverTrackingData(db) {
-    try {
-        console.log("Début de la récupération des données de suivi des livreurs.");
-
-        // 1. Récupérer tous les livreurs actifs pour avoir la liste de base
-        const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
-        console.log(`${drivers.length} livreurs actifs trouvés.`);
-
-        // 2. Récupérer TOUTES les courses terminées et archivées en une seule fois
-        const allArchivedCourses = await db.collection('completed_orders_archive').find({}).toArray();
-        console.log(`${allArchivedCourses.length} courses archivées trouvées.`);
-
-        // 3. Récupérer toutes les confirmations de paiement en attente
-        const allPaymentConfirmations = await db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray();
-        console.log(`${allPaymentConfirmations.length} confirmations de paiement en attente trouvées.`);
-
-        // 4. Traiter les données pour chaque livreur
-        const driverData = drivers.map(driver => {
-            // Filtrer les courses archivées pour ce livreur spécifique
-            const driverArchivedCourses = allArchivedCourses.filter(course => 
-                (course.driverId === driver.id_livreur) || (course.completionData?.completedById === driver.id_livreur)
-            );
-
-            // Calculer le gain brut total
-            const totalGains = driverArchivedCourses.reduce((sum, course) => {
-                let gain = 0;
-                const service = course.type || course.serviceType;
-                if (service === 'packages') {
-                    gain = course.payment?.amount || 0;
-                } else { // food, shopping, pharmacy
-                    gain = course.deliveryFee || 0;
-                }
-                return sum + gain;
-            }, 0);
-
-            // Calculer la taxe due (10%)
-            const taxDue = Math.round(totalGains * 0.10);
-
-            // Vérifier si une confirmation de paiement existe pour ce livreur
-            const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
-
-            // Construire l'objet final pour ce livreur
-            return {
-                ...driver, // Toutes les infos du livreur (nom, prénom, id, etc.)
-                completedCourses: driverArchivedCourses.length,
-                totalGains,
-                taxDue,
-                paymentConfirmation: paymentConfirmation || null
-            };
-        });
-
-        console.log("Données de suivi traitées avec succès.");
-        return createCorsResponse(200, { success: true, data: driverData });
-
-    } catch (error) {
-        console.error('Erreur dans getDriverTrackingData:', error);
-        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
-    }
-}
