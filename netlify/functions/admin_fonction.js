@@ -1890,31 +1890,41 @@ async function getDriverTrackingData(db) {
 
 
 
-// NOUVELLE FONCTION COMPLÈTE POUR RÉINITIALISER LA DETTE
+// ✅✅✅ FONCTION CORRIGÉE ET VALIDÉE ✅✅✅
 async function resetDriverTax(db, data) {
+    const { driverId } = data;
+    if (!driverId) {
+        return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
+    }
+
+    console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
+
     try {
-        const { driverId } = data;
-        if (!driverId) {
-            return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
-        }
-
-        console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
-
-        // 1. Supprimer toutes les courses de la collection d'archives pour ce livreur
+        // 1. Supprimer toutes les courses de la collection d'archives pour ce livreur.
+        //    La requête est maintenant 100% correcte grâce à votre confirmation.
         const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 
-            $or: [
-                { driverId: driverId },
-                { 'completionData.completedById': driverId }
-            ]
+            'completionData.completedById': driverId 
         });
+        
         console.log(`${deleteResult.deletedCount} courses archivées ont été supprimées pour le livreur ${driverId}.`);
 
-        // 2. Mettre à jour le statut de la confirmation de paiement de "en attente" à "validé"
+        // 2. Mettre à jour le statut de la confirmation de paiement de "pending_validation" à "validated".
         const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
             { driverId: driverId, status: 'pending_validation' },
-            { $set: { status: 'validated', validatedAt: new Date(), validatedBy: 'admin' } }
+            { 
+                $set: { 
+                    status: 'validated', 
+                    validatedAt: new Date(), 
+                    validatedBy: 'admin'
+                } 
+            }
         );
+        
         console.log(`${paymentUpdateResult.modifiedCount} confirmations de paiement ont été validées pour le livreur ${driverId}.`);
+
+        // 3. Nettoyer le cache pour forcer le rafraîchissement des données sur l'interface admin.
+        clearCache();
+        console.log("Cache de l'application admin nettoyé.");
 
         return createCorsResponse(200, { 
             success: true, 
@@ -1923,9 +1933,13 @@ async function resetDriverTax(db, data) {
 
     } catch (error) {
         console.error('Erreur dans resetDriverTax:', error);
-        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation de la dette.' });
+        return createCorsResponse(500, { 
+            success: false, 
+            message: 'Erreur serveur lors de la réinitialisation de la dette.' 
+        });
     }
 }
+
 
 
 
