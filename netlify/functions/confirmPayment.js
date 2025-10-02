@@ -13,10 +13,10 @@ const COMMON_HEADERS = {
 };
 
 exports.handler = async (event) => {
-    if (event.httpMethod === 'OPTIONS' ) {
+    if (event.httpMethod === 'OPTIONS'  ) {
         return { statusCode: 204, headers: COMMON_HEADERS };
     }
-    if (event.httpMethod !== 'POST' ) {
+    if (event.httpMethod !== 'POST'  ) {
         return { statusCode: 405, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
     }
 
@@ -36,7 +36,7 @@ exports.handler = async (event) => {
         const result = await collection.insertOne({
             driverId,
             phoneNumber,
-            amount,
+            amount: parseInt(amount),
             confirmationDate: new Date(confirmationDate),
             status: 'pending_validation', // Statut initial en attente de votre validation
             createdAt: new Date()

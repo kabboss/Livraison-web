@@ -217,10 +217,13 @@ exports.handler = async (event, context) => {
                 return await globalSearch(db, body);
 
 
-                case 'getDriverTrackingData':
-    return await getDriverTrackingData(db);
-case 'resetDriverTax':
-    return await resetDriverTax(db, body);
+            // AJOUTS POUR LE SUIVI DES LIVREURS
+            case 'getDriverTrackingData':
+                return await getDriverTrackingData(db);
+
+            case 'resetDriverTax':
+                return await resetDriverTax(db, body);
+            // FIN DES AJOUTS
 
 
     case 'getAssignedCoursesForDriver':
@@ -1944,9 +1947,7 @@ async function getDriverTrackingData(db) {
     }
 }
 
-
-// REMPLACEZ VOTRE ANCIENNE FONCTION PAR CELLE-CI
-
+// NOUVELLE FONCTION COMPLÈTE POUR RÉINITIALISER LA DETTE
 async function resetDriverTax(db, data) {
     try {
         const { driverId } = data;
@@ -1957,14 +1958,15 @@ async function resetDriverTax(db, data) {
         console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
 
         // 1. Supprimer toutes les courses de la collection d'archives pour ce livreur
-        // C'est cette action qui remet le compteur de gains et de taxe à zéro pour les prochains calculs.
         const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 
-            'completionData.completedById': driverId 
+            $or: [
+                { driverId: driverId },
+                { 'completionData.completedById': driverId }
+            ]
         });
         console.log(`${deleteResult.deletedCount} courses archivées ont été supprimées pour le livreur ${driverId}.`);
 
         // 2. Mettre à jour le statut de la confirmation de paiement de "en attente" à "validé"
-        // Cela évite que le badge "Payé" ne réapparaisse après la réinitialisation.
         const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
             { driverId: driverId, status: 'pending_validation' },
             { $set: { status: 'validated', validatedAt: new Date(), validatedBy: 'admin' } }
@@ -1981,6 +1983,7 @@ async function resetDriverTax(db, data) {
         return createResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation de la dette.' });
     }
 }
+
 
 
 
@@ -2017,5 +2020,72 @@ async function getAssignedCoursesForDriver(db, data) {
     } catch (error) {
         console.error('Erreur getAssignedCoursesForDriver:', error);
         return createResponse(500, { success: false, message: 'Erreur serveur.' });
+    }
+}
+
+
+
+
+
+
+
+// NOUVELLE FONCTION COMPLÈTE POUR LE SUIVI DES LIVREURS
+async function getDriverTrackingData(db) {
+    try {
+        console.log("Début de la récupération des données de suivi des livreurs.");
+
+        // 1. Récupérer tous les livreurs actifs pour avoir la liste de base
+        const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
+        console.log(`${drivers.length} livreurs actifs trouvés.`);
+
+        // 2. Récupérer TOUTES les courses terminées et archivées en une seule fois
+        const allArchivedCourses = await db.collection('completed_orders_archive').find({}).toArray();
+        console.log(`${allArchivedCourses.length} courses archivées trouvées.`);
+
+        // 3. Récupérer toutes les confirmations de paiement en attente
+        const allPaymentConfirmations = await db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray();
+        console.log(`${allPaymentConfirmations.length} confirmations de paiement en attente trouvées.`);
+
+        // 4. Traiter les données pour chaque livreur
+        const driverData = drivers.map(driver => {
+            // Filtrer les courses archivées pour ce livreur spécifique
+            const driverArchivedCourses = allArchivedCourses.filter(course => 
+                (course.driverId === driver.id_livreur) || (course.completionData?.completedById === driver.id_livreur)
+            );
+
+            // Calculer le gain brut total
+            const totalGains = driverArchivedCourses.reduce((sum, course) => {
+                let gain = 0;
+                const service = course.type || course.serviceType;
+                if (service === 'packages') {
+                    gain = course.payment?.amount || 0;
+                } else { // food, shopping, pharmacy
+                    gain = course.deliveryFee || 0;
+                }
+                return sum + gain;
+            }, 0);
+
+            // Calculer la taxe due (10%)
+            const taxDue = Math.round(totalGains * 0.10);
+
+            // Vérifier si une confirmation de paiement existe pour ce livreur
+            const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
+
+            // Construire l'objet final pour ce livreur
+            return {
+                ...driver, // Toutes les infos du livreur (nom, prénom, id, etc.)
+                completedCourses: driverArchivedCourses.length,
+                totalGains,
+                taxDue,
+                paymentConfirmation: paymentConfirmation || null
+            };
+        });
+
+        console.log("Données de suivi traitées avec succès.");
+        return createResponse(200, { success: true, data: driverData });
+
+    } catch (error) {
+        console.error('Erreur dans getDriverTrackingData:', error);
+        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
     }
 }
