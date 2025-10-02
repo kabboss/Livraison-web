@@ -4,14 +4,13 @@ const { MongoClient, ObjectId } = require('mongodb');
 const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
 
-// Headers CORS
+// Headers CORS (CORRIGÉ)
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
     'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Max-Age': '86400',
-    'Content-Type': 'application/json'
+    'Access-Control-Max-Age': '86400'
 };
 
 // Instance MongoDB réutilisable
@@ -21,7 +20,7 @@ let mongoClient = null;
 const cache = new Map();
 const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
 
-// Configuration des collections avec nettoyage automatique
+// Configuration des collections (inchangé)
 const COLLECTIONS_CONFIG = {
     'Colis': {
         name: 'Colis',
@@ -129,11 +128,11 @@ async function connectToMongoDB() {
     }
 }
 
+// La fonction handler est maintenant correcte car elle utilise la constante corsHeaders corrigée
 exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
-    // Gestion des requêtes OPTIONS (preflight CORS)
-    if (event.httpMethod === 'OPTIONS') {
+    if (event.httpMethod === 'OPTIONS' ) {
         return {
             statusCode: 204,
             headers: corsHeaders,
@@ -141,104 +140,46 @@ exports.handler = async (event, context) => {
         };
     }
 
-    // Vérification de la méthode HTTP
-    if (event.httpMethod !== 'POST') {
-        return createResponse(405, { 
-            success: false, 
-            message: 'Méthode non autorisée' 
-        });
-    }
-
+    // Le reste de la fonction handler est bon, mais nous allons nous assurer que createResponse est aussi correct.
     try {
-        // Parse du body de la requête
+        if (event.httpMethod !== 'POST' ) {
+            return createResponse(405, { 
+                success: false, 
+                message: 'Méthode non autorisée' 
+            });
+        }
+
         const body = JSON.parse(event.body || '{}');
         const { action } = body;
-
         console.log(`🚀 Action admin reçue: ${action}`);
-
-        // Connexion à MongoDB
         const db = await connectToMongoDB();
 
-        // Router vers la fonction appropriée
+        // Le switch est correct
         switch (action) {
-            // Statistiques générales
-            case 'getStats':
-                return await getStats(db);
-            
-            // Gestion des collections
-            case 'getCollectionData':
-                return await getCollectionData(db, body);
-            
-            case 'getItemDetails':
-                return await getItemDetails(db, body);
-            
-            case 'updateCollectionItem':
-                return await updateCollectionItem(db, body);
-            
-            case 'deleteCollectionItem':
-                return await deleteCollectionItem(db, body);
-            
-            case 'bulkDeleteItems':
-                return await bulkDeleteItems(db, body);
-            
-            // Gestion des demandes de livreurs
-            case 'getDemandesLivreurs':
-                return await getDemandesLivreurs(db, body);
-            
-            case 'getDemandesRestaurants':
-                return await getDemandesRestaurants(db, body);
-            
-            case 'approuverDemande':
-                return await approuverDemande(db, body);
-            
-            case 'rejeterDemande':
-                return await rejeterDemande(db, body);
-            
-            case 'envoyerNotification':
-                return await envoyerNotification(db, body);
-
-
-            
-            // Nettoyage automatique
-            case 'runCleanup':
-                return await runCleanup(db, body);
-            
-            
-            // Analyses
-            case 'getAnalytics':
-                return await getAnalytics(db, body);
-            
-            // Export
-            case 'exportData':
-                return await exportData(db, body);
-            
-            // Recherche globale
-            case 'globalSearch':
-                return await globalSearch(db, body);
-
-
-            // AJOUTS POUR LE SUIVI DES LIVREURS
-            case 'getDriverTrackingData':
-                return await getDriverTrackingData(db);
-
-            case 'resetDriverTax':
-                return await resetDriverTax(db, body);
-            // FIN DES AJOUTS
-
-
-    case 'getAssignedCoursesForDriver':
-    return await getAssignedCoursesForDriver(db, body);
-
-
-
-            
+            case 'getStats': return await getStats(db);
+            case 'getCollectionData': return await getCollectionData(db, body);
+            case 'getItemDetails': return await getItemDetails(db, body);
+            case 'updateCollectionItem': return await updateCollectionItem(db, body);
+            case 'deleteCollectionItem': return await deleteCollectionItem(db, body);
+            case 'bulkDeleteItems': return await bulkDeleteItems(db, body);
+            case 'getDemandesLivreurs': return await getDemandesLivreurs(db, body);
+            case 'getDemandesRestaurants': return await getDemandesRestaurants(db, body);
+            case 'approuverDemande': return await approuverDemande(db, body);
+            case 'rejeterDemande': return await rejeterDemande(db, body);
+            case 'envoyerNotification': return await envoyerNotification(db, body);
+            case 'runCleanup': return await runCleanup(db, body);
+            case 'getAnalytics': return await getAnalytics(db, body);
+            case 'exportData': return await exportData(db, body);
+            case 'globalSearch': return await globalSearch(db, body);
+            case 'getDriverTrackingData': return await getDriverTrackingData(db);
+            case 'resetDriverTax': return await resetDriverTax(db, body);
+            case 'getAssignedCoursesForDriver': return await getAssignedCoursesForDriver(db, body);
             default:
                 return createResponse(400, { 
                     success: false, 
                     message: `Action non supportée: ${action}` 
                 });
         }
-
     } catch (error) {
         console.error('💥 Erreur serveur admin:', error);
         return createResponse(500, { 
@@ -1884,7 +1825,10 @@ function clearCache() {
 function createResponse(statusCode, body) {
     return {
         statusCode,
-        headers: corsHeaders,
+        headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json' // On ajoute le Content-Type ici, pour chaque réponse
+        },
         body: JSON.stringify(body)
     };
 }
