@@ -1826,46 +1826,47 @@ function clearCache() {
 
 
 
-// REMPLACEZ VOTRE ANCIENNE FONCTION PAR CELLE-CI
+// DANS VOTRE FICHIER admin_fonction.js
 
+// ✅✅✅ VERSION FINALE ET SIMPLIFIÉE DE getDriverTrackingData ✅✅✅
 async function getDriverTrackingData(db) {
     try {
         console.log("Début de la récupération des données de suivi des livreurs.");
 
-        // 1. Récupérer tous les livreurs actifs pour avoir la liste de base
-        const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
-        console.log(`${drivers.length} livreurs actifs trouvés.`);
+        // 1. Récupérer les livreurs, les archives et les paiements en une seule fois
+        const [drivers, allArchivedCourses, allPaymentConfirmations] = await Promise.all([
+            db.collection('Res_livreur').find({ statut: 'actif' }).toArray(),
+            db.collection('completed_orders_archive').find({}).toArray(),
+            db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray()
+        ]);
 
-        // 2. Récupérer TOUTES les courses terminées et archivées en une seule fois
-        const allArchivedCourses = await db.collection('completed_orders_archive').find({}).toArray();
-        console.log(`${allArchivedCourses.length} courses archivées trouvées.`);
+        console.log(`${drivers.length} livreurs, ${allArchivedCourses.length} archives, ${allPaymentConfirmations.length} paiements.`);
 
-        // 3. Récupérer toutes les confirmations de paiement en attente
-        const allPaymentConfirmations = await db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray();
-        console.log(`${allPaymentConfirmations.length} confirmations de paiement en attente trouvées.`);
-
-        // 4. Traiter les données pour chaque livreur
+        // 2. Traiter les données pour chaque livreur
         const driverData = drivers.map(driver => {
-            // Filtrer les courses archivées pour ce livreur spécifique
+            // Filtrer les courses archivées pour ce livreur
             const driverArchivedCourses = allArchivedCourses.filter(course => 
                 course.completionData?.completedById === driver.id_livreur
             );
 
-            // Calculer le gain brut total à partir du champ standardisé `deliveryGain`
+            // =================================================================
+            // ✅ LOGIQUE DE CALCUL DÉFINITIVE : ON LIT DIRECTEMENT deliveryGain
+            // =================================================================
             const totalGains = driverArchivedCourses.reduce((sum, course) => {
+                // On fait simplement la somme du champ standardisé `deliveryGain`
                 const gain = course.completionData?.deliveryGain || 0;
                 return sum + gain;
             }, 0);
 
-            // Calculer la taxe due (10%)
+            // Calculer la taxe due
             const taxDue = Math.round(totalGains * 0.10);
 
-            // Vérifier si une confirmation de paiement existe pour ce livreur
+            // Trouver la confirmation de paiement
             const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
 
-            // Construire l'objet final pour ce livreur
+            // Retourner l'objet complet
             return {
-                ...driver, // Toutes les infos du livreur (nom, prénom, id, etc.)
+                ...driver,
                 completedCourses: driverArchivedCourses.length,
                 totalGains,
                 taxDue,
@@ -1874,13 +1875,14 @@ async function getDriverTrackingData(db) {
         });
 
         console.log("Données de suivi traitées avec succès.");
-        return createCorsResponse(200, { success: true, data: driverData });
+        return createResponse(200, { success: true, data: driverData });
 
     } catch (error) {
         console.error('Erreur dans getDriverTrackingData:', error);
-        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
+        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
     }
 }
+
 
 // NOUVELLE FONCTION COMPLÈTE POUR RÉINITIALISER LA DETTE
 async function resetDriverTax(db, data) {
