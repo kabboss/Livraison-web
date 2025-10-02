@@ -4,14 +4,24 @@ const { MongoClient, ObjectId } = require('mongodb');
 const MONGODB_URI = 'mongodb+srv://kabboss:ka23bo23re23@cluster0.uy2xz.mongodb.net/FarmsConnect?retryWrites=true&w=majority';
 const DB_NAME = 'FarmsConnect';
 
-// Headers CORS (CORRIGÉ)
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Max-Age': '86400'
-};
+
+
+// Fonction utilitaire pour les réponses CORS
+function createCorsResponse(statusCode, body) {
+    return {
+        statusCode,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Max-Age': '86400',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    };
+}
+
 
 // Instance MongoDB réutilisable
 let mongoClient = null;
@@ -128,22 +138,17 @@ async function connectToMongoDB() {
     }
 }
 
-// La fonction handler est maintenant correcte car elle utilise la constante corsHeaders corrigée
 exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
-    if (event.httpMethod === 'OPTIONS' ) {
-        return {
-            statusCode: 204,
-            headers: corsHeaders,
-            body: ''
-        };
+    // Gérer les requêtes OPTIONS pour CORS
+    if (event.httpMethod === 'OPTIONS') {
+        return createCorsResponse(204, {});
     }
 
-    // Le reste de la fonction handler est bon, mais nous allons nous assurer que createResponse est aussi correct.
     try {
-        if (event.httpMethod !== 'POST' ) {
-            return createResponse(405, { 
+        if (event.httpMethod !== 'POST') {
+            return createCorsResponse(405, { 
                 success: false, 
                 message: 'Méthode non autorisée' 
             });
@@ -154,7 +159,6 @@ exports.handler = async (event, context) => {
         console.log(`🚀 Action admin reçue: ${action}`);
         const db = await connectToMongoDB();
 
-        // Le switch est correct
         switch (action) {
             case 'getStats': return await getStats(db);
             case 'getCollectionData': return await getCollectionData(db, body);
@@ -175,14 +179,14 @@ exports.handler = async (event, context) => {
             case 'resetDriverTax': return await resetDriverTax(db, body);
             case 'getAssignedCoursesForDriver': return await getAssignedCoursesForDriver(db, body);
             default:
-                return createResponse(400, { 
+                return createCorsResponse(400, { 
                     success: false, 
                     message: `Action non supportée: ${action}` 
                 });
         }
     } catch (error) {
         console.error('💥 Erreur serveur admin:', error);
-        return createResponse(500, { 
+        return createCorsResponse(500, { 
             success: false, 
             message: 'Erreur interne du serveur',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -201,7 +205,7 @@ async function getStats(db) {
         
         if (cached) {
             console.log('📋 Statistiques récupérées du cache');
-            return createResponse(200, { success: true, ...cached });
+            return createCorsResponse(200, { success: true, ...cached });
         }
 
         // Obtenir les statistiques de toutes les collections
@@ -260,11 +264,11 @@ async function getStats(db) {
         setCachedData(cacheKey, result);
         
         console.log('✅ Statistiques générales chargées');
-        return createResponse(200, { success: true, ...result });
+        return createCorsResponse(200, { success: true, ...result });
 
     } catch (error) {
         console.error('❌ Erreur getStats:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors du chargement des statistiques'
         });
@@ -343,7 +347,7 @@ async function getCollectionData(db, data) {
         console.log(`📋 Récupération collection: ${collection}`);
 
         if (!collection || !COLLECTIONS_CONFIG[collection]) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection non supportée'
             });
@@ -401,7 +405,7 @@ async function getCollectionData(db, data) {
 
         console.log(`✅ ${documents.length} documents récupérés de ${collection}`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             data: documents,
             totalCount,
@@ -417,7 +421,7 @@ async function getCollectionData(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur getCollectionData:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: `Erreur lors du chargement de la collection ${data.collection}`
         });
@@ -431,14 +435,14 @@ async function getItemDetails(db, data) {
         console.log(`🔍 Récupération détails: ${collection}/${itemId}`);
 
         if (!collection || !itemId) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection et ID requis'
             });
         }
 
         if (!COLLECTIONS_CONFIG[collection]) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection non supportée'
             });
@@ -450,7 +454,7 @@ async function getItemDetails(db, data) {
         });
 
         if (!item) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Élément non trouvé'
             });
@@ -458,7 +462,7 @@ async function getItemDetails(db, data) {
 
         console.log(`✅ Détails récupérés pour ${collection}/${itemId}`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             data: item,
             collection,
@@ -467,7 +471,7 @@ async function getItemDetails(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur getItemDetails:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la récupération des détails'
         });
@@ -522,14 +526,14 @@ async function updateCollectionItem(db, data) {
         console.log(`✏️ Mise à jour ${collection}: ${itemId}`);
 
         if (!collection || !itemId || !updates) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection, ID et données de mise à jour requis'
             });
         }
 
         if (!COLLECTIONS_CONFIG[collection]) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection non supportée'
             });
@@ -547,13 +551,13 @@ async function updateCollectionItem(db, data) {
             clearCache();
             
             console.log(`✅ Élément ${itemId} mis à jour dans ${collection}`);
-            return createResponse(200, {
+            return createCorsResponse(200, {
                 success: true,
                 message: 'Élément mis à jour avec succès',
                 modifiedCount: result.modifiedCount
             });
         } else {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Élément non trouvé'
             });
@@ -561,7 +565,7 @@ async function updateCollectionItem(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur updateCollectionItem:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la mise à jour'
         });
@@ -575,14 +579,14 @@ async function deleteCollectionItem(db, data) {
         console.log(`🗑️ Suppression ${collection}: ${itemId}`);
 
         if (!collection || !itemId) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection et ID requis'
             });
         }
 
         if (!COLLECTIONS_CONFIG[collection]) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection non supportée'
             });
@@ -594,7 +598,7 @@ async function deleteCollectionItem(db, data) {
         });
 
         if (!existingItem) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Élément non trouvé'
             });
@@ -614,13 +618,13 @@ async function deleteCollectionItem(db, data) {
             clearCache();
             
             console.log(`✅ Élément ${itemId} supprimé de ${collection}`);
-            return createResponse(200, {
+            return createCorsResponse(200, {
                 success: true,
                 message: 'Élément supprimé avec succès',
                 deletedCount: result.deletedCount
             });
         } else {
-            return createResponse(500, {
+            return createCorsResponse(500, {
                 success: false,
                 message: 'Erreur lors de la suppression'
             });
@@ -631,13 +635,13 @@ async function deleteCollectionItem(db, data) {
         
         // Gestion spécifique des erreurs ObjectId
         if (error.message && error.message.includes('ObjectId')) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'ID d\'élément invalide'
             });
         }
         
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la suppression'
         });
@@ -651,14 +655,14 @@ async function bulkDeleteItems(db, data) {
         console.log(`🗑️ Suppression en lot ${collection}: ${itemIds.length} éléments`);
 
         if (!collection || !itemIds || !Array.isArray(itemIds) || itemIds.length === 0) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection et liste d\'IDs requis'
             });
         }
 
         if (!COLLECTIONS_CONFIG[collection]) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Collection non supportée'
             });
@@ -675,7 +679,7 @@ async function bulkDeleteItems(db, data) {
         }).filter(id => id !== null);
 
         if (objectIds.length === 0) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Aucun ID valide fourni'
             });
@@ -688,7 +692,7 @@ async function bulkDeleteItems(db, data) {
         clearCache();
         
         console.log(`✅ ${result.deletedCount} éléments supprimés de ${collection}`);
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             message: `${result.deletedCount} éléments supprimés avec succès`,
             deletedCount: result.deletedCount,
@@ -697,7 +701,7 @@ async function bulkDeleteItems(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur bulkDeleteItems:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la suppression en lot'
         });
@@ -796,7 +800,7 @@ async function getDemandesLivreurs(db, data) {
 
         console.log(`✅ ${demandes.length} demandes de livreurs récupérées`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             data: enrichedDemandes,
             totalCount,
@@ -818,7 +822,7 @@ async function getDemandesLivreurs(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur getDemandesLivreurs:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la récupération des demandes de livreurs'
         });
@@ -899,7 +903,7 @@ async function getDemandesRestaurants(db, data) {
 
         console.log(`✅ ${demandes.length} demandes de restaurants récupérées`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             data: enrichedDemandes,
             totalCount,
@@ -921,7 +925,7 @@ async function getDemandesRestaurants(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur getDemandesRestaurants:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la récupération des demandes de restaurants'
         });
@@ -935,7 +939,7 @@ async function approuverDemande(db, data) {
         console.log(`✅ Approbation demande: ${demandeId} (${type})`);
 
         if (!demandeId || !type) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'ID de demande et type requis'
             });
@@ -950,7 +954,7 @@ async function approuverDemande(db, data) {
         });
 
         if (!demande) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Demande non trouvée ou déjà traitée'
             });
@@ -975,7 +979,7 @@ async function approuverDemande(db, data) {
         );
 
         if (updateResult.matchedCount === 0) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Erreur lors de la mise à jour'
             });
@@ -986,7 +990,7 @@ async function approuverDemande(db, data) {
 
         console.log(`✅ Demande ${demandeId} approuvée avec le code ${codeAutorisation}`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             message: 'Demande approuvée avec succès',
             codeAutorisation: codeAutorisation,
@@ -996,7 +1000,7 @@ async function approuverDemande(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur approuverDemande:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de l\'approbation de la demande'
         });
@@ -1010,7 +1014,7 @@ async function rejeterDemande(db, data) {
         console.log(`❌ Rejet demande: ${demandeId} (${type})`);
 
         if (!demandeId || !type || !motif) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'ID de demande, type et motif requis'
             });
@@ -1025,7 +1029,7 @@ async function rejeterDemande(db, data) {
         });
 
         if (!demande) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Demande non trouvée ou déjà traitée'
             });
@@ -1047,7 +1051,7 @@ async function rejeterDemande(db, data) {
         );
 
         if (updateResult.matchedCount === 0) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Erreur lors de la mise à jour'
             });
@@ -1058,7 +1062,7 @@ async function rejeterDemande(db, data) {
 
         console.log(`✅ Demande ${demandeId} rejetée`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             message: 'Demande rejetée avec succès',
             demandeId: demandeId,
@@ -1068,7 +1072,7 @@ async function rejeterDemande(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur rejeterDemande:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors du rejet de la demande'
         });
@@ -1082,7 +1086,7 @@ async function envoyerNotification(db, data) {
         console.log(`📲 Envoi notification: ${demandeId} (${type})`);
 
         if (!demandeId || !type) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'ID de demande et type requis'
             });
@@ -1096,7 +1100,7 @@ async function envoyerNotification(db, data) {
         });
 
         if (!demande) {
-            return createResponse(404, {
+            return createCorsResponse(404, {
                 success: false,
                 message: 'Demande non trouvée'
             });
@@ -1117,7 +1121,7 @@ async function envoyerNotification(db, data) {
         // Simuler l'envoi de notification
         // TODO: Intégrer un service réel de WhatsApp/SMS
         
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             message: 'Notification envoyée avec succès',
             destinataire: demande.whatsapp || demande.telephone,
@@ -1126,7 +1130,7 @@ async function envoyerNotification(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur envoyerNotification:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de l\'envoi de la notification'
         });
@@ -1168,7 +1172,7 @@ async function runCleanup(db, data = {}) {
 
         console.log('✅ Nettoyage automatique terminé');
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             message: 'Nettoyage automatique terminé',
             results: results,
@@ -1177,7 +1181,7 @@ async function runCleanup(db, data = {}) {
 
     } catch (error) {
         console.error('❌ Erreur runCleanup:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors du nettoyage automatique'
         });
@@ -1272,7 +1276,7 @@ async function globalSearch(db, data) {
         const { query, limit = 50 } = data;
 
         if (!query || query.trim().length < 2) {
-            return createResponse(400, {
+            return createCorsResponse(400, {
                 success: false,
                 message: 'Requête de recherche trop courte (minimum 2 caractères)'
             });
@@ -1312,7 +1316,7 @@ async function globalSearch(db, data) {
 
         console.log(`✅ Recherche terminée: ${totalResults} résultats trouvés`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             query,
             totalResults,
@@ -1321,7 +1325,7 @@ async function globalSearch(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur globalSearch:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la recherche globale'
         });
@@ -1352,7 +1356,7 @@ async function getAnalytics(db, data) {
                 analytics = await getPerformanceAnalytics(db, startDate);
                 break;
             default:
-                return createResponse(400, {
+                return createCorsResponse(400, {
                     success: false,
                     message: 'Type d\'analyse non supporté'
                 });
@@ -1360,7 +1364,7 @@ async function getAnalytics(db, data) {
 
         console.log(`✅ Analyses ${type} générées`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             type,
             timeRange,
@@ -1373,7 +1377,7 @@ async function getAnalytics(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur getAnalytics:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de la génération des analyses'
         });
@@ -1533,7 +1537,7 @@ async function exportData(db, data) {
         switch (type) {
             case 'collection':
                 if (!collection) {
-                    return createResponse(400, {
+                    return createCorsResponse(400, {
                         success: false,
                         message: 'Collection requise pour l\'export'
                     });
@@ -1550,7 +1554,7 @@ async function exportData(db, data) {
                 exportData = await exportAnalytics(db, filters);
                 break;
             default:
-                return createResponse(400, {
+                return createCorsResponse(400, {
                     success: false,
                     message: 'Type d\'export non supporté'
                 });
@@ -1570,7 +1574,7 @@ async function exportData(db, data) {
 
         console.log(`✅ Export ${type} généré (${format})`);
 
-        return createResponse(200, {
+        return createCorsResponse(200, {
             success: true,
             type,
             format,
@@ -1582,7 +1586,7 @@ async function exportData(db, data) {
 
     } catch (error) {
         console.error('❌ Erreur exportData:', error);
-        return createResponse(500, {
+        return createCorsResponse(500, {
             success: false,
             message: 'Erreur lors de l\'export'
         });
@@ -1822,7 +1826,7 @@ function clearCache() {
     cache.clear();
 }
 
-function createResponse(statusCode, body) {
+function createCorsResponse(statusCode, body) {
     return {
         statusCode,
         headers: {
@@ -1883,11 +1887,11 @@ async function getDriverTrackingData(db) {
         });
 
         console.log("Données de suivi traitées avec succès.");
-        return createResponse(200, { success: true, data: driverData });
+        return createCorsResponse(200, { success: true, data: driverData });
 
     } catch (error) {
         console.error('Erreur dans getDriverTrackingData:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
+        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
     }
 }
 
@@ -1896,7 +1900,7 @@ async function resetDriverTax(db, data) {
     try {
         const { driverId } = data;
         if (!driverId) {
-            return createResponse(400, { success: false, message: 'ID du livreur manquant.' });
+            return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
         }
 
         console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
@@ -1917,14 +1921,14 @@ async function resetDriverTax(db, data) {
         );
         console.log(`${paymentUpdateResult.modifiedCount} confirmations de paiement ont été validées pour le livreur ${driverId}.`);
 
-        return createResponse(200, { 
+        return createCorsResponse(200, { 
             success: true, 
             message: `Dette réinitialisée. ${deleteResult.deletedCount} courses purgées et ${paymentUpdateResult.modifiedCount} paiements validés.` 
         });
 
     } catch (error) {
         console.error('Erreur dans resetDriverTax:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation de la dette.' });
+        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la réinitialisation de la dette.' });
     }
 }
 
@@ -1934,7 +1938,7 @@ async function resetDriverTax(db, data) {
 async function getAssignedCoursesForDriver(db, data) {
     const { driverId } = data;
     if (!driverId) {
-        return createResponse(400, { success: false, message: 'ID du livreur manquant.' });
+        return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
     }
     try {
         const collections = {
@@ -1960,12 +1964,13 @@ async function getAssignedCoursesForDriver(db, data) {
                 });
             });
         }
-        return createResponse(200, { success: true, courses: allAssignedCourses });
+        return createCorsResponse(200, { success: true, courses: allAssignedCourses });
     } catch (error) {
         console.error('Erreur getAssignedCoursesForDriver:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur.' });
+        return createCorsResponse(500, { success: false, message: 'Erreur serveur.' });
     }
 }
+
 
 
 
@@ -2026,10 +2031,10 @@ async function getDriverTrackingData(db) {
         });
 
         console.log("Données de suivi traitées avec succès.");
-        return createResponse(200, { success: true, data: driverData });
+        return createCorsResponse(200, { success: true, data: driverData });
 
     } catch (error) {
         console.error('Erreur dans getDriverTrackingData:', error);
-        return createResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
+        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
     }
 }
