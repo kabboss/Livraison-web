@@ -1824,17 +1824,6 @@ function clearCache() {
     cache.clear();
 }
 
-function createCorsResponse(statusCode, body) {
-    return {
-        statusCode,
-        headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json' // On ajoute le Content-Type ici, pour chaque réponse
-        },
-        body: JSON.stringify(body)
-    };
-}
-
 
 
 // REMPLACEZ VOTRE ANCIENNE FONCTION PAR CELLE-CI
