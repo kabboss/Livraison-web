@@ -11,17 +11,14 @@ function createCorsResponse(statusCode, body) {
     return {
         statusCode,
         headers: {
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': '*', // Permet à n'importe quel site de faire des requêtes
             'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Max-Age': '86400',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
     };
 }
-
 
 // Instance MongoDB réutilisable
 let mongoClient = null;
@@ -141,13 +138,15 @@ async function connectToMongoDB() {
 exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
-    // Gérer les requêtes OPTIONS pour CORS
-    if (event.httpMethod === 'OPTIONS') {
-        return createCorsResponse(204, {});
+    // Gérer les requêtes OPTIONS pour CORS en PREMIER
+    // C'est la correction la plus importante pour le problème CORS.
+    if (event.httpMethod === 'OPTIONS' ) {
+        return createCorsResponse(204, {}); // 204 No Content est la réponse standard
     }
 
     try {
-        if (event.httpMethod !== 'POST') {
+        // Le reste de votre logique ne s'exécute que pour les autres méthodes (POST, etc.)
+        if (event.httpMethod !== 'POST' ) {
             return createCorsResponse(405, { 
                 success: false, 
                 message: 'Méthode non autorisée' 
@@ -184,7 +183,7 @@ exports.handler = async (event, context) => {
                     message: `Action non supportée: ${action}` 
                 });
         }
-    } catch (error) {
+   } catch (error) {
         console.error('💥 Erreur serveur admin:', error);
         return createCorsResponse(500, { 
             success: false, 
@@ -193,7 +192,6 @@ exports.handler = async (event, context) => {
         });
     }
 };
-
 // ===== STATISTIQUES GÉNÉRALES =====
 
 async function getStats(db) {
