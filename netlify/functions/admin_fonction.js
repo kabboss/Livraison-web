@@ -1826,183 +1826,142 @@ function clearCache() {
 
 
 
-// ✅✅✅ VERSION FINALE CORRIGÉE ✅✅✅
+// ✅✅✅ VERSION CORRIGÉE ET ROBUSTE DE getDriverTrackingData ✅✅✅
 async function getDriverTrackingData(db) {
     try {
-        console.log("Début de la récupération des données de suivi des livreurs.");
+        console.log("🚀 Récupération des données de suivi des livreurs.");
 
-        // 1. Récupérer les livreurs, les archives et les paiements en une seule fois
-        const [drivers, allArchivedCourses, allPaymentConfirmations] = await Promise.all([
-            db.collection('Res_livreur').find({ statut: 'actif' }).toArray(),
-            db.collection('completed_orders_archive').find({}).toArray(),
-            db.collection('confirmations_paiement').find({ status: 'pending_validation' }).toArray()
+        // 1. Récupérer tous les livreurs actifs
+        const drivers = await db.collection('Res_livreur').find({ statut: 'actif' }).toArray();
+        if (drivers.length === 0) {
+            return createCorsResponse(200, { success: true, data: [], totalDrivers: 0 });
+        }
+
+        // 2. Extraire tous les id_livreur pour optimiser les requêtes
+        const driverIdentifiers = drivers.map(d => d.id_livreur).filter(id => id);
+
+        // 3. Récupérer TOUTES les courses et confirmations en une seule fois
+        const [allArchivedCourses, allPendingPayments] = await Promise.all([
+            db.collection('completed_orders_archive').find({ 'completionData.completedById': { $in: driverIdentifiers } }).toArray(),
+            db.collection('confirmations_paiement').find({ driverId: { $in: driverIdentifiers }, status: 'pending_validation' }).toArray()
         ]);
 
-        console.log(`${drivers.length} livreurs, ${allArchivedCourses.length} archives, ${allPaymentConfirmations.length} paiements.`);
+        // 4. Grouper les données par id_livreur pour un accès rapide
+        const coursesByDriver = allArchivedCourses.reduce((acc, course) => {
+            const driverId = course.completionData.completedById;
+            if (!acc[driverId]) acc[driverId] = [];
+            acc[driverId].push(course);
+            return acc;
+        }, {});
 
-        // 2. Traiter les données pour chaque livreur
+        const paymentsByDriver = allPendingPayments.reduce((acc, payment) => {
+            acc[payment.driverId] = payment;
+            return acc;
+        }, {});
+
+        // 5. Combiner les données pour chaque livreur
         const driverData = drivers.map(driver => {
-            // Filtrer les courses archivées pour ce livreur
-            const driverArchivedCourses = allArchivedCourses.filter(course => 
-                course.completionData?.completedById === driver.id_livreur
-            );
-
-            // =================================================================
-            // ✅ LOGIQUE DE CALCUL DÉFINITIVE : ON LIT DIRECTEMENT deliveryGain
-            // =================================================================
-            const totalGains = driverArchivedCourses.reduce((sum, course) => {
-                // On fait simplement la somme du champ standardisé `deliveryGain`
-                const gain = course.completionData?.deliveryGain || 0;
-                return sum + gain;
-            }, 0);
-
-            // Calculer la taxe due
+            const driverCourses = coursesByDriver[driver.id_livreur] || [];
+            const totalGains = driverCourses.reduce((sum, course) => sum + (course.completionData?.deliveryGain || 0), 0);
             const taxDue = Math.round(totalGains * 0.10);
+            const paymentConfirmation = paymentsByDriver[driver.id_livreur] || null;
 
-            // Trouver la confirmation de paiement
-            const paymentConfirmation = allPaymentConfirmations.find(p => p.driverId === driver.id_livreur);
-
-            // Retourner l'objet complet
             return {
                 ...driver,
-                completedCourses: driverArchivedCourses.length,
+                completedCourses: driverCourses.length,
                 totalGains,
                 taxDue,
-                paymentConfirmation: paymentConfirmation || null
+                paymentConfirmation
             };
         });
 
-        console.log("Données de suivi traitées avec succès.");
-        
-        // ✅✅✅ CORRECTION : Utiliser createCorsResponse au lieu de createResponse
-        return createCorsResponse(200, { success: true, data: driverData });
+        console.log("✅ Données de suivi traitées avec succès.");
+        return createCorsResponse(200, { success: true, data: driverData, totalDrivers: drivers.length });
 
     } catch (error) {
-        console.error('Erreur dans getDriverTrackingData:', error);
-        
-        // ✅✅✅ CORRECTION : Utiliser createCorsResponse au lieu de createResponse
-        return createCorsResponse(500, { 
-            success: false, 
-            message: 'Erreur serveur lors de la récupération des données de suivi.' 
-        });
+        console.error('❌ Erreur dans getDriverTrackingData:', error);
+        return createCorsResponse(500, { success: false, message: 'Erreur serveur lors de la récupération des données de suivi.' });
     }
 }
 
 
 
-// ✅✅✅ FONCTION CORRIGÉE POUR SUPPRIMER DÉFINITIVEMENT LES COMMANDES ✅✅✅
+
+// ✅✅✅ VERSION CORRIGÉE ET ROBUSTE DE resetDriverTax ✅✅✅
 async function resetDriverTax(db, data) {
-    const { driverId } = data;
+    const { driverId } = data; // driverId est l'_id de la collection Res_livreur
     if (!driverId) {
-        return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
+        return createCorsResponse(400, { success: false, message: 'ID de l\'objet livreur manquant.' });
     }
 
-    console.log(`🚀 Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
+    console.log(`🚀 DÉBUT RÉINITIALISATION pour l'objet livreur _id: ${driverId}`);
+    const session = mongoClient.startSession(); // Utiliser une transaction pour la sécurité
 
     try {
-        // 1. SUPPRESSION DÉFINITIVE de toutes les courses archivées du livreur
-        const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 
-            'completionData.completedById': driverId 
-        });
-        
-        console.log(`🗑️ ${deleteResult.deletedCount} courses archivées ont été SUPPRIMÉES DÉFINITIVEMENT pour le livreur ${driverId}.`);
+        let result = {};
 
-        // 2. VALIDATION du paiement - mise à jour du statut
-        const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
-            { 
-                driverId: driverId, 
-                status: 'pending_validation' 
-            },
-            { 
-                $set: { 
-                    status: 'validated', 
-                    validatedAt: new Date(), 
-                    validatedBy: 'admin',
-                    notes: `Paiement validé - ${deleteResult.deletedCount} courses supprimées de l'archive`
-                } 
+        await session.withTransaction(async () => {
+            // ÉTAPE 1: Trouver le livreur pour obtenir son id_livreur (ex: LIV12345)
+            const driver = await db.collection('Res_livreur').findOne({ _id: new ObjectId(driverId) }, { session });
+            if (!driver || !driver.id_livreur) {
+                throw new Error(`Livreur non trouvé ou id_livreur manquant pour _id: ${driverId}`);
             }
-        );
-        
-        console.log(`💰 ${paymentUpdateResult.modifiedCount} confirmations de paiement validées pour le livreur ${driverId}.`);
+            const driverIdentifier = driver.id_livreur;
+            console.log(`🔑 Identifiant du livreur trouvé: ${driverIdentifier}`);
 
-        // 3. SUPPRESSION AUSSI des commandes actives assignées au livreur (optionnel mais recommandé)
-        // Supprimer des différentes collections où le livreur pourrait avoir des commandes actives
-        const collectionsToClean = [
-            'Livraison',
-            'Commandes', 
-            'shopping_orders',
-            'pharmacyOrders',
-            'cour_expedition'
-        ];
+            // ÉTAPE 2: VÉRIFICATION - Compter les courses à supprimer
+            const coursesBeforeCount = await db.collection('completed_orders_archive').countDocuments({ 'completionData.completedById': driverIdentifier }, { session });
+            console.log(`📊 VÉRIFICATION - ${coursesBeforeCount} courses trouvées pour ${driverIdentifier}`);
 
-        let totalActiveDeleted = 0;
-        
-        for (const collectionName of collectionsToClean) {
-            try {
-                const activeDeleteResult = await db.collection(collectionName).deleteMany({
-                    $or: [
-                        { driverId: driverId },
-                        { idLivreurEnCharge: driverId },
-                        { id_livreur: driverId }
-                    ],
-                    status: { $in: ['assigned', 'en_cours', 'en_cours_de_livraison'] }
-                });
-                
-                if (activeDeleteResult.deletedCount > 0) {
-                    console.log(`🧹 ${activeDeleteResult.deletedCount} commandes actives supprimées de ${collectionName}`);
-                    totalActiveDeleted += activeDeleteResult.deletedCount;
+            // ÉTAPE 3: SUPPRESSION des courses archivées
+            const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 'completionData.completedById': driverIdentifier }, { session });
+            console.log(`🗑️ SUPPRESSION - ${deleteResult.deletedCount} courses supprimées.`);
+
+            // ÉTAPE 4: VALIDATION des paiements en attente
+            const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
+                { driverId: driverIdentifier, status: 'pending_validation' },
+                { $set: { status: 'validated', validatedAt: new Date(), validatedBy: 'admin' } },
+                { session }
+            );
+            console.log(`💰 VALIDATION - ${paymentUpdateResult.modifiedCount} paiements mis à jour.`);
+
+            // ÉTAPE 5: JOURNALISATION de l'opération
+            await db.collection('admin_operations_log').insertOne({
+                type: 'tax_reset',
+                driverObjectId: driverId,
+                driverIdentifier: driverIdentifier,
+                deletedCourses: deleteResult.deletedCount,
+                validatedPayments: paymentUpdateResult.modifiedCount,
+                performedBy: 'admin',
+                timestamp: new Date()
+            }, { session });
+            console.log("📝 Opération journalisée.");
+
+            result = {
+                success: true,
+                message: `Paiement validé et dette réinitialisée pour ${driver.prenom} ${driver.nom}.`,
+                details: {
+                    coursesSupprimees: deleteResult.deletedCount,
+                    paiementsValides: paymentUpdateResult.modifiedCount
                 }
-            } catch (error) {
-                console.warn(`⚠️ Erreur lors du nettoyage de ${collectionName}:`, error.message);
-            }
-        }
-
-        // 4. NETTOYAGE DU CACHE pour rafraîchir l'interface admin
-        clearCache();
-        console.log("🔄 Cache de l'application admin nettoyé.");
-
-        // 5. JOURNALISATION de l'opération
-        await db.collection('admin_operations_log').insertOne({
-            type: 'tax_reset',
-            driverId: driverId,
-            deletedArchivedCourses: deleteResult.deletedCount,
-            deletedActiveCourses: totalActiveDeleted,
-            validatedPayments: paymentUpdateResult.modifiedCount,
-            performedBy: 'admin',
-            timestamp: new Date(),
-            notes: `Réinitialisation complète pour le livreur ${driverId}`
+            };
         });
 
-        console.log(`✅ OPÉRATION TERMINÉE pour le livreur ${driverId}`);
-
-        return createCorsResponse(200, { 
-            success: true, 
-            message: `Paiement validé et dette réinitialisée avec succès !`,
-            details: {
-                coursesArchivesSupprimees: deleteResult.deletedCount,
-                commandesActivesSupprimees: totalActiveDeleted,
-                paiementsValides: paymentUpdateResult.modifiedCount,
-                message: `Toutes les données du livreur ont été nettoyées définitivement.`
-            }
-        });
+        clearCache(); // Nettoyer le cache après la transaction réussie
+        console.log("🔄 Cache nettoyé.");
+        console.log(`✅ RÉINITIALISATION TERMINÉE pour ${driverId}`);
+        return createCorsResponse(200, result);
 
     } catch (error) {
-        console.error('❌ Erreur critique dans resetDriverTax:', error);
-        
-        // Journalisation de l'erreur
-        await db.collection('admin_operations_log').insertOne({
-            type: 'tax_reset_error',
-            driverId: driverId,
-            error: error.message,
-            timestamp: new Date(),
-            performedBy: 'admin'
+        console.error('❌ ERREUR CRITIQUE resetDriverTax:', error);
+        await session.abortTransaction();
+        return createCorsResponse(500, {
+            success: false,
+            message: 'Erreur serveur lors de la réinitialisation.',
+            error: error.message
         });
-
-        return createCorsResponse(500, { 
-            success: false, 
-            message: 'Erreur serveur lors de la réinitialisation de la dette.',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+    } finally {
+        await session.endSession();
     }
 }
 
