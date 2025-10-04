@@ -1890,52 +1890,118 @@ async function getDriverTrackingData(db) {
 
 
 
-// ✅✅✅ FONCTION CORRIGÉE ET VALIDÉE ✅✅✅
+// ✅✅✅ FONCTION CORRIGÉE POUR SUPPRIMER DÉFINITIVEMENT LES COMMANDES ✅✅✅
 async function resetDriverTax(db, data) {
     const { driverId } = data;
     if (!driverId) {
         return createCorsResponse(400, { success: false, message: 'ID du livreur manquant.' });
     }
 
-    console.log(`Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
+    console.log(`🚀 Début de la réinitialisation de la taxe pour le livreur : ${driverId}`);
 
     try {
-        // 1. Supprimer toutes les courses de la collection d'archives pour ce livreur.
-        //    La requête est maintenant 100% correcte grâce à votre confirmation.
+        // 1. SUPPRESSION DÉFINITIVE de toutes les courses archivées du livreur
         const deleteResult = await db.collection('completed_orders_archive').deleteMany({ 
             'completionData.completedById': driverId 
         });
         
-        console.log(`${deleteResult.deletedCount} courses archivées ont été supprimées pour le livreur ${driverId}.`);
+        console.log(`🗑️ ${deleteResult.deletedCount} courses archivées ont été SUPPRIMÉES DÉFINITIVEMENT pour le livreur ${driverId}.`);
 
-        // 2. Mettre à jour le statut de la confirmation de paiement de "pending_validation" à "validated".
+        // 2. VALIDATION du paiement - mise à jour du statut
         const paymentUpdateResult = await db.collection('confirmations_paiement').updateMany(
-            { driverId: driverId, status: 'pending_validation' },
+            { 
+                driverId: driverId, 
+                status: 'pending_validation' 
+            },
             { 
                 $set: { 
                     status: 'validated', 
                     validatedAt: new Date(), 
-                    validatedBy: 'admin'
+                    validatedBy: 'admin',
+                    notes: `Paiement validé - ${deleteResult.deletedCount} courses supprimées de l'archive`
                 } 
             }
         );
         
-        console.log(`${paymentUpdateResult.modifiedCount} confirmations de paiement ont été validées pour le livreur ${driverId}.`);
+        console.log(`💰 ${paymentUpdateResult.modifiedCount} confirmations de paiement validées pour le livreur ${driverId}.`);
 
-        // 3. Nettoyer le cache pour forcer le rafraîchissement des données sur l'interface admin.
+        // 3. SUPPRESSION AUSSI des commandes actives assignées au livreur (optionnel mais recommandé)
+        // Supprimer des différentes collections où le livreur pourrait avoir des commandes actives
+        const collectionsToClean = [
+            'Livraison',
+            'Commandes', 
+            'shopping_orders',
+            'pharmacyOrders',
+            'cour_expedition'
+        ];
+
+        let totalActiveDeleted = 0;
+        
+        for (const collectionName of collectionsToClean) {
+            try {
+                const activeDeleteResult = await db.collection(collectionName).deleteMany({
+                    $or: [
+                        { driverId: driverId },
+                        { idLivreurEnCharge: driverId },
+                        { id_livreur: driverId }
+                    ],
+                    status: { $in: ['assigned', 'en_cours', 'en_cours_de_livraison'] }
+                });
+                
+                if (activeDeleteResult.deletedCount > 0) {
+                    console.log(`🧹 ${activeDeleteResult.deletedCount} commandes actives supprimées de ${collectionName}`);
+                    totalActiveDeleted += activeDeleteResult.deletedCount;
+                }
+            } catch (error) {
+                console.warn(`⚠️ Erreur lors du nettoyage de ${collectionName}:`, error.message);
+            }
+        }
+
+        // 4. NETTOYAGE DU CACHE pour rafraîchir l'interface admin
         clearCache();
-        console.log("Cache de l'application admin nettoyé.");
+        console.log("🔄 Cache de l'application admin nettoyé.");
+
+        // 5. JOURNALISATION de l'opération
+        await db.collection('admin_operations_log').insertOne({
+            type: 'tax_reset',
+            driverId: driverId,
+            deletedArchivedCourses: deleteResult.deletedCount,
+            deletedActiveCourses: totalActiveDeleted,
+            validatedPayments: paymentUpdateResult.modifiedCount,
+            performedBy: 'admin',
+            timestamp: new Date(),
+            notes: `Réinitialisation complète pour le livreur ${driverId}`
+        });
+
+        console.log(`✅ OPÉRATION TERMINÉE pour le livreur ${driverId}`);
 
         return createCorsResponse(200, { 
             success: true, 
-            message: `Dette réinitialisée. ${deleteResult.deletedCount} courses purgées et ${paymentUpdateResult.modifiedCount} paiements validés.` 
+            message: `Paiement validé et dette réinitialisée avec succès !`,
+            details: {
+                coursesArchivesSupprimees: deleteResult.deletedCount,
+                commandesActivesSupprimees: totalActiveDeleted,
+                paiementsValides: paymentUpdateResult.modifiedCount,
+                message: `Toutes les données du livreur ont été nettoyées définitivement.`
+            }
         });
 
     } catch (error) {
-        console.error('Erreur dans resetDriverTax:', error);
+        console.error('❌ Erreur critique dans resetDriverTax:', error);
+        
+        // Journalisation de l'erreur
+        await db.collection('admin_operations_log').insertOne({
+            type: 'tax_reset_error',
+            driverId: driverId,
+            error: error.message,
+            timestamp: new Date(),
+            performedBy: 'admin'
+        });
+
         return createCorsResponse(500, { 
             success: false, 
-            message: 'Erreur serveur lors de la réinitialisation de la dette.' 
+            message: 'Erreur serveur lors de la réinitialisation de la dette.',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 }
