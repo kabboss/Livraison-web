@@ -1,3 +1,4 @@
+
 // Fichier : functions/reportInfraction.js
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -111,3 +112,4 @@ exports.handler = async (event) => {
         return { statusCode: 500, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Erreur interne du serveur.' }) };
     }
 };
+

@@ -39,10 +39,10 @@ function validateTrackingCode(codeID) {
     return { valid: true, code: trimmedCode.toUpperCase() };
 }
 
-// Enrichissement ultra-sophistiqué des données
-async function enrichTrackingData(expeditionData, livreurCollection) {
+// Enrichissement ultra-sophistiqué des données de livraison
+async function enrichTrackingData(livraisonData, livreurCollection) {
     try {
-        const enrichedData = { ...expeditionData };
+        const enrichedData = { ...livraisonData };
         
         // Calculer la durée depuis la création
         if (enrichedData.dateCreation) {
@@ -60,14 +60,20 @@ async function enrichTrackingData(expeditionData, livreurCollection) {
         };
         
         // Enrichir les informations de localisation
-        if (enrichedData.driverLocation) {
-            enrichedData.driverLocation.derniereMAJ = enrichedData.dateModification || enrichedData.dateAcceptation;
-            enrichedData.driverLocation.precision = enrichedData.driverLocation.accuracy ? 
-                `±${Math.round(enrichedData.driverLocation.accuracy)}m` : 'Non spécifiée';
+        if (enrichedData.localisation) {
+            enrichedData.driverLocation = {
+                latitude: enrichedData.localisation.latitude,
+                longitude: enrichedData.localisation.longitude,
+                accuracy: enrichedData.localisation.accuracy,
+                timestamp: enrichedData.localisation.timestamp,
+                derniereMAJ: enrichedData.dateModification || enrichedData.dateAcceptation,
+                precision: enrichedData.localisation.accuracy ? 
+                    `±${Math.round(enrichedData.localisation.accuracy)}m` : 'Non spécifiée'
+            };
         }
         
         // Récupérer et enrichir les informations du livreur
-        const livreurId = enrichedData.idLivreurEnCharge || enrichedData.driverId;
+        const livreurId = enrichedData.idLivreurEnCharge || enrichedData.driverId || enrichedData.id_livreur;
         if (livreurId && livreurCollection) {
             try {
                 logger.info('Recherche des informations du livreur', { livreurId });
@@ -184,23 +190,25 @@ async function enrichTrackingData(expeditionData, livreurCollection) {
         // Ajouter des informations de traçabilité
         enrichedData.traceabilite = {
             derniereUpdate: new Date().toISOString(),
-            sourceEnrichissement: 'tracking-handler-v2.0',
-            versionAPI: '2.0.0'
+            sourceEnrichissement: 'tracking-handler-v3.0-livraison',
+            versionAPI: '3.0.0'
         };
         
         return enrichedData;
         
     } catch (error) {
         logger.error('Erreur lors de l\'enrichissement des données', error);
-        return expeditionData; // Retourner les données originales en cas d'erreur
+        return livraisonData; // Retourner les données originales en cas d'erreur
     }
 }
 
 // Fonctions utilitaires
 function getStatusLibelle(statut) {
     const statusMap = {
-        'en_cours_de_livraison': 'En cours de livraison',
+        'en_attente_assignation': 'En attente d\'un livreur',
         'en_attente': 'En attente de prise en charge',
+        'assigné': 'Livreur assigné',
+        'en_cours_de_livraison': 'En cours de livraison',
         'en_cours': 'En cours de traitement',
         'livre': 'Livré avec succès',
         'retour': 'Retourné à l\'expéditeur',
@@ -208,12 +216,14 @@ function getStatusLibelle(statut) {
         'en_preparation': 'En préparation',
         'pret_pour_collecte': 'Prêt pour collecte'
     };
-    return statusMap[statut] || 'Statut inconnu';
+    return statusMap[statut] || statut || 'Statut inconnu';
 }
 
 function getCompletionPercentage(statut) {
     const percentageMap = {
-        'en_attente': 10,
+        'en_attente_assignation': 10,
+        'en_attente': 20,
+        'assigné': 40,
         'en_preparation': 25,
         'pret_pour_collecte': 40,
         'en_cours': 50,
@@ -228,7 +238,9 @@ function getCompletionPercentage(statut) {
 function getStatusColor(statut) {
     const colorMap = {
         'en_cours_de_livraison': '#F59E0B',
+        'en_attente_assignation': '#6B7280',
         'en_attente': '#6B7280',
+        'assigné': '#3B82F6',
         'en_cours': '#3B82F6',
         'livre': '#10B981',
         'retour': '#F97316',
@@ -238,7 +250,7 @@ function getStatusColor(statut) {
 }
 
 function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -267,17 +279,25 @@ function calculatePerformanceMetrics(data) {
     
     // Estimation basée sur le statut
     switch (data.statut) {
-        case 'en_cours_de_livraison':
-            metrics.estimationLivraison = 'Dans les 2-4 heures';
-            metrics.efficacite = 'excellente';
-            break;
-        case 'en_cours':
-            metrics.estimationLivraison = 'Dans les 4-8 heures';
+        case 'assigné':
+            metrics.estimationLivraison = 'Dans les 1-2 heures';
             metrics.efficacite = 'bonne';
             break;
-        case 'en_attente':
-            metrics.estimationLivraison = 'Dans les 8-24 heures';
+        case 'en_cours_de_livraison':
+            metrics.estimationLivraison = 'Dans les 30-60 minutes';
+            metrics.efficacite = 'excellente';
+            break;
+        case 'en_attente_assignation':
+            metrics.estimationLivraison = 'Dans les 2-4 heures';
             metrics.efficacite = 'normale';
+            break;
+        case 'en_attente':
+            metrics.estimationLivraison = 'Dans les 4-8 heures';
+            metrics.efficacite = 'normale';
+            break;
+        case 'livre':
+            metrics.estimationLivraison = 'Livraison terminée';
+            metrics.efficacite = 'excellente';
             break;
         default:
             metrics.estimationLivraison = 'Non déterminée';
@@ -288,7 +308,7 @@ function calculatePerformanceMetrics(data) {
 
 // Gestion du cache
 function getCacheKey(codeID) {
-    return `tracking_ultra_${codeID}`;
+    return `tracking_livraison_${codeID}`;
 }
 
 function getCachedData(codeID) {
@@ -318,7 +338,7 @@ function setCachedData(codeID, data) {
     }
 }
 
-// Handler principal ultra-sophistiqué
+// Handler principal ultra-sophistiqué pour la collection Livraison
 exports.handler = async (event, context) => {
     // Headers CORS ultra-sécurisés
     const corsHeaders = {
@@ -406,7 +426,7 @@ exports.handler = async (event, context) => {
         }
 
         const codeID = validation.code;
-        logger.info('Recherche de suivi ultra-sophistiquée initiée', { codeID });
+        logger.info('Recherche de suivi dans Livraison initiée', { codeID });
 
         // Vérification du cache
         const cachedData = getCachedData(codeID);
@@ -442,61 +462,63 @@ exports.handler = async (event, context) => {
         logger.info('Connexion MongoDB établie avec succès');
 
         const db = client.db(DB_NAME);
-        const expeditionCollection = db.collection('cour_expedition');
         const livraisonCollection = db.collection('Livraison');
         const livreurCollection = db.collection('Res_livreur');
 
-        // Recherche ultra-optimisée dans cour_expedition
-        const expeditionInfo = await expeditionCollection.findOne(
+        // Recherche ultra-optimisée dans Livraison
+        const livraisonInfo = await livraisonCollection.findOne(
             { colisID: codeID },
             {
                 projection: {
-                    // Projection ultra-complète
+                    // Projection complète pour la collection Livraison
+                    _id: 1,
                     colisID: 1,
                     livraisonID: 1,
                     expediteur: 1,
                     destinataire: 1,
                     colis: 1,
+                    pricing: 1,
+                    payment: 1,
                     statut: 1,
                     dateCreation: 1,
                     dateAcceptation: 1,
-                    dateModification: 1,
-                    driverLocation: 1,
+                    localisation: 1,
+                    historique: 1,
+                    metadata: 1,
+                    
+                    // Champs spécifiques au livreur
+                    nomLivreur: 1,
+                    telephoneLivreur1: 1,
+                    telephoneLivreur2: 1,
+                    idLivreurEnCharge: 1,
+                    id_livreur: 1,
                     driverName: 1,
                     driverPhone: 1,
                     driverPhone1: 1,
                     driverPhone2: 1,
                     driverId: 1,
-                    nomLivreur: 1,
-                    telephoneLivreur1: 1,
-                    telephoneLivreur2: 1,
-                    idLivreurEnCharge: 1,
-                    prixLivraison: 1,
-                    processus: 1,
-                    historique: 1,
+                    
+                    // Champs de statut avancés
                     estExpedie: 1,
-                    orderId: 1,
-                    serviceType: 1,
-                    assignedAt: 1,
-                    status: 1,
-                    originalCollection: 1,
-                    lastPositionUpdate: 1,
-                    positionHistory: 1,
-                    localisation: 1
+                    missionConfirmee: 1,
+                    estAttribue: 1,
+                    processusDeclenche: 1,
+                    assigneA: 1,
+                    derniereMiseAJour: 1
                 }
             }
         );
 
-        if (expeditionInfo) {
-            logger.info('Expédition trouvée avec succès', { 
+        if (livraisonInfo) {
+            logger.info('Livraison trouvée avec succès', { 
                 codeID, 
-                statut: expeditionInfo.statut,
-                hasDriverLocation: !!expeditionInfo.driverLocation,
-                driverId: expeditionInfo.driverId || expeditionInfo.idLivreurEnCharge
+                statut: livraisonInfo.statut,
+                hasLocalisation: !!livraisonInfo.localisation,
+                hasLivreur: !!(livraisonInfo.idLivreurEnCharge || livraisonInfo.nomLivreur)
             });
             
             // Enrichissement ultra-sophistiqué des données
-            const enrichedData = await enrichTrackingData(expeditionInfo, livreurCollection);
+            const enrichedData = await enrichTrackingData(livraisonInfo, livreurCollection);
             
             // Mise en cache avec métadonnées
             setCachedData(codeID, enrichedData);
@@ -512,72 +534,19 @@ exports.handler = async (event, context) => {
                     responseTime: Date.now() - startTime,
                     timestamp: new Date().toISOString(),
                     metadata: {
-                        version: '2.0.0',
+                        version: '3.0.0',
                         enriched: true,
                         hasDriverInfo: !!enrichedData.livreurInfo,
                         hasDriverPhoto: !!(enrichedData.livreurInfo?.photoBase64),
-                        hasLocation: !!enrichedData.driverLocation
-                    }
-                })
-            };
-        }
-
-        // Recherche dans Livraison si non trouvé
-        logger.info('Recherche dans la collection Livraison', { codeID });
-        const colisEnregistre = await livraisonCollection.findOne(
-            { colisID: codeID },
-            { projection: { colisID: 1, dateCreation: 1, statut: 1, expediteur: 1, destinataire: 1, colis: 1 } }
-        );
-
-        if (colisEnregistre) {
-            logger.info('Colis trouvé en attente dans Livraison', { codeID });
-            
-            const pendingData = {
-                colisID: codeID,
-                statut: 'en_attente',
-                dateCreation: colisEnregistre.dateCreation,
-                expediteur: colisEnregistre.expediteur,
-                destinataire: colisEnregistre.destinataire,
-                colis: colisEnregistre.colis,
-                statutDetaille: {
-                    code: 'en_attente',
-                    libelle: 'En attente de prise en charge',
-                    pourcentageCompletion: 10,
-                    couleur: '#6B7280'
-                },
-                metriques: {
-                    estimationLivraison: 'Dans les 8-24 heures',
-                    efficacite: 'normale'
-                },
-                traceabilite: {
-                    derniereUpdate: new Date().toISOString(),
-                    sourceEnrichissement: 'tracking-handler-v2.0-pending',
-                    versionAPI: '2.0.0'
-                }
-            };
-            
-            // Cache avec durée réduite pour les colis en attente
-            setCachedData(codeID, pendingData);
-            
-            return {
-                statusCode: 200,
-                headers: corsHeaders,
-                body: JSON.stringify({
-                    success: true,
-                    message: 'Le processus d\'expédition pour ce colis n\'a pas encore démarré. Un livreur prendra en charge votre colis dans les plus brefs délais.',
-                    expedition: pendingData,
-                    responseTime: Date.now() - startTime,
-                    timestamp: new Date().toISOString(),
-                    metadata: {
-                        version: '2.0.0',
-                        status: 'pending'
+                        hasLocation: !!enrichedData.driverLocation,
+                        collection: 'Livraison'
                     }
                 })
             };
         }
 
         // Aucun résultat trouvé
-        logger.warn('Aucun colis trouvé avec ce code', { codeID });
+        logger.warn('Aucune livraison trouvée avec ce code', { codeID });
         return {
             statusCode: 404,
             headers: corsHeaders,
@@ -596,10 +565,10 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        logger.error('Erreur critique lors de la récupération des informations d\'expédition', error);
+        logger.error('Erreur critique lors de la récupération des informations de livraison', error);
         
         // Gestion sophistiquée des erreurs
-        let errorMessage = 'Erreur serveur lors de la récupération des informations d\'expédition.';
+        let errorMessage = 'Erreur serveur lors de la récupération des informations de livraison.';
         let errorCode = 'SERVER_ERROR';
         let statusCode = 500;
         
@@ -627,7 +596,7 @@ exports.handler = async (event, context) => {
                 timestamp: new Date().toISOString(),
                 responseTime: Date.now() - startTime,
                 metadata: {
-                    version: '2.0.0',
+                    version: '3.0.0',
                     errorType: error.name || 'UnknownError'
                 }
             })

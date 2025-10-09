@@ -1925,18 +1925,6 @@ async function resetDriverTax(db, data) {
             );
             console.log(`💰 VALIDATION - ${paymentUpdateResult.modifiedCount} paiements mis à jour.`);
 
-            // ÉTAPE 5: JOURNALISATION de l'opération
-            await db.collection('admin_operations_log').insertOne({
-                type: 'tax_reset',
-                driverObjectId: driverId,
-                driverIdentifier: driverIdentifier,
-                deletedCourses: deleteResult.deletedCount,
-                validatedPayments: paymentUpdateResult.modifiedCount,
-                performedBy: 'admin',
-                timestamp: new Date()
-            }, { session });
-            console.log("📝 Opération journalisée.");
-
             result = {
                 success: true,
                 message: `Paiement validé et dette réinitialisée pour ${driver.prenom} ${driver.nom}.`,

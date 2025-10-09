@@ -11,50 +11,20 @@ const COMMON_HEADERS = {
 };
 
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: COMMON_HEADERS,
-      body: JSON.stringify({})
-    };
+  if (event.httpMethod === 'OPTIONS' ) {
+    return { statusCode: 200, headers: COMMON_HEADERS };
   }
-
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: COMMON_HEADERS,
-      body: JSON.stringify({ error: 'Méthode non autorisée' })
-    };
+  if (event.httpMethod !== 'POST' ) {
+    return { statusCode: 405, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
   }
 
   let client;
-
   try {
     const data = JSON.parse(event.body);
     const { orderId, driverId, location } = data;
 
-    if (
-      !orderId || !driverId || !location ||
-      typeof location.latitude === 'undefined' ||
-      typeof location.longitude === 'undefined'
-    ) {
-      return {
-        statusCode: 400,
-        headers: COMMON_HEADERS,
-        body: JSON.stringify({
-          error: 'Données manquantes ou invalides',
-          expected: {
-            orderId: 'string',
-            driverId: 'string',
-            location: {
-              latitude: 'number',
-              longitude: 'number',
-              accuracy: 'number (facultatif)'
-            }
-          },
-          received: data
-        })
-      };
+    if (!orderId || !driverId || !location?.latitude || !location?.longitude) {
+      return { statusCode: 400, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Données manquantes ou invalides' }) };
     }
 
     client = await MongoClient.connect(MONGODB_URI);
@@ -67,80 +37,50 @@ exports.handler = async (event) => {
       timestamp: new Date()
     };
 
-    // Filtrage correct combiné avec $and et $or
-    const expeditionFilter = {
-      $and: [
-        {
-          $or: [
-            { orderId },
-            { colisID: orderId },
-            { identifiant: orderId },
-            { id: orderId },
-            { _id: orderId }
-          ]
-        },
-        {
-          $or: [
-            { driverId },
-            { idLivreurEnCharge: driverId },
-            { 'identifiant du conducteur': driverId }
-          ]
-        }
+    // ✅ Filtre amélioré pour cibler la bonne commande dans la collection "Livraison"
+    const filter = {
+      colisID: orderId,
+      $or: [
+        { driverId: driverId },
+        { idLivreurEnCharge: driverId },
+        { id_livreur: driverId }
       ]
     };
 
-    const expeditionUpdate = await db.collection('cour_expedition').updateOne(
-      expeditionFilter,
+    const updateResult = await db.collection('Livraison').updateOne(
+      filter,
       {
         $set: {
-          driverLocation: positionData,
+          driverLocation: positionData, // On met à jour la position principale
           lastPositionUpdate: new Date()
         },
         $push: {
+          // On garde un historique des 100 dernières positions
           positionHistory: {
             $each: [positionData],
-            $slice: -100
+            $slice: -100 
           }
         }
       }
     );
 
-    if (expeditionUpdate.matchedCount === 0) {
+    if (updateResult.matchedCount === 0) {
       return {
         statusCode: 404,
         headers: COMMON_HEADERS,
-        body: JSON.stringify({
-          error: 'Commande non trouvée ou livreur non assigné',
-          orderId,
-          driverId
-        })
+        body: JSON.stringify({ error: 'Commande non trouvée ou livreur non assigné à cette commande.' })
       };
     }
 
     return {
       statusCode: 200,
       headers: COMMON_HEADERS,
-      body: JSON.stringify({
-        success: true,
-        message: 'Position mise à jour avec succès dans cour_expedition',
-        orderId,
-        driverId,
-        location: positionData,
-        updatedAt: new Date().toISOString(),
-        expeditionUpdated: expeditionUpdate.modifiedCount > 0
-      })
+      body: JSON.stringify({ success: true, message: 'Position mise à jour avec succès.' })
     };
 
   } catch (error) {
-    console.error('Erreur serveur:', error);
-    return {
-      statusCode: 500,
-      headers: COMMON_HEADERS,
-      body: JSON.stringify({
-        error: 'Erreur serveur lors de la mise à jour',
-        details: error.message
-      })
-    };
+    console.error('Erreur serveur updateDriverPosition:', error);
+    return { statusCode: 500, headers: COMMON_HEADERS, body: JSON.stringify({ error: 'Erreur serveur.' }) };
   } finally {
     if (client) await client.close();
   }
